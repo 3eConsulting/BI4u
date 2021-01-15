@@ -31,7 +31,7 @@ const PFLeaveHistoryRep = getCustomRepository(PFLeaveHistoryRepository);
 const Mutation = `
     extend type Mutation {
 		PFaddCustomer(PFCustomer: PFCustomerInput!): PFCustomer!
-		PFremoveCustomers(ids: [ID!]!): Boolean!
+		PFremoveCustomers(PFCustomerIDS: [ID!]!): Boolean!
 		PFupdateCustomer(PFCustomerID: ID!, PFCustomer: PFCustomerUpdateInput!): PFCustomer!
 		
 		PFaddAddress(PFCustomerID: ID!, PFAddress: PFAddressInput!): PFCustomer!
@@ -71,13 +71,13 @@ export const mutationResolvers = {
 		},
 		async PFremoveCustomers(
 			parent: unknown,
-			{ ids }: { ids: string[] },
+			{ PFCustomerIDS }: { PFCustomerIDS: string[] },
 			context: ContextWithAuthentication,
 			info: unknown
 		) {
 			let [customers, count] = await PFCustomerRep.createQueryBuilder("customer")
 				.leftJoinAndSelect("customer.PFextraInfo", "extraInfo")
-				.where("customer.id in (:...ids)", { ids: ids })
+				.where("customer.id in (:...ids)", { ids: PFCustomerIDS })
 				.getManyAndCount();
 
 			if (count === 0) throw new Error("No Customer Found");

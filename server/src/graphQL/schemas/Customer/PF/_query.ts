@@ -8,8 +8,8 @@ const PFCustomerRep = getCustomRepository(PFCustomerRepository);
 const Query = ` 
     extend type Query {
 		PFfetchCustomers: [PFCustomer!]!
-		PFfetchCustomersById(ids: [String!]!) : [PFCustomer!]!
-		PFfetchCustomerById(id: String!) : PFCustomer!
+		PFfetchCustomersById(PFCustomerIDS: [String!]!) : [PFCustomer!]!
+		PFfetchCustomerById(PFCustomerID: String!) : PFCustomer!
     }
 `;
 
@@ -19,9 +19,17 @@ export const queryResolvers = {
 	Query: {
 		PFfetchCustomers: async (root, args: {}, context: ContextWithAuthentication, info: {}) =>
 			await PFCustomerRep.fetchCustomers(),
-		PFfetchCustomersById: async (root, { ids }: { ids: string[] }, context: ContextWithAuthentication, info: {}) =>
-			await PFCustomerRep.fetchCustomers(ids),
-		PFfetchCustomerById: async (root, { id }: { id: string }, context: ContextWithAuthentication, info: {}) =>
-			await PFCustomerRep.fetchCustomer(id),
+		PFfetchCustomersById: async (
+			root,
+			{ PFCustomerIDS }: { PFCustomerIDS: string[] },
+			context: ContextWithAuthentication,
+			info: {}
+		) => await PFCustomerRep.fetchCustomers(PFCustomerIDS),
+		PFfetchCustomerById: async (
+			root,
+			{ PFCustomerID }: { PFCustomerID: string },
+			context: ContextWithAuthentication,
+			info: {}
+		) => await PFCustomerRep.fetchCustomer(PFCustomerID),
 	},
 };

@@ -1,0 +1,701 @@
+#### OPERATIONS
+
+### FRAGMENTS
+## PF
+fragment PFContactInfo on PFContact {
+	id
+	email
+	phone
+	mobilePhone
+	isWhatsApp
+	isMain
+	createdAt
+	updatedAt
+}
+
+fragment PFAddressInfo on PFAddress {
+	id
+	name
+	CEP
+	country
+	state
+	city
+	district
+	street
+	number
+	complement
+	isMain
+	createdAt
+	updatedAt
+}
+
+fragment PFDisabilityInfo on PFDisability {
+	id
+	CID
+	nomenclature
+	createdAt
+	updatedAt
+}
+
+fragment PFLeaveHistoryInfo on PFLeaveHistory {
+	id
+	leaveDate
+	returnDate
+	reason
+	isINSS
+	createdAt
+	updatedAt
+}
+
+fragment PFProfessionalHistoryInfo on PFProfessionalHistory {
+	id
+	office
+	CBO
+	admissionDate
+	startDate
+	recisionDate
+	EPI
+	createdAt
+	updatedAt
+	leaveHistory {
+		...PFLeaveHistoryInfo
+	}
+	company {
+		...PJCustomerInfo
+	}
+}
+
+fragment PFExtraInfoInfo on PFExtraInfo {
+	id
+	createdAt
+	updatedAt
+	contacts {
+		...PFContactInfo
+	}
+	addresses {
+		...PFAddressInfo
+	}
+	disabilities {
+		...PFDisabilityInfo
+	}
+	professionalHistory {
+		...PFProfessionalHistoryInfo
+	}
+}
+
+fragment PFCustomerInfo on PFCustomer {
+	id
+	firstName
+	lastName
+	birthDate
+	CPF
+	gender
+	preferedPronoun
+	isActive
+	hasDisability
+	createdAt
+	updatedAt
+	PFextraInfo {
+		...PFExtraInfoInfo
+	}
+}
+
+## PJ
+fragment PJAddressInfo on PJAddress {
+	id
+	name
+	CEP
+	country
+	state
+	city
+	district
+	street
+	number
+	complement
+	isMain
+	createdAt
+	updatedAt
+}
+
+fragment PJContactInfo on PJContact {
+	id
+	contactEmployeeName
+	email
+	phone
+	mobilePhone
+	site
+	isWhatsApp
+	isMain
+	createdAt
+	updatedAt
+}
+
+fragment PJActivityInfo on PJActivityClassification {
+	id
+	CNAE
+	description
+	isMain
+	createdAt
+	updatedAt
+}
+
+fragment PJExtraInfoInfo on PJExtraInfo {
+	id
+	createdAt
+	updatedAt
+	contacts {
+		...PJContactInfo
+	}
+	addresses {
+		...PJAddressInfo
+	}
+	activities {
+		...PJActivityInfo
+	}
+}
+
+fragment PJCustomerInfo on PJCustomer {
+	id
+	legalName
+	tradingName
+	CNPJ
+	isActive
+	isAssociated
+	createdAt
+	updatedAt
+	PJextraInfo {
+		...PJExtraInfoInfo
+	}
+}
+
+### QUERIES (BY REQUEST ARGUMENT TYPE)
+## PF
+query PFfetchCustomers {
+	PFfetchCustomers {
+		...PFCustomerInfo
+	}
+}
+
+query PFfetchCustomersByID($PFCustomerIDS: [String!]!) {
+	PFfetchCustomersById(PFCustomerIDS: $PFCustomerIDS) {
+		...PFCustomerInfo
+	}
+}
+
+query PFfetchCustomerByID($PFCustomerID: String!) {
+	PFfetchCustomerById(PFCustomerID: $PFCustomerID) {
+		...PFCustomerInfo
+	}
+}
+
+## PJ
+query PJfetchCustomers {
+	PJfetchCustomers {
+		...PJCustomerInfo
+	}
+}
+
+query PJfetchCustomersByID($PJCustomerIDS: [String!]!) {
+	PJfetchCustomersById(PJCustomerIDS: $PJCustomerIDS) {
+		...PJCustomerInfo
+	}
+}
+
+query PJfetchCustomerByID($PJCustomerID: String!) {
+	PJfetchCustomerById(PJCustomerID: $PJCustomerID) {
+		...PJCustomerInfo
+	}
+}
+
+query PJfetchEmployees($PJCustomerID: String!) {
+	PJfetchEmployees(PJCustomerID: $PJCustomerID) {
+		...PFCustomerInfo
+	}
+}
+
+### MUTATION (BY TABLE AFFECTED)
+## PF
+# BASE OBJECT
+mutation PFaddCustomer(
+	$firstName: String!
+	$lastName: String!
+	$birthDate: Date!
+	$CPF: CPF!
+	$gender: GenderEnum!
+	$preferedPronoun: PreferedPronounEnum!
+	$isActive: Boolean
+	$hasDisability: Boolean
+) {
+	PFaddCustomer(
+		PFCustomer: {
+			firstName: $firstName
+			lastName: $lastName
+			birthDate: $birthDate
+			CPF: $CPF
+			gender: $gender
+			preferedPronoun: $preferedPronoun
+			isActive: $isActive
+			hasDisability: $hasDisability
+		}
+	) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFupdateCustomer(
+	$PFCustomerID: ID!
+	$firstName: String
+	$lastName: String
+	$birthDate: Date
+	$CPF: CPF
+	$gender: GenderEnum
+	$preferedPronoun: PreferedPronounEnum
+	$isActive: Boolean
+	$hasDisability: Boolean
+) {
+	PFupdateCustomer(
+		PFCustomerID: $PFCustomerID
+		PFCustomer: {
+			firstName: $firstName
+			lastName: $lastName
+			birthDate: $birthDate
+			CPF: $CPF
+			gender: $gender
+			preferedPronoun: $preferedPronoun
+			isActive: $isActive
+			hasDisability: $hasDisability
+		}
+	) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFremoveCustomers($PFCustomerIDS: [ID!]!) {
+	PFremoveCustomers(PFCustomerIDS: $PFCustomerIDS)
+}
+
+# ADDRESS
+mutation PFaddAddress(
+	$PFCustomerID: ID!
+	$name: String!
+	$CEP: String!
+	$country: String
+	$state: String!
+	$city: String!
+	$district: String
+	$street: String!
+	$number: String!
+	$complement: String
+	$isMain: Boolean
+) {
+	PFaddAddress(
+		PFCustomerID: $PFCustomerID
+		PFAddress: {
+			name: $name
+			CEP: $CEP
+			country: $country
+			state: $state
+			city: $city
+			district: $district
+			street: $street
+			number: $number
+			complement: $complement
+			isMain: $isMain
+		}
+	) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFupdateAddress(
+	$PFAddressID: ID!
+	$name: String
+	$CEP: String
+	$country: String
+	$state: String
+	$city: String
+	$district: String
+	$street: String
+	$number: String
+	$complement: String
+	$isMain: Boolean
+) {
+	PFupdateAddress(
+		PFAddressID: $PFAddressID
+		PFAddress: {
+			name: $name
+			CEP: $CEP
+			country: $country
+			state: $state
+			city: $city
+			district: $district
+			street: $street
+			number: $number
+			complement: $complement
+			isMain: $isMain
+		}
+	) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFremoveAddresses($PFAddressIDS: [ID!]!) {
+	PFremoveAddresses(PFAddressIDS: $PFAddressIDS) {
+		...PFCustomerInfo
+	}
+}
+
+# CONTACT
+mutation PFaddContact(
+	$PFCustomerID: ID!
+	$email: String
+	$phone: String
+	$mobilePhone: String
+	$isWhatsApp: Boolean
+	$isMain: Boolean
+) {
+	PFaddContact(
+		PFCustomerID: $PFCustomerID
+		PFContact: { email: $email, phone: $phone, mobilePhone: $mobilePhone, isWhatsApp: $isWhatsApp, isMain: $isMain }
+	) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFupdateContact(
+	$PFContactID: ID!
+	$email: String
+	$phone: String
+	$mobilePhone: String
+	$isWhatsApp: Boolean
+	$isMain: Boolean
+) {
+	PFupdateContact(
+		PFContactID: $PFContactID
+		PFContact: { email: $email, phone: $phone, mobilePhone: $mobilePhone, isWhatsApp: $isWhatsApp, isMain: $isMain }
+	) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFremoveContact($PFContactIDS: [ID!]!) {
+	PFremoveContacts(PFContactIDS: $PFContactIDS) {
+		...PFCustomerInfo
+	}
+}
+
+# DISABILITY
+mutation PFaddDisability($PFCustomerID: ID!, $CID: String!, $nomenclature: String) {
+	PFaddDisability(PFCustomerID: $PFCustomerID, PFDisability: { CID: $CID, nomenclature: $nomenclature }) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFupdateDisability($PFDisabilityID: ID!, $CID: String, $nomenclature: String) {
+	PFupdateDisability(PFDisabilityID: $PFDisabilityID, PFDisability: { CID: $CID, nomenclature: $nomenclature }) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFremoveDisability($PFDisabilityIDS: [ID!]!) {
+	PFremoveDisabilities(PFDisabilityIDS: $PFDisabilityIDS) {
+		...PFCustomerInfo
+	}
+}
+
+# PROFESSIONAL HISTORY
+mutation PFaddProfessionalHistory(
+	$PFCustomerID: ID!
+	$companyID: ID!
+	$office: String!
+	$CBO: String!
+	$admissionDate: Date!
+	$startDate: Date
+	$recisionDate: Date
+	$EPI: Boolean
+) {
+	PFaddProfessionalHistory(
+		PFCustomerID: $PFCustomerID
+		PFProfessionalHistory: {
+			companyID: $companyID
+			office: $office
+			CBO: $CBO
+			admissionDate: $admissionDate
+			startDate: $startDate
+			recisionDate: $recisionDate
+			EPI: $EPI
+		}
+	) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFupdateProfessionalHistory(
+	$PFProfessionalHistoryID: ID!
+	$companyID: ID
+	$office: String
+	$CBO: String
+	$admissionDate: Date
+	$startDate: Date
+	$recisionDate: Date
+	$EPI: Boolean
+) {
+	PFupdateProfessionalHistory(
+		PFProfessionalHistoryID: $PFProfessionalHistoryID
+		PFProfessionalHistory: {
+			companyID: $companyID
+			office: $office
+			CBO: $CBO
+			admissionDate: $admissionDate
+			startDate: $startDate
+			recisionDate: $recisionDate
+			EPI: $EPI
+		}
+	) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFremoveProfessionalHistory($PFProfessionalHistoryIDS: [ID!]!) {
+	PFremoveProfessionalHistory(PFProfessionalHistoryIDS: $PFProfessionalHistoryIDS) {
+		PFextraInfo {
+			professionalHistory {
+				...PFProfessionalHistoryInfo
+			}
+		}
+	}
+}
+
+# LEAVE HISTORY
+mutation PFaddLeaveHistory(
+	$PFProfessionalHistoryID: ID!
+	$leaveDate: Date!
+	$returnDate: Date
+	$reason: String!
+	$isINSS: Boolean
+) {
+	PFaddLeaveHistory(
+		PFProfessionalHistoryID: $PFProfessionalHistoryID
+		PFLeaveHistory: { leaveDate: $leaveDate, returnDate: $returnDate, reason: $reason, isINSS: $isINSS }
+	) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFupdateLeaveHistory(
+	$PFLeaveHistoryID: ID!
+	$leaveDate: Date!
+	$returnDate: Date
+	$reason: String!
+	$isINSS: Boolean
+) {
+	PFupdateLeaveHistory(
+		PFLeaveHistoryID: $PFLeaveHistoryID
+		PFLeaveHistory: { leaveDate: $leaveDate, returnDate: $returnDate, reason: $reason, isINSS: $isINSS }
+	) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFremoveLeaveHistory($PFLeaveHistoryIDS: [ID!]!) {
+	PFremoveLeaveHistory(PFLeaveHistoryIDS: $PFLeaveHistoryIDS) {
+		...PFCustomerInfo
+	}
+}
+
+## PF
+# BASE OBJECT
+mutation PJaddCustomer(
+	$legalName: String!
+	$tradingName: String!
+	$CNPJ: CNPJ!
+	$isActive: Boolean
+	$isAssociated: Boolean
+) {
+	PJaddCustomer(
+		PJCustomer: {
+			legalName: $legalName
+			tradingName: $tradingName
+			CNPJ: $CNPJ
+			isActive: $isActive
+			isAssociated: $isAssociated
+		}
+	) {
+		...PJCustomerInfo
+	}
+}
+
+mutation PJupdateCustomer(
+	$PJCustomerID: ID!
+	$legalName: String
+	$tradingName: String
+	$CNPJ: CNPJ
+	$isActive: Boolean
+	$isAssociated: Boolean
+) {
+	PJupdateCustomer(
+		PJCustomerID: $PJCustomerID
+		PJCustomer: {
+			legalName: $legalName
+			tradingName: $tradingName
+			CNPJ: $CNPJ
+			isActive: $isActive
+			isAssociated: $isAssociated
+		}
+	) {
+		...PJCustomerInfo
+	}
+}
+
+mutation PJremoveCustomers($PJCustomerIDS: [ID!]!) {
+	PJremoveCustomers(PJCustomerIDS: $PJCustomerIDS)
+}
+
+# ADDRESS
+mutation PJaddAddress(
+	$PJCustomerID: ID!
+	$name: String!
+	$CEP: String!
+	$country: String
+	$state: String!
+	$city: String!
+	$district: String
+	$street: String!
+	$number: String!
+	$complement: String
+	$isMain: Boolean
+) {
+	PJaddAddress(
+		PJCustomerID: $PJCustomerID
+		PJAddress: {
+			name: $name
+			CEP: $CEP
+			country: $country
+			state: $state
+			city: $city
+			district: $district
+			street: $street
+			number: $number
+			complement: $complement
+			isMain: $isMain
+		}
+	) {
+		...PJCustomerInfo
+	}
+}
+
+mutation PJupdateAddress(
+	$PJAddressID: ID!
+	$name: String!
+	$CEP: String!
+	$country: String
+	$state: String!
+	$city: String!
+	$district: String
+	$street: String!
+	$number: String!
+	$complement: String
+	$isMain: Boolean
+) {
+	PJupdateAddress(
+		PJAddressID: $PJAddressID
+		PJAddress: {
+			name: $name
+			CEP: $CEP
+			country: $country
+			state: $state
+			city: $city
+			district: $district
+			street: $street
+			number: $number
+			complement: $complement
+			isMain: $isMain
+		}
+	) {
+		...PJCustomerInfo
+	}
+}
+
+mutation PJremoveAddresses($PJAddressIDS: [ID!]!) {
+	PJremoveAddresses(PJAddressIDS: $PJAddressIDS) {
+		...PJCustomerInfo
+	}
+}
+
+# CONTACT
+mutation PJaddContact(
+	$PJCustomerID: ID!
+	$contactEmployeeName: String
+	$email: String
+	$phone: String
+	$mobilePhone: String
+	$site: String
+	$isWhatsApp: Boolean
+	$isMain: Boolean
+) {
+	PJaddContact(
+		PJCustomerID: $PJCustomerID
+		PJContact: {
+			contactEmployeeName: $contactEmployeeName
+			email: $email
+			phone: $phone
+			mobilePhone: $mobilePhone
+			site: $site
+			isWhatsApp: $isWhatsApp
+			isMain: $isMain
+		}
+	) {
+		...PJCustomerInfo
+	}
+}
+
+mutation PJupdateContact(
+	$PJContactID: ID!
+	$contactEmployeeName: String
+	$email: String
+	$phone: String
+	$mobilePhone: String
+	$site: String
+	$isWhatsApp: Boolean
+	$isMain: Boolean
+) {
+	PJupdateContact(
+		PJContactID: $PJContactID
+		PJContact: {
+			contactEmployeeName: $contactEmployeeName
+			email: $email
+			phone: $phone
+			mobilePhone: $mobilePhone
+			site: $site
+			isWhatsApp: $isWhatsApp
+			isMain: $isMain
+		}
+	) {
+		...PJCustomerInfo
+	}
+}
+
+mutation PJremoveContacts($PJContactIDS: [ID!]!) {
+	PJremoveContacts(PJContactIDS: $PJContactIDS) {
+		...PJCustomerInfo
+	}
+}
+
+# ACTIVITY CLASSIFICATION
+mutation PJaddActivityClassification($PJCustomerID: ID!, $CNAE: String!, $description: String, $isMain: Boolean) {
+	PJaddActivityClassification(
+		PJCustomerID: $PJCustomerID
+		PJActivityClassification: { CNAE: $CNAE, description: $description, isMain: $isMain }
+	) {
+		...PJCustomerInfo
+	}
+}
+
+mutation PJupdateActivityClassification($PJActivityID: ID!, $CNAE: String!, $description: String, $isMain: Boolean) {
+	PJupdateActivityClassification(
+		PJActivityID: $PJActivityID
+		PJActivityClassification: { CNAE: $CNAE, description: $description, isMain: $isMain }
+	) {
+		...PJCustomerInfo
+	}
+}

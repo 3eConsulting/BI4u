@@ -1,5 +1,0 @@
-mutation PFremoveCompany($PFCustomerIDS: [ID!]!) {
-	PFremoveCompany(PFCustomerIDS: $PFCustomerIDS) {
-		id
-	}
-}

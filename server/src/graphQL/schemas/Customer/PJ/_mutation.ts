@@ -16,7 +16,7 @@ const PJActivityClassificationRep = getCustomRepository(PJActivityClassification
 const Mutation = `
     extend type Mutation {
 		PJaddCustomer(PJCustomer: PJCustomerInput!): PJCustomer!
-		PJremoveCustomers(ids: [ID!]): Boolean!
+		PJremoveCustomers(PJCustomerIDS: [ID!]): Boolean!
 		PJupdateCustomer(PJCustomerID: ID!, PJCustomer: PJCustomerUpdateInput!): PJCustomer!
 
 		PJaddAddress(PJCustomerID: ID!, PJAddress: PJAddressInput!): PJCustomer!
@@ -27,8 +27,8 @@ const Mutation = `
 		PJremoveContacts(PJContactIDS: [ID!]!): PJCustomer!
 		PJremoveActivityClassifications(PJActivityIDS: [ID!]!): PJCustomer!
 		
-		PJupdateAddress(PJAddressID: ID!, PJAddress: PFAddressUpdateInput!): PJCustomer!
-		PJupdateContact(PJContactID: ID!, PJContact: PFContactUpdateInput!): PJCustomer!
+		PJupdateAddress(PJAddressID: ID!, PJAddress: PJAddressUpdateInput!): PJCustomer!
+		PJupdateContact(PJContactID: ID!, PJContact: PJContactUpdateInput!): PJCustomer!
 		PJupdateActivityClassification(PJActivityID: ID!, PJActivityClassification: PJActivityClassificationUpdateInput!): PJCustomer!
 
     }
@@ -50,13 +50,13 @@ export const mutationResolvers = {
 		},
 		async PJremoveCustomers(
 			parent: unknown,
-			{ ids }: { ids: string[] },
+			{ PJCustomerIDS }: { PJCustomerIDS: string[] },
 			context: ContextWithAuthentication,
 			info: unknown
 		) {
 			let [customers, count] = await PJCustomerRep.createQueryBuilder("customer")
 				.leftJoinAndSelect("customer.PJextraInfo", "extraInfo")
-				.where("customer.id in (:...ids)", { ids: ids })
+				.where("customer.id in (:...ids)", { ids: PJCustomerIDS })
 				.getManyAndCount();
 
 			if (count === 0) throw new Error("No Customer Found");
