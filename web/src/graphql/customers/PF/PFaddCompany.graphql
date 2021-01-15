@@ -1,0 +1,12 @@
+mutation PFaddCompany($PFCustomerIDS: [ID!]!, $PJCustomerID: ID!, $force: Boolean!) {
+	PFaddCompany(PFCustomerIDS: $PFCustomerIDS, PJCustomerID: $PJCustomerID, force: $force) {
+		id
+		firstName
+		lastName
+		company {
+			id
+			legalName
+			tradingName
+		}
+	}
+}

@@ -1,0 +1,35 @@
+mutation createBasePFCustomer(
+	$firstName: String!
+	$lastName: String!
+	$birthDate: Date!
+	$CPF: CPF!
+	$gender: GenderEnum!
+	$preferedPronoun: PreferedPronounEnum!
+	$isActive: Boolean
+	$hasDisability: Boolean
+) {
+	createBaseCustomer(
+		PFCustomer: {
+			firstName: $firstName
+			lastName: $lastName
+			birthDate: $birthDate
+			CPF: $CPF
+			gender: $gender
+			preferedPronoun: $preferedPronoun
+			isActive: $isActive
+			hasDisability: $hasDisability
+		}
+	) {
+		id
+		firstName
+		lastName
+		birthDate
+		CPF
+		gender
+		preferedPronoun
+		isActive
+		hasDisability
+		createdAt
+		updatedAt
+	}
+}

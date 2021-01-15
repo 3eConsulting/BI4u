@@ -1,0 +1,15 @@
+query fetchCustomers {
+	fetchCustomers {
+		id
+		firstName
+		lastName
+		birthDate
+		CPF
+		gender
+		preferedPronoun
+		isActive
+		hasDisability
+		createdAt
+		updatedAt
+	}
+}

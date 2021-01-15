@@ -1,0 +1,24 @@
+fragment PJnameFields on PJCustomer {
+	id
+	tradingName
+	legalName
+}
+
+query PJfetchCustomers {
+	PJfetchCustomers {
+		id
+		legalName
+		tradingName
+		CNPJ
+		isActive
+		isAssociated
+		createdAt
+		updatedAt
+	}
+}
+
+query PJfetchCustomersName($ids: [String!]!) {
+	PJfetchCustomersById(ids: $ids) {
+		...PJnameFields
+	}
+}

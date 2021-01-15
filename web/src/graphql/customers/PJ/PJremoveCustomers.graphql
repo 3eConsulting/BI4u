@@ -1,0 +1,3 @@
+mutation PJremoveCustomers($ids: [ID!]!) {
+	PJremoveCustomers(ids: $ids)
+}

@@ -1,0 +1,26 @@
+mutation PJcreateBaseCustomer(
+	$legalName: String!
+	$tradingName: String!
+	$CNPJ: CNPJ!
+	$isActive: Boolean
+	$isAssociated: Boolean
+) {
+	PJcreateBaseCustomer(
+		PJCustomer: {
+			legalName: $legalName
+			tradingName: $tradingName
+			CNPJ: $CNPJ
+			isActive: $isActive
+			isAssociated: $isAssociated
+		}
+	) {
+		id
+		legalName
+		tradingName
+		CNPJ
+		isActive
+		isAssociated
+		createdAt
+		updatedAt
+	}
+}
