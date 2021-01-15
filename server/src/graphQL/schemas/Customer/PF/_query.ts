@@ -1,5 +1,5 @@
-import { getCustomRepository, getRepository } from "typeorm";
-import { PFCustomer, PFCustomerRepository } from "../../../../database/models/Customer/PF/PFCustomer";
+import { getCustomRepository } from "typeorm";
+import { PFCustomerRepository } from "../../../../database/models/Customer/PF/PFCustomer";
 import { ContextWithAuthentication } from "../../../../interfaces/authentication";
 import { AuthenticationResolverMiddleware } from "../../../middleware";
 

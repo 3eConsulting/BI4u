@@ -1,4 +1,4 @@
-import { PFCustomer } from "../PF/PFCustomer";
+import { PFCustomer, PFCustomerRepository } from "../PF/PFCustomer";
 import {
 	BaseEntity,
 	Entity,
@@ -82,6 +82,7 @@ export class PJCustomerRepository extends Repository<PJCustomer> {
 	private readonly logger: Logger = logger;
 	private readonly errorGenerator = new ErrorService(this.logger);
 	private readonly extraInfoRepository = getCustomRepository(PJExtraInfoRepository);
+	private readonly PFCustomerRepository = getCustomRepository(PFCustomerRepository);
 
 	public async validateAndCreate(input: Partial<PJCustomer>) {
 		let obj = this.create(input);
@@ -134,5 +135,17 @@ export class PJCustomerRepository extends Repository<PJCustomer> {
 			.leftJoinAndSelect("extraInfo.activities", "activities")
 			.where("customer.id = :id", { id: id })
 			.getOne();
+	}
+
+	public async fetchEmployees(PJCustomerID: string) {
+		let PFCustomerIDS = await this.PFCustomerRepository.createQueryBuilder("employees")
+			.select("employees.id")
+			.leftJoin("employees.PFextraInfo", "extraInfo")
+			.leftJoin("extraInfo.professionalHistory", "professionalHistory")
+			.leftJoin("professionalHistory.company", "company")
+			.where("company.id = :id", { id: PJCustomerID })
+			.getMany();
+
+		return await this.PFCustomerRepository.fetchCustomers(PFCustomerIDS.map((customer) => customer.id));
 	}
 }
