@@ -6,10 +6,12 @@ import { ExtendedTable } from '../../components/Table';
 import { ModalForm } from '../../components/ModalForm';
 
 import { 
-    PJfetchCustomersNameQuery,
+    PJfetchCustomersByIdQuery,
     usePJfetchCustomersQuery,
     usePJremoveCustomersMutation,
 } from "../../graphql/generated";
+
+import { useSnackbar } from 'notistack';
 
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 
@@ -66,13 +68,31 @@ const RemovalConfirmationDialog: React.FC<RemovalConfirmationDialogProps> = (
 
 	const classes = useStyles();
 
-	const [removeSelectedCustomers, {data, loading}] = usePJremoveCustomersMutation(
-        {variables: {ids: customers.map(c => c.id)}}
+    const {enqueueSnackbar} = useSnackbar();
+
+	const [removeSelectedCustomers, {data, loading, error}] = usePJremoveCustomersMutation(
+        {variables: {PJCustomerIDS: customers.map(c => c.id)}}
     );
 
 	if (data) {
+		let removedIDS = customers.map(c => c.id)
+        let newSelection = selected.filter(s => removedIDS.indexOf(s) === -1);
+        setSelected(newSelection);
+
+        enqueueSnackbar(
+            `Clientes removidos com sucesso !`,
+            {variant: "success", preventDuplicate: true}
+        );
 		onClose();
-	}
+    }
+    
+    if (error) {
+        enqueueSnackbar(
+            `Erro ao remover cliente.`,
+            {variant: "error", preventDuplicate: true}
+        );
+        onClose();
+    }
 
 	return (
 		<Dialog open={open} onClose={onClose} keepMounted={false}>
@@ -122,7 +142,7 @@ interface PJPageProps {
     setSelected: React.Dispatch<React.SetStateAction<string[]>>;
     isPF: boolean;
     setIsPF: React.Dispatch<React.SetStateAction<boolean>>;
-    customers?: PJfetchCustomersNameQuery; 
+    customers?: PJfetchCustomersByIdQuery; 
 };
 
 export const PJPage: React.FC<PJPageProps> = ({

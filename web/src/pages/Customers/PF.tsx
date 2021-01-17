@@ -6,12 +6,10 @@ import { ExtendedTable } from '../../components/Table';
 import { ModalForm } from '../../components/ModalForm';
 
 import { 
-    FetchPfCustomersNameQuery,
+    PFfetchCustomersByIdQuery,
     PJfetchCustomersQuery,
-    useFetchCustomersQuery,
-    useRemoveCustomersMutation,
-    usePFaddCompanyMutation,
-    usePFremoveCompanyMutation,
+    usePFfetchCustomersQuery,
+    usePFremoveCustomersMutation,
     usePFfetchCustomersByIdQuery,
 } from "../../graphql/generated";
 
@@ -37,8 +35,6 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField";
 
 import LabelIcon from '@material-ui/icons/Label';
 import CloseIcon from '@material-ui/icons/Close';
@@ -50,7 +46,6 @@ import Divider from "@material-ui/core/Divider";
 import { Edit } from "../../components/ModalForm/Customer/PF/Edit";
 import { Tabs } from "@material-ui/core";
 import Tab from "@material-ui/core/Tab/Tab";
-import Box from "@material-ui/core/Box/Box";
 
 // PF Page CSS
 const useStyles = makeStyles((theme) =>
@@ -104,10 +99,10 @@ const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
 
     const [tab, setTab] = React.useState<'addresses' | 'contacts' | 'disabilities' | 'professionalHistory'>('addresses')
 
-    const {data, loading, error} = usePFfetchCustomersByIdQuery({variables: {ids: [PFcustomerID]}})
+    const {data, loading, error} = usePFfetchCustomersByIdQuery({variables: {PFCustomerIDS: [PFcustomerID]}})
 
     if (data) {
-        var {__typename, ...customer} = data.fetchCustomersPFById[0];
+        var {__typename, ...customer} = data.PFfetchCustomersById[0];
     }
 
     const TabPanel = (props: TabPanelProps) => {
@@ -130,7 +125,7 @@ const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
                 <Toolbar>
                     <Grid container justify='space-between' alignItems='center'>
                         <Typography variant="h6" color='secondary'>
-                            Informações Adicionais - {data && data.fetchCustomersPFById[0].firstName} {data && data.fetchCustomersPFById[0].lastName}
+                            Informações Adicionais - {data && data.PFfetchCustomersById[0].firstName} {data && data.PFfetchCustomersById[0].lastName}
                         </Typography>
                         <IconButton edge="end" color="inherit" onClick={onClose} aria-label="close">
                             <CloseIcon />
@@ -188,21 +183,27 @@ const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
 interface RemovalConfirmationDialogProps {
 	open: boolean;
 	onClose(): void;
-	customers: {__typename?: string, id: string, firstName: string, lastName: string}[];
+    customers: {__typename?: string, id: string, firstName: string, lastName: string}[];
+    selected: string[];
+    setSelected: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const RemovalConfirmationDialog: React.FC<RemovalConfirmationDialogProps> = (
-	{open, onClose, customers}
+	{open, onClose, customers, selected, setSelected}
 ) => {
 
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
 
-	const [removeSelectedCustomers, {data, loading, error}] = useRemoveCustomersMutation(
-        {variables: {ids: customers.map(c => c.id)}}
+	const [removeSelectedCustomers, {data, loading, error}] = usePFremoveCustomersMutation(
+        {variables: {PFCustomerIDS: customers.map(c => c.id)}}
     );
 
 	if (data) {
+        let removedIDS = customers.map(c => c.id)
+        let newSelection = selected.filter(s => removedIDS.indexOf(s) === -1);
+        setSelected(newSelection);
+
         enqueueSnackbar(
             `Clientes removidos com sucesso !`,
             {variant: "success", preventDuplicate: true}
@@ -249,143 +250,6 @@ const RemovalConfirmationDialog: React.FC<RemovalConfirmationDialogProps> = (
 };
 
 
-// PF Customer Connection Confirmation Dialog (Add/Remove Company)
-interface ConnectionConfirmationDialogProps {
-	open: boolean;
-	onClose(): void;
-    PFcustomers: {id: string, firstName: string, lastName: string}[];
-    PJcustomers: {id: string, tradingName: string; legalName: string}[];
-}
-
-const ConnectionConfirmationDialog: React.FC<ConnectionConfirmationDialogProps> = (
-	{open, onClose, PFcustomers, PJcustomers}
-) => {
-
-	const classes = useStyles();
-    const { enqueueSnackbar } = useSnackbar();
-
-    const [PJcustomer, setPJcustomer] = React.useState<string>('');
-    const [isConnect, setIsConnect] = React.useState<boolean>(true);
-
-    const [
-        addCompany,
-        {data: addCompanyData, loading: addCompanyLoading, error: addCompanyError}
-    ] = usePFaddCompanyMutation({variables: {
-        PJCustomerID: PJcustomer,
-        PFCustomerIDS: PFcustomers.map(pfc => pfc.id),
-        force: false
-    }});
-
-    const [
-        removeCompany, 
-        {data: removeCompanyData, loading: removeCompanyLoading, error: removeCompanyError}
-    ] = usePFremoveCompanyMutation({variables: {
-        PFCustomerIDS: PFcustomers.map(pfc => pfc.id),
-    }})
-
-	if (addCompanyData || removeCompanyData) {
-        enqueueSnackbar(
-            `Clientes ${!isConnect && 'des'}vinculados com sucesso !`,
-            {variant: "success", preventDuplicate: true}
-        );
-		onClose();
-    }
-
-    if (addCompanyError || removeCompanyError) {
-        enqueueSnackbar(
-            `Erro ao ${!isConnect && 'des'}vincular cliente.`,
-            {variant: "error", preventDuplicate: true}
-        );
-    }
-
-    const toggleConnection = () => {
-        setIsConnect(!isConnect);
-    }
-
-    const onSave = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        if (isConnect) {
-            addCompany().catch(error => console.error(error.message));
-        } else {
-            removeCompany().catch(error => console.error(error.message));
-        }
-    }
-
-	return (
-		<Dialog open={open} onClose={onClose}>
-			
-                <Grid container direction='row' justify='space-between' alignItems='center'>
-                    <Grid item>
-                        <DialogTitle>
-                            {isConnect ? 'Vincular' : 'Desvincular'} Clientes
-                        </DialogTitle>
-                    </Grid>
-                    <Grid item>
-                        <Button color='primary' variant='outlined'
-                            className={classes.linkButton} onClick={toggleConnection}>
-                                {isConnect ? 'Desvincular' : 'Vincular'}
-                        </Button>
-                    </Grid>
-                </Grid>
-            
-			<DialogContent>
-                {PJcustomer !== '' || !isConnect ? (
-                    <>
-                        {isConnect ? (
-                            <DialogContentText>
-                                <>Os seguintes clientes PF serão vinculados ao cliente PJ "<b>{`${
-                                    PJcustomers.filter(pjc => pjc.id === PJcustomer)[0].tradingName
-                                }`}</b>". Tem certeza que deseja continuar ?`</>
-                            </DialogContentText>
-                        ) : (
-                            <DialogContentText>
-                                Os seguintes clientes PF serão desvinculados do seu respectivo cliente PJ Tem certeza que deseja continuar ?
-                            </DialogContentText>
-                        )}
-                        <List>
-                            {PFcustomers.map(customer => {
-                                return (
-                                    <ListItem key={customer.id} dense>
-                                        <ListItemIcon><LabelIcon /></ListItemIcon>
-                                        <ListItemText id={customer.id} primary={`${customer.firstName} ${customer.lastName}`} />
-                                    </ListItem>
-                                );
-                            })}
-                        </List>
-                    </>
-
-                ) : (
-                    <DialogContentText>Escolha um cliente PJ para ser vinculado !</DialogContentText>
-                )}
-
-                {isConnect && (<><br/>
-                <TextField fullWidth select 
-                    variant="outlined" label="Cliente PJ" 
-                    value={PJcustomer} onChange={(e) => setPJcustomer(e.target.value)}>
-                        {PJcustomers.map(customer => (
-                            <MenuItem key={customer.id} value={customer.id}>{customer.tradingName}</MenuItem>
-                        ))}
-                </TextField>
-                <br/></>)}
-
-			</DialogContent>
-			<DialogActions>
-                {(PJcustomer !== '' || !isConnect ) &&
-                    <Button color='primary' variant='contained'
-                        className={classes.button}
-                        onClick={onSave}>
-                        Salvar
-                    </Button>
-                }
-				<Button color='primary' variant='contained' className={classes.button} onClick={onClose}>Cancelar</Button>
-			</DialogActions>
-			<Backdrop open={addCompanyLoading || removeCompanyLoading} style={{zIndex: 10}}>
-				<CircularProgress size={75} color='secondary'/> 
-			</Backdrop>
-		</Dialog>        
-	);
-};
-
-
 // PF Page
 interface PFPageProps {
     addModalOpen: boolean,
@@ -400,19 +264,17 @@ interface PFPageProps {
     setPFselected: React.Dispatch<React.SetStateAction<string[]>>;
     isPF: boolean;
     setIsPF: React.Dispatch<React.SetStateAction<boolean>>;
-    PFcustomers?: FetchPfCustomersNameQuery; 
+    PFcustomers?: PFfetchCustomersByIdQuery; 
     PJcustomers?: PJfetchCustomersQuery; 
 };
 
 export const PFPage: React.FC<PFPageProps> = ({
     addModalOpen, setAddModalOpen,
     removalDialogOpen, setRemovalDialogOpen,
-    connectionDialogOpen, setConnectionDialogOpen,
     extraInfoDialogOpen, setExtraInfoDialogOpen,
     PFselected, setPFselected,
     isPF, setIsPF,
     PFcustomers,
-    PJcustomers,  
 }) => {
     
     // Hooks
@@ -428,7 +290,7 @@ export const PFPage: React.FC<PFPageProps> = ({
                     {name: 'CPF', alignment: 'center', fetchedName: 'CPF', formatDate: false},
                     {name: 'Criado Em', alignment: 'center', fetchedName: 'createdAt', formatDate: true},
                     {name: 'Atualizado Em', alignment: 'center', fetchedName: 'updatedAt', formatDate: true},
-                ]} query={useFetchCustomersQuery} tabledProperty="fetchCustomers" rowCallback={(id) => history.push(`/customer/${id}`)}
+                ]} query={usePFfetchCustomersQuery} tabledProperty="PFfetchCustomers" rowCallback={(id) => history.push(`/customer/${id}`)}
                 filterBy={['firstName', 'lastName', 'CPF']} rowsPerPage={6}
                 selected={PFselected} setSelected={setPFselected} 
                 extraComponents={[
@@ -455,15 +317,9 @@ export const PFPage: React.FC<PFPageProps> = ({
                 <RemovalConfirmationDialog 
                     open={removalDialogOpen}
                     onClose={() => setRemovalDialogOpen(false)}
-                    customers={PFcustomers.fetchCustomersPFById}/>
-            )}
-
-            {isPF && PJcustomers && PFcustomers && connectionDialogOpen && (
-                <ConnectionConfirmationDialog 
-                    open={connectionDialogOpen}
-                    onClose={() => setConnectionDialogOpen(false)}
-                    PFcustomers={PFcustomers.fetchCustomersPFById}
-                    PJcustomers={PJcustomers.PJfetchCustomers}/>
+                    customers={PFcustomers.PFfetchCustomersById}
+                    selected={PFselected}
+                    setSelected={setPFselected}/>
             )}
 
             {extraInfoDialogOpen && PFselected.length === 1 && (

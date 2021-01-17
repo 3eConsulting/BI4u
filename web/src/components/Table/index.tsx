@@ -17,6 +17,7 @@ import Typography from '@material-ui/core/Typography';
 
 import IconButton from '@material-ui/core/IconButton/IconButton';
 import LaunchIcon from '@material-ui/icons/Launch';
+import { Box } from '@material-ui/core';
 
 interface Column {
     name: string;
@@ -39,7 +40,6 @@ export interface ExtendedTableProps {
     extraComponents?: React.ReactNode[];
 }
 
-
 interface EnhancedTableRowProps {
     properties: any;
     columns: Column[];
@@ -58,6 +58,17 @@ const useExtendedTableStyles = makeStyles(theme => createStyles({
     },
     tableRow: {
         cursor: 'pointer'
+    },
+    noCustomerFoundContainer: {
+
+    },
+    noCustomerFoundWarning: {
+        fontSize: '2rem',
+        textAlign: 'center',
+        color: '#afafaf',
+        padding: '5px',
+        marginTop: '20px',
+        marginBottom: '20px'
     }
 }));
 
@@ -140,39 +151,49 @@ export const ExtendedTable: React.FC<ExtendedTableProps> = ({
 
     return (
             <Paper>
-                {
-                    data && data[tabledProperty] && (
-                        <TableToolbar enablePagination={!Boolean(filterValue)}
-                            title={title ? title : 'Data'} 
-                            rows={data[tabledProperty].length} 
-                            page={page} 
-                            onPageChange={(newPage) => setPage(newPage)}
-                            onSettingsButtonClick={onSettingsButtonClick}
-                            searchFunction={(searchValue) => setFilterValue(searchValue)}
-                            rowsPerPage={rowsPerPage}
-                            onRefetchButtonClick={() => refetchFunc()}
-                            extraComponents={extraComponents}
-                        />
-                    )
-                }
-                
+                    
+                <TableToolbar enablePagination={!Boolean(filterValue)}
+                    title={title ? title : 'Data'} 
+                    rows={(data && data[tabledProperty]) ? data[tabledProperty].length : 0} 
+                    page={page} 
+                    onPageChange={(newPage) => setPage(newPage)}
+                    onSettingsButtonClick={onSettingsButtonClick}
+                    searchFunction={(searchValue) => setFilterValue(searchValue)}
+                    rowsPerPage={rowsPerPage}
+                    onRefetchButtonClick={() => refetchFunc()}
+                    extraComponents={extraComponents}
+                />
+                    
                 <TableContainer>
                     <Table>
-                        <TableHead className={classes.tableHeader}>
-                            <TableRow>
-                                {columns.map(({name, alignment}) => 
-                                    <TableCell key={`${title}/${name}`} align={alignment} size='small'>
-                                        <Typography className={classes.tableHeaderCell}>
-                                            {name}
-                                        </Typography>
-                                    </TableCell>
-                                )}
-                                <TableCell />
-                            </TableRow>
-                        </TableHead>
+                        {((data && data[tabledProperty] && data[tabledProperty].length !== 0)) &&
+                            <TableHead className={classes.tableHeader}>
+                                <TableRow>
+                                    {columns.map(({name, alignment}) => 
+                                        <TableCell key={`${title}/${name}`} align={alignment} size='small'>
+                                            <Typography className={classes.tableHeaderCell}>
+                                                {name}
+                                            </Typography>
+                                        </TableCell>
+                                    )}
+                                    <TableCell />
+                                </TableRow>
+                            </TableHead>
+                        }
                         <TableBody>
                             {
-                                (loading || error) ? 
+                                data &&
+                                data[tabledProperty].length === 0 && (
+                                    <TableRow>
+                                        <TableCell colSpan={5}>
+                                            <Typography className={classes.noCustomerFoundWarning}>Nenhum Registro Encontrado em {title}.</Typography>
+                                            <Typography className={classes.noCustomerFoundWarning}>Para Adicionar Novos {title}, Utilize o Atalho de Rodapé !</Typography>
+                                        </TableCell>
+                                    </TableRow>
+                                )
+                            }
+                            {
+                                (loading) ? 
                                 Array
                                     .from({length: 3}, (_, k: number) => k + 1)
                                     .map(k => (

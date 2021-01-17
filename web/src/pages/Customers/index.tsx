@@ -5,9 +5,9 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { SpeedDial, Action } from '../../components/SpeedDial';
 
 import { 
-	useFetchPfCustomersNameLazyQuery,
+	usePFfetchCustomersByIdLazyQuery,
 	usePJfetchCustomersLazyQuery,
-	usePJfetchCustomersNameLazyQuery
+	usePJfetchCustomersByIdLazyQuery
 } from '../../graphql/generated';
 
 import { PFPage } from './PF';
@@ -58,9 +58,9 @@ export const CustomersPage: React.FC = () => {
 	const [
 		PFfetchCustomers,
 		{data: customersData}
-	] = useFetchPfCustomersNameLazyQuery({variables: {ids: selectedPF}});
+	] = usePFfetchCustomersByIdLazyQuery({variables: {PFCustomerIDS: selectedPF}});
 
-	const [PJfetchCustomer, {data: PJcustomersData}] = usePJfetchCustomersNameLazyQuery({variables: {ids: selectedPJ}})
+	const [PJfetchCustomer, {data: PJcustomersData}] = usePJfetchCustomersByIdLazyQuery({variables: {PJCustomerIDS: selectedPJ}})
 
 	const [PJfetchAllcustomers, {data: PJallCustomersData}] = usePJfetchCustomersLazyQuery();
 

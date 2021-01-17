@@ -14,7 +14,7 @@ import {
     Backdrop
 } from '@material-ui/core';
 
-import { useCreateBasePfCustomerMutation } from '../../../../graphql/generated';
+import { usePFaddCustomerMutation } from '../../../../graphql/generated';
 import { useSnackbar } from 'notistack';
 
 interface AddProps {
@@ -38,14 +38,14 @@ export const Add: React.FC<AddProps> = ({closeModal}) => {
     // Hooks
     const {register, handleSubmit, errors, control} = useForm({resolver: yupResolver(validationSchema)});
     
-    const [saveCustomer, {loading}] = useCreateBasePfCustomerMutation();
+    const [saveCustomer, {loading}] = usePFaddCustomerMutation();
     const { enqueueSnackbar } = useSnackbar();
 
     const createCustomer = (data: any) => {
         saveCustomer({variables: data})
             .then(result => {
                 if (result.data) {
-                    enqueueSnackbar(`Cliente criado com sucesso ! [id: ${result.data.createBaseCustomer.id}]`, {variant: 'success'});
+                    enqueueSnackbar(`Cliente criado com sucesso ! [id: ${result.data.PFaddCustomer.id}]`, {variant: 'success'});
                     closeModal();
                 }
             })
