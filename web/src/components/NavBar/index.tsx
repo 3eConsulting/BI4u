@@ -16,7 +16,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Link from '@material-ui/core/Link';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { authFunctionalities } from '../../utilities/authentication';
-import { CollapsibleSearchBar } from '../CollapsibleSearchBar';
+
 
 type iSubmenu = {
 	nome: string;

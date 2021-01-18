@@ -7,7 +7,6 @@ import {yupLocale} from '../../../../utilities/misc';
 import moment from 'moment'
 
 import { PfCustomer } from '../../../../graphql/generated';
-import { useSnackbar } from 'notistack';
 
 import {
     FormControlLabel,

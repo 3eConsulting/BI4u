@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { ExtendedTable } from '../../components/Table';
 import { ModalForm } from '../../components/ModalForm';
 
-import { 
+import {
     PFfetchCustomersByIdQuery,
     PJfetchCustomersQuery,
     usePFfetchCustomersQuery,
@@ -49,20 +49,20 @@ import Tab from "@material-ui/core/Tab/Tab";
 
 // PF Page CSS
 const useStyles = makeStyles((theme) =>
-	createStyles({
-		root: {
-			
-		},
-		container: {
-			marginTop: '5%',
-		},
-		speedDial: {
-			position: 'absolute',
-			bottom: theme.spacing(3),
-			left: theme.spacing(3),
-		},
-		button: {
-			color: theme.palette.common.white,
+    createStyles({
+        root: {
+
+        },
+        container: {
+            marginTop: '5%',
+        },
+        speedDial: {
+            position: 'absolute',
+            bottom: theme.spacing(3),
+            left: theme.spacing(3),
+        },
+        button: {
+            color: theme.palette.common.white,
         },
         linkButton: {
             color: theme.palette.common.white,
@@ -74,21 +74,21 @@ const useStyles = makeStyles((theme) =>
         tabPanel: {
             height: '75vh'
         }
-	})
+    })
 );
 
 // PF Customer Extra Info Dialog
 interface ExtraInfoDialogProps {
-	open: boolean;
-	onClose(): void;
-	PFcustomerID: string;
+    open: boolean;
+    onClose(): void;
+    PFcustomerID: string;
 }
 
 interface TabPanelProps extends GridProps {
     children?: React.ReactNode;
     index: any;
     value: any;
-  }
+}
 
 const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
     open, PFcustomerID,
@@ -99,10 +99,15 @@ const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
 
     const [tab, setTab] = React.useState<'addresses' | 'contacts' | 'disabilities' | 'professionalHistory'>('addresses')
 
-    const {data, loading, error} = usePFfetchCustomersByIdQuery({variables: {PFCustomerIDS: [PFcustomerID]}})
+    const { data, loading, error } = usePFfetchCustomersByIdQuery({ variables: { PFCustomerIDS: [PFcustomerID] } })
+
+    // TODO: Better Handle Fetch Error
+    if (error) {
+        console.error(error);
+    }
 
     if (data) {
-        var {__typename, ...customer} = data.PFfetchCustomersById[0];
+        var { __typename, ...customer } = data.PFfetchCustomersById[0];
     }
 
     const TabPanel = (props: TabPanelProps) => {
@@ -115,7 +120,7 @@ const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
                     </Grid>
                 )}
             </>
-        ) 
+        )
     }
 
 
@@ -133,33 +138,33 @@ const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
                     </Grid>
                 </Toolbar>
             </AppBar>
-            
+
             {data && customer && <DialogContent>
                 <Grid container direction='row' justify='center' spacing={3} className={classes.extraInfoDialogContentRoot}>
                     <Grid item xs={4} container direction='column' justify='space-evenly' spacing={3}>
-                        <Grid item><Edit customer={customer}/></Grid>
+                        <Grid item><Edit customer={customer} /></Grid>
                     </Grid>
-                    
+
                     <Divider orientation="vertical" flexItem />
-                    
+
                     <Grid item xs={8} container direction='column' justify='flex-end' spacing={3}>
-                    
+
                         <Grid item>
-                            <Tabs 
+                            <Tabs
                                 value={tab}
                                 onChange={(event, newValue) => setTab(newValue)}
                                 indicatorColor="primary"
                                 textColor="secondary"
                                 variant="fullWidth">
 
-                                <Tab label='Endereços' value='addresses'/>
-                                <Tab label='Contatos' value='contacts'/>
-                                {customer.hasDisability && <Tab label='Deficiências' value='disabilities'/>}
-                                <Tab label='Histórico Profissional' value='professionalHistory'/>
+                                <Tab label='Endereços' value='addresses' />
+                                <Tab label='Contatos' value='contacts' />
+                                {customer.hasDisability && <Tab label='Deficiências' value='disabilities' />}
+                                <Tab label='Histórico Profissional' value='professionalHistory' />
 
                             </Tabs>
                         </Grid>
-                        
+
                         <Grid item className={classes.tabPanel}>
                             <TabPanel value={tab} index={'addresses'}><h1>Addresses</h1></TabPanel>
                             <TabPanel value={tab} index={'contacts'}><h1>Contacts</h1></TabPanel>
@@ -167,12 +172,12 @@ const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
                             <TabPanel value={tab} index={'professionalHistory'}><h1>ProfessionalHistory</h1></TabPanel>
                         </Grid>
 
-                    </Grid> 
-                </Grid>    
+                    </Grid>
+                </Grid>
             </DialogContent>}
-            <Backdrop open={loading} style={{zIndex: 10}}>
-				<CircularProgress size={75} color='secondary'/> 
-			</Backdrop>
+            <Backdrop open={loading} style={{ zIndex: 10 }}>
+                <CircularProgress size={75} color='secondary' />
+            </Backdrop>
         </Dialog>
     );
 }
@@ -181,72 +186,72 @@ const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
 
 // PF Customer Removal Confirmation Dialog
 interface RemovalConfirmationDialogProps {
-	open: boolean;
-	onClose(): void;
-    customers: {__typename?: string, id: string, firstName: string, lastName: string}[];
+    open: boolean;
+    onClose(): void;
+    customers: { __typename?: string, id: string, firstName: string, lastName: string }[];
     selected: string[];
     setSelected: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const RemovalConfirmationDialog: React.FC<RemovalConfirmationDialogProps> = (
-	{open, onClose, customers, selected, setSelected}
+    { open, onClose, customers, selected, setSelected }
 ) => {
 
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
 
-	const [removeSelectedCustomers, {data, loading, error}] = usePFremoveCustomersMutation(
-        {variables: {PFCustomerIDS: customers.map(c => c.id)}}
+    const [removeSelectedCustomers, { data, loading, error }] = usePFremoveCustomersMutation(
+        { variables: { PFCustomerIDS: customers.map(c => c.id) } }
     );
 
-	if (data) {
+    if (data) {
         let removedIDS = customers.map(c => c.id)
         let newSelection = selected.filter(s => removedIDS.indexOf(s) === -1);
         setSelected(newSelection);
 
         enqueueSnackbar(
             `Clientes removidos com sucesso !`,
-            {variant: "success", preventDuplicate: true}
-        );
-		onClose();
-    }
-    
-    if (error) {
-        enqueueSnackbar(
-            `Erro ao remover cliente.`,
-            {variant: "error", preventDuplicate: true}
+            { variant: "success", preventDuplicate: true }
         );
         onClose();
     }
 
-	return (
-		<Dialog open={open} onClose={onClose}>
-			<DialogTitle>Remover Clientes - PF</DialogTitle>
-			<DialogContent>
-				<DialogContentText>
-					Os Seguintes clientes serão removidos permanentemente do sistema.
-					Tem certeza que deseja continuar ? 
+    if (error) {
+        enqueueSnackbar(
+            `Erro ao remover cliente.`,
+            { variant: "error", preventDuplicate: true }
+        );
+        onClose();
+    }
+
+    return (
+        <Dialog open={open} onClose={onClose}>
+            <DialogTitle>Remover Clientes - PF</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    Os Seguintes clientes serão removidos permanentemente do sistema.
+                    Tem certeza que deseja continuar ?
 				</DialogContentText>
-					<List>
-						{customers.map(customer => {
-							return (
-								<ListItem key={customer.id} dense>
-									<ListItemIcon><LabelIcon /></ListItemIcon>
-									<ListItemText id={customer.id} primary={`${customer.firstName} ${customer.lastName}`} />
-								</ListItem>
-							);
-						})}
-					</List>
-			</DialogContent>
-			<DialogActions>
-				<Button color='primary' variant='contained' className={classes.button} onClick={() => removeSelectedCustomers()}>Deletar</Button>
-				<Button color='primary' variant='contained' className={classes.button} onClick={onClose}>Cancelar</Button>
-			</DialogActions>
-			<Backdrop open={loading} style={{zIndex: 10}}>
-				<CircularProgress size={75} color='secondary'/> 
-			</Backdrop>
-		</Dialog>        
-	);
+                <List>
+                    {customers.map(customer => {
+                        return (
+                            <ListItem key={customer.id} dense>
+                                <ListItemIcon><LabelIcon /></ListItemIcon>
+                                <ListItemText id={customer.id} primary={`${customer.firstName} ${customer.lastName}`} />
+                            </ListItem>
+                        );
+                    })}
+                </List>
+            </DialogContent>
+            <DialogActions>
+                <Button color='primary' variant='contained' className={classes.button} onClick={() => removeSelectedCustomers()}>Deletar</Button>
+                <Button color='primary' variant='contained' className={classes.button} onClick={onClose}>Cancelar</Button>
+            </DialogActions>
+            <Backdrop open={loading} style={{ zIndex: 10 }}>
+                <CircularProgress size={75} color='secondary' />
+            </Backdrop>
+        </Dialog>
+    );
 };
 
 
@@ -264,8 +269,8 @@ interface PFPageProps {
     setPFselected: React.Dispatch<React.SetStateAction<string[]>>;
     isPF: boolean;
     setIsPF: React.Dispatch<React.SetStateAction<boolean>>;
-    PFcustomers?: PFfetchCustomersByIdQuery; 
-    PJcustomers?: PJfetchCustomersQuery; 
+    PFcustomers?: PFfetchCustomersByIdQuery;
+    PJcustomers?: PJfetchCustomersQuery;
 };
 
 export const PFPage: React.FC<PFPageProps> = ({
@@ -276,7 +281,7 @@ export const PFPage: React.FC<PFPageProps> = ({
     isPF, setIsPF,
     PFcustomers,
 }) => {
-    
+
     // Hooks
     const classes = useStyles();
     const history = useHistory();
@@ -285,25 +290,25 @@ export const PFPage: React.FC<PFPageProps> = ({
         <>
             <Container className={classes.container}>
                 <ExtendedTable title="Clientes PF" columns={[
-                    {name: 'Nome', alignment: 'left', fetchedName: 'firstName', formatDate: false},
-                    {name: 'Sobrenome', alignment: 'center', fetchedName: 'lastName', formatDate: false},
-                    {name: 'CPF', alignment: 'center', fetchedName: 'CPF', formatDate: false},
-                    {name: 'Criado Em', alignment: 'center', fetchedName: 'createdAt', formatDate: true},
-                    {name: 'Atualizado Em', alignment: 'center', fetchedName: 'updatedAt', formatDate: true},
+                    { name: 'Nome', alignment: 'left', fetchedName: 'firstName', formatDate: false },
+                    { name: 'Sobrenome', alignment: 'center', fetchedName: 'lastName', formatDate: false },
+                    { name: 'CPF', alignment: 'center', fetchedName: 'CPF', formatDate: false },
+                    { name: 'Criado Em', alignment: 'center', fetchedName: 'createdAt', formatDate: true },
+                    { name: 'Atualizado Em', alignment: 'center', fetchedName: 'updatedAt', formatDate: true },
                 ]} query={usePFfetchCustomersQuery} tabledProperty="PFfetchCustomers" rowCallback={(id) => history.push(`/customer/${id}`)}
-                filterBy={['firstName', 'lastName', 'CPF']} rowsPerPage={6}
-                selected={PFselected} setSelected={setPFselected} 
-                extraComponents={[
-                    <Button 
-                        onClick={() => setIsPF(!isPF)} 
-                        variant='outlined'
-                        color='secondary'>
+                    filterBy={['firstName', 'lastName', 'CPF']} rowsPerPage={6}
+                    selected={PFselected} setSelected={setPFselected}
+                    extraComponents={[
+                        <Button
+                            onClick={() => setIsPF(!isPF)}
+                            variant='outlined'
+                            color='secondary'>
                             Trocar Tipo Pessoa
                     </Button>,
-                ]}/>
+                    ]} />
             </Container>
-            
-            <ModalForm 
+
+            <ModalForm
                 title="Adicionar Cliente - PF"
                 text={
                     <>Aqui você pode criar um novo <b>Cliente PF</b>, inserindo as informações mínimas para tal.
@@ -311,19 +316,19 @@ export const PFPage: React.FC<PFPageProps> = ({
                 }
                 variant="PFAdd"
                 open={addModalOpen}
-                onClose={() => setAddModalOpen(false)}/>
-            
+                onClose={() => setAddModalOpen(false)} />
+
             {PFcustomers && removalDialogOpen && (
-                <RemovalConfirmationDialog 
+                <RemovalConfirmationDialog
                     open={removalDialogOpen}
                     onClose={() => setRemovalDialogOpen(false)}
                     customers={PFcustomers.PFfetchCustomersById}
                     selected={PFselected}
-                    setSelected={setPFselected}/>
+                    setSelected={setPFselected} />
             )}
 
             {extraInfoDialogOpen && PFselected.length === 1 && (
-                <ExtraInfoDialog 
+                <ExtraInfoDialog
                     open={extraInfoDialogOpen}
                     onClose={() => setExtraInfoDialogOpen(false)}
                     PFcustomerID={PFselected[0]}

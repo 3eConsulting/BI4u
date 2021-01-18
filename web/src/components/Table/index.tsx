@@ -17,7 +17,6 @@ import Typography from '@material-ui/core/Typography';
 
 import IconButton from '@material-ui/core/IconButton/IconButton';
 import LaunchIcon from '@material-ui/icons/Launch';
-import { Box } from '@material-ui/core';
 
 interface Column {
     name: string;
@@ -124,6 +123,11 @@ export const ExtendedTable: React.FC<ExtendedTableProps> = ({
 
     // GraphQL Query
     let {data, loading, error, refetch: refetchFunc} = query();
+
+    // TODO: Handle Fetch Error The Proper Way
+    if (error) {
+        console.error(error);
+    }
 
     const addToSelection = (id: string) => {
         let newSelection = selected;
