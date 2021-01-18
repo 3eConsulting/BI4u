@@ -39,7 +39,7 @@ export const SpeedDial = ({actions, className, backdropHander, open, setOpen} : 
         <>
             {!backdropHander && (<Backdrop open={open} style={{zIndex: 999}}/>)}
             <SpeedDialBase ariaLabel='SpeedDial Customer Options' direction='right'
-                icon={<SpeedDialIcon icon={<ChevronRightIcon/>} openIcon={<CloseIcon/>}/>}
+                icon={<SpeedDialIcon icon={<ChevronRightIcon color="secondary"/>} openIcon={<CloseIcon color="secondary"/>}/>}
                 open={open}
                 onOpen={handleOpen}
                 onClose={handleClose}

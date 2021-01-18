@@ -42,22 +42,28 @@ const useStyles = makeStyles(theme => createStyles({
             width: '20ch',
             },
         },
+        color: (props: {color?: "primary" | "secondary"}) => {
+            return props.color === "primary" ?
+                theme.palette.common.black :
+                theme.palette.common.white
+        }
     },
 }))
 
 
 export interface CollapsibleSearchBarProps {
     searchFunction?(searchValue: string): void
+    color?: "primary" | "secondary" 
 }
 
-export const CollapsibleSearchBar: React.FC<CollapsibleSearchBarProps> = ({searchFunction}) => {
+export const CollapsibleSearchBar: React.FC<CollapsibleSearchBarProps> = ({searchFunction, color}) => {
     
-    const classes = useStyles();
+    const classes = useStyles({color: color});
 
     return (
         <div className={classes.search}>
             <div className={classes.searchIcon}>
-              <SearchIcon />
+              <SearchIcon color={color}/>
             </div>
             <InputBase
               placeholder="Buscar ..."
@@ -65,7 +71,8 @@ export const CollapsibleSearchBar: React.FC<CollapsibleSearchBarProps> = ({searc
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
-              inputProps={{ 'aria-label': 'search' }}
+              
+              inputProps={{ 'aria-label': 'buscar' }}
               onChange={(event) => searchFunction && searchFunction(event.target.value)}
             />
         </div>

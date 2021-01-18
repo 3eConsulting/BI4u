@@ -1,15 +1,13 @@
 import React from 'react';
-import { fade, makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import InputBase from '@material-ui/core/InputBase';
 import Badge from '@material-ui/core/Badge';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import NotificationsIcon from '@material-ui/icons/Notifications';
@@ -18,6 +16,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Link from '@material-ui/core/Link';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { authFunctionalities } from '../../utilities/authentication';
+import { CollapsibleSearchBar } from '../CollapsibleSearchBar';
 
 type iSubmenu = {
 	nome: string;
@@ -67,6 +66,7 @@ const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		grow: {
 			flexGrow: 1,
+			color: theme.palette.common.white
 		},
 		menuButton: {
 			marginRight: theme.spacing(2),
@@ -77,18 +77,13 @@ const useStyles = makeStyles((theme: Theme) =>
 			},
 			display: 'none',
 			fontWeight: 700,
-			color: theme.palette.common.black,
+			color: theme.palette.common.white,
 			[theme.breakpoints.up('sm')]: {
 				display: 'block',
 			},
 		},
 		search: {
 			position: 'relative',
-			borderRadius: theme.shape.borderRadius,
-			backgroundColor: fade(theme.palette.common.white, 0.15),
-			'&:hover': {
-				backgroundColor: fade(theme.palette.common.white, 0.25),
-			},
 			marginRight: theme.spacing(2),
 			marginLeft: 0,
 			width: '100%',
@@ -105,9 +100,10 @@ const useStyles = makeStyles((theme: Theme) =>
 			display: 'flex',
 			alignItems: 'center',
 			justifyContent: 'center',
+			color: theme.palette.common.white
 		},
 		inputRoot: {
-			color: 'inherit',
+			color: theme.palette.common.black,
 		},
 		inputInput: {
 			padding: theme.spacing(1, 1, 1, 0),
@@ -140,6 +136,10 @@ const useStyles = makeStyles((theme: Theme) =>
 		dropdownMenuItem: {
 			padding: 15,
 		},
+		firstName: {
+			lineHeight: '100%', alignSelf: 'center', fontWeight: 700,
+			color: theme.palette.common.white
+		}
 	})
 );
 
@@ -236,7 +236,7 @@ export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
 			onClose={handleMobileMenuClose}
 		>
 			<MenuItem>
-				<IconButton aria-label='new notifications' color='inherit'>
+				<IconButton aria-label='new notifications' color='secondary'>
 					<Badge badgeContent={notifications} color='secondary'>
 						{notifications > 0 ? <NotificationsActiveIcon /> : <NotificationsIcon />}
 					</Badge>
@@ -248,7 +248,7 @@ export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
 					aria-label='account of current user'
 					aria-controls='primary-search-account-menu'
 					aria-haspopup='true'
-					color='inherit'
+					color='secondary'
 				>
 					<AccountCircle />
 				</IconButton>
@@ -318,7 +318,7 @@ export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
 					<IconButton
 						edge='start'
 						className={classes.menuButton}
-						color='inherit'
+						color='secondary'
 						aria-label='open menu'
 						onClick={handleMenuOpen}
 					>
@@ -330,21 +330,11 @@ export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
 					</Link>
 
 					<div className={classes.grow} />
-					<div className={classes.search}>
-						<div className={classes.searchIcon}>
-							<SearchIcon />
-						</div>
-						<InputBase
-							placeholder='Buscar …'
-							classes={{
-								root: classes.inputRoot,
-								input: classes.inputInput,
-							}}
-							inputProps={{ 'aria-label': 'search' }}
-						/>
-					</div>
+					{/* <div className={classes.search}>
+						<CollapsibleSearchBar color='secondary' />
+					</div> */}
 					<div className={classes.sectionDesktop}>
-						<Typography style={{ lineHeight: '100%', alignSelf: 'center', fontWeight: 700 }}>
+						<Typography className={classes.firstName}>
 							Olá, {authObject?.user?.firstName}
 						</Typography>
 						<IconButton
@@ -353,11 +343,11 @@ export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
 							aria-controls={menuId}
 							aria-haspopup='true'
 							onClick={handleProfileMenuOpen}
-							color='inherit'
+							color='secondary'
 						>
 							<AccountCircle />
 						</IconButton>
-						<IconButton aria-label='new notifications' color='inherit'>
+						<IconButton aria-label='new notifications' color='secondary'>
 							<Badge badgeContent={notifications} color='secondary'>
 								{notifications > 0 ? <NotificationsActiveIcon /> : <NotificationsIcon />}
 							</Badge>
@@ -369,7 +359,7 @@ export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
 							aria-controls={mobileProfileMenuId}
 							aria-haspopup='true'
 							onClick={handleMobileMenuOpen}
-							color='inherit'
+							color='secondary'
 						>
 							<MoreIcon />
 						</IconButton>
