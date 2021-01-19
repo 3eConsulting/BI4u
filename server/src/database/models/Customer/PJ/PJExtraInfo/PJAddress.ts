@@ -80,7 +80,7 @@ export class PJAddress extends BaseEntity {
 
 	// -- Methods
 	public async validate() {
-		await validateOrReject(this, { validationError: { target: false } });
+		await validateOrReject(this, { validationError: { target: false }, skipMissingProperties: true });
 	}
 }
 

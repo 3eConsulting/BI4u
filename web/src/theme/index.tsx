@@ -22,7 +22,7 @@ const theme = createMuiTheme({
         fontFamily: "'Noto Sans JP', sans-serif",
     },
     button: {
-        fontFamily: "'Noto Sans JP', sans-serif",
+        fontFamily: "'Noto Sans JP', sans-serif"
     },
   }, 
   palette: {

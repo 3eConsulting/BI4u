@@ -13,7 +13,6 @@ import theme from './theme';
 import {BrowserRouter} from 'react-router-dom'
 
 ReactDOM.render(
-  
   <ThemeProvider theme={theme}>
     <CssBaseline />
     <BrowserRouter>

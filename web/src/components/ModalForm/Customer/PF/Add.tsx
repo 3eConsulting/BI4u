@@ -37,9 +37,9 @@ export const Add: React.FC<AddProps> = ({closeModal}) => {
 
     // Hooks
     const {register, handleSubmit, errors, control} = useForm({resolver: yupResolver(validationSchema)});
+    const { enqueueSnackbar } = useSnackbar();
     
     const [saveCustomer, {loading}] = usePFaddCustomerMutation();
-    const { enqueueSnackbar } = useSnackbar();
 
     const createCustomer = (data: any) => {
         saveCustomer({variables: data})

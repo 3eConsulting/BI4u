@@ -7,8 +7,11 @@ export const yupLocale = {
 	string: {
 		messages: {
 			max: ({ max }: { max: number }) => `Deve ter no máximo ${max} caractéres.`,
+			length: ({ length }: { length: number }) => `Deve ter exatamente ${length} caractéres.`,
+			uppercase: "Deve ser em letras maiusculas.",
 			CPF: "Deve ser um CPF válido.",
 			CNPJ: "Deve ser um CPF válido.",
+			CEP: "Deve ser um CEP válido.",
 		},
 		validators: {
 			isCPF: (value?: string) => {

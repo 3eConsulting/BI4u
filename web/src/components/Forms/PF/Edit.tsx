@@ -2,11 +2,11 @@ import React from 'react'
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import {yupLocale} from '../../../../utilities/misc';
+import {yupLocale} from '../../../utilities/misc';
 
 import moment from 'moment'
 
-import { PfCustomer } from '../../../../graphql/generated';
+import { PfCustomer } from '../../../graphql/generated';
 
 import {
     FormControlLabel,

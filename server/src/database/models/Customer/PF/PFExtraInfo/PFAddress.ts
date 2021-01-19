@@ -85,7 +85,7 @@ export class PFAddress extends BaseEntity {
 
 	// -- Methods
 	public async validate(logger: Logger) {
-		await validateOrReject(this, { validationError: { target: false } });
+		await validateOrReject(this, { validationError: { target: false }, skipMissingProperties: true });
 	}
 }
 
