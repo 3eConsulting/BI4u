@@ -18,7 +18,7 @@ import {
 import Button from '@material-ui/core/Button';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
-import { usePFaddAddressMutation } from '../../../graphql/generated';
+import { usePFaddAddressMutation, usePFupdateAddressMutation } from '../../../graphql/generated';
 
 import { useSnackbar } from 'notistack';
 
@@ -128,8 +128,12 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
     const [loading, setLoading] = React.useState(false)
 
     // Hooks
-    const { register, handleSubmit, errors, control, setValue, getValues } = useForm({ resolver: yupResolver(validationSchema) });
+    const { register, handleSubmit, errors, control, setValue } = useForm({ resolver: yupResolver(validationSchema) });
     const { enqueueSnackbar } = useSnackbar();
+    
+    const [addAddress, {data: addData, loading: addLoading, error: addError}] = usePFaddAddressMutation();
+    const [updateAddress, {data: updateData, loading: updateLoading, error: updateError }] = usePFupdateAddressMutation();
+
 
     // Methods
     const autocompleteByCEP = async (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -169,11 +173,42 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
         
     }
 
+    const handleMutationCall = async (data: any) => {
+        if (initialData) {
+            try {
+                updateAddress({variables: {
+                    PFAddressID: initialData.id,
+                    ...data
+                }});
+            } catch (err) {
+                console.error(err);
+            }
+        } else {
+            try {
+                addAddress({variables: data});
+            } catch (err) {
+                console.error(err);        
+            }
+        }
+    }
+
+    if (addData) enqueueSnackbar("Novo Endereço Adicionado com Sucesso !", {variant: "success"});
+    if (updateData) enqueueSnackbar("Endereço Alterado com Sucesso !", {variant: "success"});
+
+    if (addError) {
+        console.error(addError);
+        enqueueSnackbar("Erro ao Adicionar Endereços !", {variant: "error"})
+    };
+    if (updateError) {
+        console.error(updateError);
+        enqueueSnackbar("Erro ao Alterar Endereços !", {variant: "error"})
+    };
+
     // CSS
     const classes = useStyles();
 
     return (
-        <form id="PFAddress" className={classes.root} onSubmit={handleSubmit((data) => console.log(data))} autoComplete="false">
+        <form id="PFAddress" className={classes.root} onSubmit={handleSubmit((data) => handleMutationCall(data))} autoComplete="false">
             <Grid container direction='column' spacing={3}>
                 
                 <Grid item container direction='row-reverse'>
@@ -181,10 +216,10 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                         <Controller
                             name="isMain"
                             control={control}
-                            defaultValue={initialData ? initialData.isMain : false}
+                            defaultValue={(initialData && initialData.isMain) ? initialData.isMain : false}
                             render={props =>
                                 <FormControlLabel label="Principal" labelPlacement='start'
-                                    disabled={hasMain}
+                                    disabled={(hasMain && (!initialData || !initialData.isMain)) }
                                     control={
                                         <Switch color="primary" checked={props.value} size='small'
                                             onChange={e => props.onChange(e.target.checked)} />
@@ -198,7 +233,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                 <Grid item container direction='row' spacing={3}>
                     <Grid item lg={6}>
                     <Controller 
-                        defaultValue={initialData ? initialData.name : defaultName ? defaultName : ""}
+                        defaultValue={(initialData && initialData.name) ? initialData.name : defaultName ? defaultName : ""}
                         name='name'
                         control={control}
                         label="Nome"
@@ -216,7 +251,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                         <Controller
                             name="CEP"
                             control={control}
-                            defaultValue={initialData ? initialData.CEP : ""}
+                            defaultValue={(initialData && initialData.CEP) ? initialData.CEP : ""}
                             render={props => (
                                 <TextField fullWidth variant="outlined"
                                     {...props}
@@ -246,7 +281,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                     
                     <Grid item lg={7}>
                         <Controller 
-                            defaultValue={initialData ? initialData.street : ""}
+                            defaultValue={(initialData && initialData.street) ? initialData.street : ""}
                             name='street'
                             control={control}
                             label="Rua"
@@ -258,7 +293,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                     </Grid>
                     <Grid item lg={2}>
                         <Controller 
-                            defaultValue={initialData ? initialData.number : ""}
+                            defaultValue={(initialData && initialData.number) ? initialData.number : ""}
                             name='number'
                             control={control}
                             label="Número"
@@ -273,7 +308,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                     </Grid>
                     <Grid item lg={3}>
                         <Controller 
-                            defaultValue={initialData ? initialData.complement : ""}
+                            defaultValue={(initialData && initialData.complement) ? initialData.complement : ""}
                             name='complement'
                             control={control}
                             label="Complemento"
@@ -292,7 +327,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                 <Grid item container direction='row' spacing={3}>
                     <Grid item lg={4}>
                         <Controller 
-                            defaultValue={initialData ? initialData.district : ""}
+                            defaultValue={(initialData && initialData.district) ? initialData.district : ""}
                             name='district'
                             control={control}
                             label="Bairro"
@@ -308,7 +343,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                     </Grid>
                     <Grid item lg={4}>
                         <Controller 
-                            defaultValue={initialData ? initialData.city : ""}
+                            defaultValue={(initialData && initialData.city) ? initialData.city : ""}
                             name='city'
                             control={control}
                             label="Cidade"
@@ -325,7 +360,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                         <Controller
                             name="state"
                             control={control}
-                            defaultValue={initialData ? initialData.state : ""}
+                            defaultValue={(initialData && initialData.state) ? initialData.state : ""}
                             render={props => (
                                 <TextField fullWidth variant="outlined"
                                     {...props}
@@ -347,7 +382,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                     </Grid>
                     <Grid item lg={2}>
                         <CountrySelect
-                            defaultValue={initialData ? initialData.country : "BR"}
+                            defaultValue={(initialData && initialData.country) ? initialData.country : "BR"}
                             error={!!errors.country}
                             helperText={errors.country ? errors.country.message : ""}
                             inputRef={register} />

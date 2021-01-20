@@ -16,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { PFAddressForm } from '../../Forms';
+import { Badge } from '@material-ui/core';
 
 
 const useStyles = makeStyles(
@@ -41,10 +42,6 @@ const useStyles = makeStyles(
         accordionSubHeading: {
             flexBasis: '40%',
             flexShrink: 0,
-        },
-        accordionIcon: {
-            flexBasis: '40%',
-            justifySelf: 'flex-end'
         },
         accordionHeadingText: {
             fontWeight: 'bold',
@@ -84,24 +81,32 @@ const AddressAccordion:React.FC<AddressAccordionProps> = ({address, setNewAddres
                 onChange={handleChange}
                 elevation={4} 
                 TransitionProps={{ unmountOnExit: true }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                        <div className={classes.accordionHeading}>
-                            <Typography className={classes.accordionHeadingText}>{address.name}</Typography>
-                        </div>
-                        <div className={classes.accordionSubHeading}>
-                            <Typography className={classes.accordionSubHeadingText}>
-                                {`${address.street}, ${address.number}`}
-                                {address.district && ` - ${address.district}`}
-                                {` - ${address.city} - ${address.state}/${address.country}`}
-                            </Typography>
-                        </div>    
-                        {address.isMain && <CheckCircleIcon className={classes.accordionIcon} color='disabled' />}
-                    </AccordionSummary>
-                        
+                    
+                        <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+                            
+                            <div className={classes.accordionHeading}>
+                                <Badge variant="dot" color="primary" invisible={!address.isMain}>
+                                    <Typography className={classes.accordionHeadingText}>{address.name}</Typography>
+                                </Badge>
+                            </div>
+                            
+                            <div className={classes.accordionSubHeading}>
+                                <Typography className={classes.accordionSubHeadingText}>
+                                    {`${address.street}, ${address.number}`}
+                                    {address.district && ` - ${address.district}`}
+                                    {` - ${address.city} - ${address.state}/${address.country}`}
+                                </Typography>
+                            </div>    
+                                
+                        </AccordionSummary>
+
                     <AccordionDetails>
                         <PFAddressForm initialData={address} hasMain={hasMain}/>
                     </AccordionDetails>
+
+                    
             </Accordion>
+            
         )
     } else {
         return (
