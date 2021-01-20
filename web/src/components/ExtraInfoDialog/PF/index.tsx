@@ -32,7 +32,9 @@ const useStyles = makeStyles((theme) =>
             height: `calc(100vh - ${theme.spacing(3)}px)`,
         },
         tabPanel: {
-            height: '75vh'
+            height: '75vh',
+            overflowY: 'auto',
+            overflowX: 'hidden'
         }
     })
 );

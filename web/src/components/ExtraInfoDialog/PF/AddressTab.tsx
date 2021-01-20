@@ -14,7 +14,8 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Typography from '@material-ui/core/Typography';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import StarsIcon from '@material-ui/icons/Stars';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { PFAddressForm } from '../../Forms';
 
 
 const useStyles = makeStyles(
@@ -56,38 +57,102 @@ const useStyles = makeStyles(
 
 interface AddressAccordionProps {
     address?: any;
+    setNewAddressFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+    defaultName?: string;
+    hasMain?: boolean
 }
 
-const AddressAccordion:React.FC<AddressAccordionProps> = ({address}) => {
+const AddressAccordion:React.FC<AddressAccordionProps> = ({address, setNewAddressFormOpen, defaultName, hasMain}) => {
     
+    // State
+    const [open, setOpen] = React.useState(address ? false : true);
+
+    // Methods
+    const handleChange = () => {
+        setOpen(!open);
+        if (!address && setNewAddressFormOpen) setTimeout(() => setNewAddressFormOpen(false), 500);
+    }
+
     // CSS
     const classes = useStyles();
     
-    return (
-        <Accordion className={classes.accordion} elevation={4}>
-            <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                
-                <div className={classes.accordionHeading}>
-                    <Typography className={classes.accordionHeadingText}>{address.name}</Typography>
-                </div>
-            
-                <div className={classes.accordionSubHeading}>
-                    <Typography className={classes.accordionSubHeadingText}>
-                        {`${address.street}, ${address.number}`}
-                        {address.district && ` - ${address.district}`}
-                        {` - ${address.city} - ${address.state}/${address.country}`}
-                    </Typography>
-                </div>
-                
-                {address.isMain && <StarsIcon className={classes.accordionIcon} color='primary' />}
-                
-            </AccordionSummary>
-        </Accordion>
-    ); 
+    if (address) {
+        return (
+            <Accordion 
+                className={classes.accordion}
+                expanded={open}
+                onChange={handleChange}
+                elevation={4} 
+                TransitionProps={{ unmountOnExit: true }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+                        <div className={classes.accordionHeading}>
+                            <Typography className={classes.accordionHeadingText}>{address.name}</Typography>
+                        </div>
+                        <div className={classes.accordionSubHeading}>
+                            <Typography className={classes.accordionSubHeadingText}>
+                                {`${address.street}, ${address.number}`}
+                                {address.district && ` - ${address.district}`}
+                                {` - ${address.city} - ${address.state}/${address.country}`}
+                            </Typography>
+                        </div>    
+                        {address.isMain && <CheckCircleIcon className={classes.accordionIcon} color='disabled' />}
+                    </AccordionSummary>
+                        
+                    <AccordionDetails>
+                        <PFAddressForm initialData={address} hasMain={hasMain}/>
+                    </AccordionDetails>
+            </Accordion>
+        )
+    } else {
+        return (
+            <Accordion 
+                className={classes.accordion}
+                expanded={open}
+                onChange={handleChange}
+                elevation={4} 
+                TransitionProps={{ unmountOnExit: true }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+                        <div className={classes.accordionHeading}>
+                            <Typography className={classes.accordionHeadingText}>Novo Endereço</Typography>
+                        </div>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <PFAddressForm defaultName={defaultName} hasMain={hasMain}/>
+                    </AccordionDetails>
+            </Accordion>
+        ); 
+    }
 }
 
+const generateAddressDefaultName = (customer: PFfetchCustomerByIdQuery) => {
+    
+    let startString = `Endereço de ${customer.PFfetchCustomerById.firstName}`;
 
+    if (startString.length > 36) startString = startString.substring(0, 36)
 
+    let addresses = customer.PFfetchCustomerById.PFextraInfo.addresses!;
+
+    let defaultAddresses = addresses.filter(address => {
+        return address.name && address.name.startsWith(startString)
+    })
+    
+    if (defaultAddresses.length > 0) {
+        return `${startString} (${defaultAddresses.length})`
+    } else {
+        return startString
+    }    
+}
+
+const customerHasMainAddress = (customer: PFfetchCustomerByIdQuery) => {
+    if (!customer || !customer.PFfetchCustomerById.PFextraInfo.addresses) return false;
+    let addresses = customer.PFfetchCustomerById.PFextraInfo.addresses;
+
+    if (addresses.findIndex(address => address.isMain === true) === -1) {
+        return false
+    } 
+
+    return true;
+}
 export interface AddressTabProps {
     customer?: PFfetchCustomerByIdQuery;
 }
@@ -97,6 +162,12 @@ export const AddressTab: React.FC<AddressTabProps> = ({customer}) => {
     // CSS
     const classes = useStyles();
 
+    // State
+    const [newAddressFormOpen, setNewAddressFormOpen] = React.useState(false)
+
+    // Methods
+    
+
     //const {data, loading, error} = usePFfetchCustomerByIdQuery({variables: {PFCustomerID: customerID}})
     
     return (
@@ -105,15 +176,21 @@ export const AddressTab: React.FC<AddressTabProps> = ({customer}) => {
                 <Button 
                     className={classes.button}
                     variant='contained'
-                    color='primary'>
+                    color='primary'
+                    onClick={() => setNewAddressFormOpen(true)}>
                         Adicionar Endereço
                 </Button>
             </Grid>
-            <Grid item >
+            <Grid item>
+                {customer && newAddressFormOpen &&
+                    <AddressAccordion 
+                        setNewAddressFormOpen={setNewAddressFormOpen} 
+                        defaultName={generateAddressDefaultName(customer)}
+                        />}
                 {   customer && 
                     customer.PFfetchCustomerById.PFextraInfo.addresses &&
                     customer.PFfetchCustomerById.PFextraInfo.addresses.map(address => 
-                        <AddressAccordion address={address}/>
+                        <AddressAccordion key={address.id} address={address} hasMain={customerHasMainAddress(customer)}/>
                     )
                 }
             </Grid>

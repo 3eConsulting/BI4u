@@ -25,6 +25,8 @@
     "@types/react-dom": "^16.9.0",
     "apollo-link-error": "^1.1.13",
     "apollo-link-token-refresh": "^0.3.2",
+    "axios": "^0.21.1",
+    "cleave.js": "^1.6.0",
     "graphql": "^15.3.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
@@ -64,6 +66,7 @@
     "@graphql-codegen/typescript": "^1.20.0",
     "@graphql-codegen/typescript-operations": "^1.17.13",
     "@graphql-codegen/typescript-react-apollo": "^2.2.1",
+    "@types/cleave.js": "^1.4.4",
     "@types/react-router-dom": "^5.1.6"
   }
 }
