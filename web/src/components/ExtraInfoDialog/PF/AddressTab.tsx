@@ -57,9 +57,10 @@ interface AddressAccordionProps {
     setNewAddressFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;
     defaultName?: string;
     hasMain?: boolean
+    PFCustomerID: string;
 }
 
-const AddressAccordion:React.FC<AddressAccordionProps> = ({address, setNewAddressFormOpen, defaultName, hasMain}) => {
+const AddressAccordion:React.FC<AddressAccordionProps> = ({address, setNewAddressFormOpen, defaultName, hasMain, PFCustomerID}) => {
     
     // State
     const [open, setOpen] = React.useState(address ? false : true);
@@ -101,7 +102,7 @@ const AddressAccordion:React.FC<AddressAccordionProps> = ({address, setNewAddres
                         </AccordionSummary>
 
                     <AccordionDetails>
-                        <PFAddressForm initialData={address} hasMain={hasMain}/>
+                        <PFAddressForm initialData={address} hasMain={hasMain} PFCustomerID={PFCustomerID}/>
                     </AccordionDetails>
 
                     
@@ -122,7 +123,7 @@ const AddressAccordion:React.FC<AddressAccordionProps> = ({address, setNewAddres
                         </div>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <PFAddressForm defaultName={defaultName} hasMain={hasMain}/>
+                        <PFAddressForm defaultName={defaultName} hasMain={hasMain} PFCustomerID={PFCustomerID}/>
                     </AccordionDetails>
             </Accordion>
         ); 
@@ -191,12 +192,17 @@ export const AddressTab: React.FC<AddressTabProps> = ({customer}) => {
                     <AddressAccordion 
                         setNewAddressFormOpen={setNewAddressFormOpen} 
                         defaultName={generateAddressDefaultName(customer)}
+                        PFCustomerID={customer.PFfetchCustomerById.id}
                         />}
                 {   customer && 
                     customer.PFfetchCustomerById.PFextraInfo.addresses &&
                     customer.PFfetchCustomerById.PFextraInfo.addresses.map(address => 
-                        <AddressAccordion key={address.id} address={address} hasMain={customerHasMainAddress(customer)}/>
-                    )
+                        <AddressAccordion 
+                            key={address.id}
+                            address={address}
+                            hasMain={customerHasMainAddress(customer)}
+                            PFCustomerID={customer.PFfetchCustomerById.id}/>
+                    ) 
                 }
             </Grid>
         </Grid>

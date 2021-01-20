@@ -10,6 +10,7 @@ import {
     Grid,
     Switch,
     TextField,
+    Typography,
     CircularProgress,
     Backdrop,
     makeStyles,
@@ -18,7 +19,7 @@ import {
 import Button from '@material-ui/core/Button';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
-import { usePFaddAddressMutation, usePFupdateAddressMutation } from '../../../graphql/generated';
+import { usePFaddAddressMutation, usePFupdateAddressMutation, usePFremoveAddressesMutation } from '../../../graphql/generated';
 
 import { useSnackbar } from 'notistack';
 
@@ -121,9 +122,10 @@ export interface AddressFormProps {
     initialData?: any;
     defaultName?: string;
     hasMain?: boolean;
+    PFCustomerID: string;
 }
 
-export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultName, hasMain }) => {
+export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultName, hasMain, PFCustomerID }) => {
 
     const [loading, setLoading] = React.useState(false)
 
@@ -131,8 +133,9 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
     const { register, handleSubmit, errors, control, setValue } = useForm({ resolver: yupResolver(validationSchema) });
     const { enqueueSnackbar } = useSnackbar();
     
-    const [addAddress, {data: addData, loading: addLoading, error: addError}] = usePFaddAddressMutation();
-    const [updateAddress, {data: updateData, loading: updateLoading, error: updateError }] = usePFupdateAddressMutation();
+    const [addAddress] = usePFaddAddressMutation();
+    const [updateAddress] = usePFupdateAddressMutation();
+    const [removeAddresses] = usePFremoveAddressesMutation();
 
 
     // Methods
@@ -173,42 +176,67 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
         
     }
 
-    const handleMutationCall = async (data: any) => {
-        if (initialData) {
-            try {
-                updateAddress({variables: {
+    const handleAddUpdate = async (data: any) => {
+        try {
+            setLoading(true)
+            if (initialData) {
+                let updateResponse = await updateAddress({variables: {
                     PFAddressID: initialData.id,
                     ...data
                 }});
-            } catch (err) {
-                console.error(err);
+                
+                if (updateResponse.data) enqueueSnackbar("Endereço Alterado com Sucesso !", {variant: "success"});
+
+            } else {
+                let addResponse = await addAddress({variables: {
+                    PFCustomerID: PFCustomerID,
+                    ...data
+                }});
+                
+                if (addResponse.data) enqueueSnackbar("Novo Endereço Adicionado com Sucesso !", {variant: "success"});
             }
-        } else {
-            try {
-                addAddress({variables: data});
-            } catch (err) {
-                console.error(err);        
+        } catch (err) {
+            console.error(err);
+
+            if (initialData) {
+                enqueueSnackbar(
+                    <><Typography>Erro ao Alterar Endereço. Tente Novamente em Alguns Minutos.</Typography>
+                    <br/>
+                    <Typography>{err.message}</Typography></>,
+                    {variant: "error"}
+                )
+            } else {
+                enqueueSnackbar("Erro ao Adicionar Endereços. Tente Novamente em Alguns Minutos.", {variant: "error"})
             }
+        } finally {
+            setLoading(false)
         }
     }
 
-    if (addData) enqueueSnackbar("Novo Endereço Adicionado com Sucesso !", {variant: "success"});
-    if (updateData) enqueueSnackbar("Endereço Alterado com Sucesso !", {variant: "success"});
+    const handleRemove = async () => {
+        try {
+            setLoading(true)
+            
+                let removeResponse = await removeAddresses({variables: {
+                    PFAddressIDS: [initialData.id],
+                }});
+                
+                if (removeResponse.data) enqueueSnackbar("Endereço Removido com Sucesso !", {variant: "success"});
 
-    if (addError) {
-        console.error(addError);
-        enqueueSnackbar("Erro ao Adicionar Endereços !", {variant: "error"})
-    };
-    if (updateError) {
-        console.error(updateError);
-        enqueueSnackbar("Erro ao Alterar Endereços !", {variant: "error"})
-    };
+        } catch (err) {
+            console.error(err);
+            enqueueSnackbar("Erro ao Remover Endereço. Tente Novamente em Alguns Minutos.", {variant: "error"})
+            
+        } finally {
+            setLoading(false)
+        }
+    }
 
     // CSS
     const classes = useStyles();
 
     return (
-        <form id="PFAddress" className={classes.root} onSubmit={handleSubmit((data) => handleMutationCall(data))} autoComplete="false">
+        <form id="PFAddress" className={classes.root} onSubmit={handleSubmit((data) => handleAddUpdate(data))} autoComplete="false">
             <Grid container direction='column' spacing={3}>
                 
                 <Grid item container direction='row-reverse'>
@@ -391,7 +419,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
 
                 <Grid item container direction='row-reverse' spacing={3} className={classes.actionRow}>
                     <Button variant="contained" color="primary" className={classes.button} type="submit">Salvar</Button>
-                    <Button variant="contained" color="primary" className={classes.button}>Excluir</Button>
+                    <Button variant="contained" color="primary" className={classes.button} onClick={handleRemove}>Excluir</Button>
                 </Grid>
 
                 {loading && 

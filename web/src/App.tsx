@@ -9,6 +9,7 @@ import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import "moment/locale/pt-br";
+import Button from '@material-ui/core/Button';
 
 const apolloCache = new InMemoryCache();
 
@@ -95,9 +96,23 @@ const client = new ApolloClient({
 	},
 });
 
+// Dismiss Snackbar Action
+const notistackRef = React.createRef<SnackbarProvider>();
+const onClickDismiss = (key: any) => () => { 
+    notistackRef!.current!.closeSnackbar(key);
+}
+
+
 function App() {
 	return (
-		<SnackbarProvider maxSnack={3}>
+		<SnackbarProvider dense maxSnack={3}
+			anchorOrigin={{vertical: "bottom", horizontal: "right"}}
+			ref={notistackRef}
+			action={(key) => (
+				<Button onClick={onClickDismiss(key)} variant="outlined">
+					Fechar
+				</Button>
+			)}>
 			<MuiPickersUtilsProvider utils={MomentUtils} locale="pt-br">
 				<ApolloProvider client={client}>
 					<BaseRouter />
