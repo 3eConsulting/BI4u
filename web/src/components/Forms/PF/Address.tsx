@@ -196,33 +196,32 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
             }
         } catch (err) {
             console.error(err);
-
+            setLoading(false)
             if (initialData) {
                 enqueueSnackbar("Erro ao Atualizar Endereço. Tente Novamente em Alguns Minutos.", {variant: "error"});
             } else {
                 enqueueSnackbar("Erro ao Adicionar Endereços. Tente Novamente em Alguns Minutos.", {variant: "error"});
             }
-        } finally {
-            setLoading(false)
         }
     }
 
     const handleRemove = async () => {
         try {
-            setLoading(true)
+            if (initialData && initialData.id) {
+                setLoading(true)
             
-            let removeResponse = await removeAddresses({variables: {
-                PFAddressIDS: [initialData.id],
-            }});
-            
-            if (removeResponse.data) enqueueSnackbar("Endereço Removido com Sucesso !", {variant: "success"});
-
+                let removeResponse = await removeAddresses({variables: {
+                    PFAddressIDS: [initialData.id],
+                }});
+                
+                if (removeResponse.data) enqueueSnackbar("Endereço Removido com Sucesso !", {variant: "success"});
+            } else {
+                throw new Error("ID Not Found");
+            }
         } catch (err) {
             console.error(err);
-            enqueueSnackbar("Erro ao Remover Endereço. Tente Novamente em Alguns Minutos.", {variant: "error"})
-            
-        } finally {
-            setLoading(false)
+            setLoading(false);
+            enqueueSnackbar("Erro ao Remover Endereço. Tente Novamente em Alguns Minutos.", {variant: "error"})   
         }
     }
 

@@ -23,6 +23,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Edit } from "../../Forms/PF/Edit";
 import AddressTab from "./AddressTab";
 import ContactTab from "./ContactTab"
+import { PFCustomerForm } from "../../Forms";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -113,7 +114,9 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
             {data && customer && <DialogContent className={classes.root}>
                 <Grid container direction='row' justify='center' spacing={3} className={classes.extraInfoDialogContentRoot}>
                     <Grid item xs={4} container direction='column' justify='space-evenly' spacing={3}>
-                        <Grid item><Edit customer={customer} /></Grid>
+                        <Grid item>
+                            <PFCustomerForm initialData={customer} />
+                        </Grid>
                     </Grid>
 
                     <Divider orientation="vertical" flexItem />

@@ -119,7 +119,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialData, defaultNa
                     ...data
                 }});
                 
-                if (updateResponse.data) enqueueSnackbar("Endereço Alterado com Sucesso !", {variant: "success"});
+                if (updateResponse.data) enqueueSnackbar("Contato Alterado com Sucesso !", {variant: "success"});
 
             } else {
                 let addResponse = await addContact({variables: {
@@ -131,9 +131,8 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialData, defaultNa
             }
             
         } catch (err) {
-            
             console.error(err);
-
+            setLoading(false);
             if (initialData) {
                 enqueueSnackbar("Erro ao Atualizar Contato. Tente Novamente em Alguns Minutos.", {variant: "error"});
             } else {
@@ -144,16 +143,19 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialData, defaultNa
 
     const handleRemove = async () => {
         try {
-            setLoading(true)
-            
-            let removeResponse = await removeContact({variables: {
-                PFContactIDS: [initialData.id],
-            }});
-            
-            if (removeResponse.data) enqueueSnackbar("Contato Removido com Sucesso !", {variant: "success"});
-
+            if (initialData && initialData.id) {
+                setLoading(true);
+                let removeResponse = await removeContact({variables: {
+                    PFContactIDS: [initialData.id],
+                }});
+                
+                if (removeResponse.data) enqueueSnackbar("Contato Removido com Sucesso !", {variant: "success"});
+            } else {
+                throw new Error("ID Not Found");
+            }
         } catch (err) {
             console.error(err);
+            setLoading(false);
             enqueueSnackbar("Erro ao Remover Contato. Tente Novamente em Alguns Minutos.", {variant: "error"})
         }
     }

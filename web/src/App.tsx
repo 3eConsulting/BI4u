@@ -8,7 +8,7 @@ import { TokenRefreshLink } from 'apollo-link-token-refresh';
 
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import "moment/locale/pt-br";
+
 import Button from '@material-ui/core/Button';
 
 const apolloCache = new InMemoryCache();
@@ -113,7 +113,7 @@ function App() {
 					Fechar
 				</Button>
 			)}>
-			<MuiPickersUtilsProvider utils={MomentUtils} locale="pt-br">
+			<MuiPickersUtilsProvider utils={MomentUtils}>
 				<ApolloProvider client={client}>
 					<BaseRouter />
 				</ApolloProvider>

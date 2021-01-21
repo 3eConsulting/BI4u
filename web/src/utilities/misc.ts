@@ -20,6 +20,7 @@ export const yupLocale = {
 		validators: {
 			isCPF: (value?: string) => {
 				if (!value) return false;
+				value = value.replace(/[-.]/g, "");
 				if (value.length !== 11) return false;
 
 				const W = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
@@ -49,6 +50,7 @@ export const yupLocale = {
 
 			isCNPJ: (value?: string) => {
 				if (!value) return false;
+				value = value.replace(/[-./]/g, "");
 				if (value.length !== 14) return false;
 
 				const W = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
@@ -109,23 +111,3 @@ export const PFgenerateDefaultName = (customer: PFfetchCustomerByIdQuery, varian
 		return defaultName;
 	}
 };
-
-/* 
-const generateAddressDefaultName = (customer: PFfetchCustomerByIdQuery) => {
-    
-    let startString = `Endereço de ${customer.PFfetchCustomerById.firstName}`;
-
-    if (startString.length > 36) startString = startString.substring(0, 36)
-
-    let addresses = customer.PFfetchCustomerById.PFextraInfo.addresses!;
-
-    let defaultAddresses = addresses.filter(address => {
-        return address.name && address.name.startsWith(startString)
-    })
-    
-    if (defaultAddresses.length > 0) {
-        return `${startString} (${defaultAddresses.length})`
-    } else {
-        return startString
-    }    
-} */
