@@ -14,7 +14,8 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Typography from '@material-ui/core/Typography';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import WhatsAppIcon from '@material-ui/icons/WhatsApp';
+
 import { PFContactForm } from '../../Forms';
 import { Badge } from '@material-ui/core';
 import { PFgenerateDefaultName } from '../../../utilities/misc';
@@ -41,8 +42,8 @@ const useStyles = makeStyles(
             flexShrink: 0,
         },
         accordionSubHeading: {
-            flexBasis: '40%',
-            flexShrink: 0,
+            flexBasis: '60%',
+            flexShrink: 0
         },
         accordionHeadingText: {
             fontWeight: 'bold',
@@ -88,24 +89,28 @@ const ContactAccordion:React.FC<ContactAccordionProps> = (
                     
                         <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                             
-                            <div className={classes.accordionHeading}>
-                                <Badge variant="dot" color="primary" invisible={!contact.isMain}>
-                                    <Typography className={classes.accordionHeadingText}>
-                                        {contact.name}
-                                    </Typography>
-                                </Badge>
-                            </div>
-                            <div className={classes.accordionSubHeading}>
-                                <Typography className={classes.accordionSubHeadingText}>
-                                    {contact.email ? `${contact.email}` : 
-                                        contact.mobilePhone ?
-                                            <Badge variant="dot" color="primary" invisible={!contact.isWhatsApp}>
-                                                {`Telefone Celular: ${contact.mobilePhone}`}
-                                            </Badge> : 
-                                        contact.phone ? `Telefone Fixo: ${contact.phone}` : 
-                                        `ID: ${contact.id}`}
-                                </Typography>
-                            </div>
+                            <Grid container direction="row" alignContent="center" alignItems="center" spacing={3}>
+                                <Grid item lg={4}>
+                                    <Badge variant="dot" color="primary" invisible={!contact.isMain}>
+                                        <Typography className={classes.accordionHeadingText}>
+                                            {contact.name}
+                                        </Typography>
+                                    </Badge>
+                                </Grid>
+                                <Grid item>
+                                    <Grid container alignContent="center" alignItems="center" spacing={3}>
+                                        <Grid item className={classes.accordionSubHeadingText}>
+                                            {contact.email ? `${contact.email}` : 
+                                                contact.mobilePhone ? `Telefone Celular: ${contact.mobilePhone}` :
+                                                contact.phone ? `Telefone Fixo: ${contact.phone}` : 
+                                                `ID: ${contact.id}`}
+                                        </Grid>
+                                        <Grid item>
+                                            {contact.isWhatsApp && <WhatsAppIcon color="primary"/>}
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
                                 
                         </AccordionSummary>
 

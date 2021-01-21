@@ -86,20 +86,23 @@ const AddressAccordion:React.FC<AddressAccordionProps> = ({address, setNewAddres
                     
                         <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                             
-                            <div className={classes.accordionHeading}>
-                                <Badge variant="dot" color="primary" invisible={!address.isMain}>
-                                    <Typography className={classes.accordionHeadingText}>{address.name}</Typography>
-                                </Badge>
-                            </div>
-                            
-                            <div className={classes.accordionSubHeading}>
-                                <Typography className={classes.accordionSubHeadingText}>
-                                    {`${address.street}, ${address.number}`}
-                                    {address.district && ` - ${address.district}`}
-                                    {` - ${address.city} - ${address.state}/${address.country}`}
-                                </Typography>
-                            </div>    
-                                
+                            <Grid container direction="row" alignContent="center" alignItems="center" spacing={3}>
+                                <Grid item lg={4}>
+                                    <Badge variant="dot" color="primary" invisible={!address.isMain}>
+                                        <Typography className={classes.accordionHeadingText}>{address.name}</Typography>
+                                    </Badge>
+                                </Grid>
+                                <Grid item>
+                                    <Grid container alignContent="center" alignItems="center" spacing={3}>
+                                        <Grid item className={classes.accordionSubHeadingText}>
+                                            {`${address.street}, ${address.number}`}
+                                            {address.district && ` - ${address.district}`}
+                                            {` - ${address.city} - ${address.state}/${address.country}`}
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+
                         </AccordionSummary>
 
                     <AccordionDetails>

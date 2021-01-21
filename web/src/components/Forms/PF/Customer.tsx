@@ -6,7 +6,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { yupLocale } from '../../../utilities/misc';
 
 import Backdrop from '@material-ui/core/Backdrop';
-import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
@@ -20,9 +19,12 @@ import {
     createStyles
 } from '@material-ui/core/styles';
 
-import EditIcon from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CloseIcon from '@material-ui/icons/Close';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import EditIcon from '@material-ui/icons/Edit';
+import HotelIcon from '@material-ui/icons/Hotel';
 
 import {
     PfCustomer,
@@ -133,20 +135,12 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ initialData }) => {
     // CSS
     const classes = useStyles();
 
-    /**
-     * 
-     *  <Grid item container direction='row-reverse' spacing={3} className={classes.actionRow}>
-     *      <Button variant="contained" color="primary" className={classes.button} type="submit">Salvar</Button>
-     *      {initialData && <Button variant="contained" color="primary" className={classes.button} onClick={handleRemove}>Excluir</Button>}
-     *  </Grid>
-     * 
-     */
-
     return (
         <form id="PFCustomer" className={classes.root} onSubmit={handleSubmit((data) => handleAddUpdate(data))} autoComplete="false">
             <Grid container direction='column' spacing={3}>
                 <Grid item container alignItems='center' justify='space-between' direction='row-reverse' spacing={1} >
-                    <Grid item>
+                    
+                    {editable ? <Grid item>
                         <Controller
                             name="isActive"
                             control={control}
@@ -160,8 +154,8 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ initialData }) => {
                                 />
                             }
                         />
-                    </Grid>
-                    <Grid item>
+                    </Grid> : (initialData && initialData.isActive) ? <CheckBoxIcon color="primary"/> : ""}
+                    {editable ? <Grid item>
                         <Controller
                             name="hasDisability"
                             control={control}
@@ -175,12 +169,18 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ initialData }) => {
                                 />
                             }
                         />
-                    </Grid>
+                    </Grid> : (initialData && initialData.hasDisability) ? <HotelIcon color="primary"/> : ""}
+                    
                     {!editable ? (
                         <Grid item>
                             <Tooltip title='Editar' placement='top' arrow>
                                 <IconButton onClick={() => setEditable(true)}>
                                     <EditIcon/>
+                                </IconButton>
+                            </Tooltip>
+                            <Tooltip title='Editar' placement='top' arrow>
+                                <IconButton onClick={handleRemove}>
+                                    <DeleteForeverIcon/>
                                 </IconButton>
                             </Tooltip>
                         </Grid>

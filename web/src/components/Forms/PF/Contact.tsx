@@ -5,21 +5,26 @@ import { Control, Controller, useForm, useWatch } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { yupLocale } from '../../../utilities/misc';
 
+
+import Backdrop from '@material-ui/core/Backdrop';
+import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
+import Switch from '@material-ui/core/Switch';
+import TextField from '@material-ui/core/TextField';
+import Tooltip from '@material-ui/core/Tooltip';
+
 import {
-    FormControlLabel,
-    Grid,
-    Switch,
-    TextField,
-    Typography,
-    CircularProgress,
-    Backdrop,
     makeStyles,
     createStyles
-} from '@material-ui/core';
-import Button from '@material-ui/core/Button';
+} from '@material-ui/core/styles';
 
-
-import { usePFaddContactMutation, usePFremoveContactMutation, usePFupdateContactMutation } from '../../../graphql/generated';
+import {
+    usePFaddContactMutation,
+    usePFremoveContactMutation,
+    usePFupdateContactMutation
+} from '../../../graphql/generated';
 
 import { useSnackbar } from 'notistack';
 
