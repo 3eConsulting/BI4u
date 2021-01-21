@@ -1,3 +1,5 @@
+import { PFfetchCustomerByIdQuery, PJfetchCustomerByIdQuery } from "../graphql/generated";
+
 export const localeCurrency = (currency: number, locale: string = "pt-BR", currencySymbol: string = "BRL") => {
 	return currency.toLocaleString(locale, { style: "currency", currency: currencySymbol });
 };
@@ -12,6 +14,8 @@ export const yupLocale = {
 			CPF: "Deve ser um CPF válido.",
 			CNPJ: "Deve ser um CPF válido.",
 			CEP: "Deve ser um CEP válido.",
+			phone: "Deve ser um Telefone Fixo válido.",
+			mobilePhone: "Deve ser um Telefone Celular válido.",
 		},
 		validators: {
 			isCPF: (value?: string) => {
@@ -81,3 +85,47 @@ export const yupLocale = {
 		},
 	},
 };
+
+// Find a way to automate this
+const DefaultNamesVariantToLabel = {
+	address: "Endereço",
+	contact: "Contato",
+};
+
+export const PFgenerateDefaultName = (customer: PFfetchCustomerByIdQuery, variant: "address" | "contact") => {
+	let defaultName = `${DefaultNamesVariantToLabel[variant]} de ${customer.PFfetchCustomerById.firstName}`;
+
+	if (defaultName.length > 36) defaultName = defaultName.substring(0, 36);
+
+	let addresses = customer.PFfetchCustomerById.PFextraInfo.addresses!;
+
+	let defaultNamedAddresses = addresses.filter((address) => {
+		return address.name && address.name.startsWith(defaultName);
+	});
+
+	if (defaultNamedAddresses.length > 0) {
+		return `${defaultName} (${defaultNamedAddresses.length})`;
+	} else {
+		return defaultName;
+	}
+};
+
+/* 
+const generateAddressDefaultName = (customer: PFfetchCustomerByIdQuery) => {
+    
+    let startString = `Endereço de ${customer.PFfetchCustomerById.firstName}`;
+
+    if (startString.length > 36) startString = startString.substring(0, 36)
+
+    let addresses = customer.PFfetchCustomerById.PFextraInfo.addresses!;
+
+    let defaultAddresses = addresses.filter(address => {
+        return address.name && address.name.startsWith(startString)
+    })
+    
+    if (defaultAddresses.length > 0) {
+        return `${startString} (${defaultAddresses.length})`
+    } else {
+        return startString
+    }    
+} */

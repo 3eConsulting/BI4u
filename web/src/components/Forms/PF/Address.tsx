@@ -121,7 +121,7 @@ function CountrySelect({ defaultValue, error, helperText, inputRef }:
 export interface AddressFormProps {
     initialData?: any;
     defaultName?: string;
-    hasMain?: boolean;
+    hasMain: boolean;
     PFCustomerID: string;
 }
 
@@ -137,11 +137,10 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
     const [updateAddress] = usePFupdateAddressMutation();
     const [removeAddresses] = usePFremoveAddressesMutation();
 
-
     // Methods
     const autocompleteByCEP = async (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setLoading(true);
-        let CEP = event.target.value.replace('-', '');
+        let CEP = event.target.value.replace('-', "");
         if (CEP.length !== 8){
             setLoading(false)
             return;
@@ -199,14 +198,9 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
             console.error(err);
 
             if (initialData) {
-                enqueueSnackbar(
-                    <><Typography>Erro ao Alterar Endereço. Tente Novamente em Alguns Minutos.</Typography>
-                    <br/>
-                    <Typography>{err.message}</Typography></>,
-                    {variant: "error"}
-                )
+                enqueueSnackbar("Erro ao Atualizar Endereço. Tente Novamente em Alguns Minutos.", {variant: "error"});
             } else {
-                enqueueSnackbar("Erro ao Adicionar Endereços. Tente Novamente em Alguns Minutos.", {variant: "error"})
+                enqueueSnackbar("Erro ao Adicionar Endereços. Tente Novamente em Alguns Minutos.", {variant: "error"});
             }
         } finally {
             setLoading(false)
@@ -217,11 +211,11 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
         try {
             setLoading(true)
             
-                let removeResponse = await removeAddresses({variables: {
-                    PFAddressIDS: [initialData.id],
-                }});
-                
-                if (removeResponse.data) enqueueSnackbar("Endereço Removido com Sucesso !", {variant: "success"});
+            let removeResponse = await removeAddresses({variables: {
+                PFAddressIDS: [initialData.id],
+            }});
+            
+            if (removeResponse.data) enqueueSnackbar("Endereço Removido com Sucesso !", {variant: "success"});
 
         } catch (err) {
             console.error(err);
@@ -247,7 +241,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                             defaultValue={(initialData && initialData.isMain) ? initialData.isMain : false}
                             render={props =>
                                 <FormControlLabel label="Principal" labelPlacement='start'
-                                    disabled={(hasMain && (!initialData || !initialData.isMain)) }
+                                    disabled={(hasMain && (!initialData || (initialData && !initialData.isMain))) }
                                     control={
                                         <Switch color="primary" checked={props.value} size='small'
                                             onChange={e => props.onChange(e.target.checked)} />
@@ -260,19 +254,19 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
 
                 <Grid item container direction='row' spacing={3}>
                     <Grid item lg={6}>
-                    <Controller 
-                        defaultValue={(initialData && initialData.name) ? initialData.name : defaultName ? defaultName : ""}
-                        name='name'
-                        control={control}
-                        label="Nome"
-                        as={
-                            <TextField fullWidth variant="outlined"
-                                error={!!errors.name}
-                                helperText={errors.name ? errors.name.message : ''}
-                                inputProps={{
-                                    maxLength: 40
-                                }}/>
-                            }/>
+                        <Controller 
+                            defaultValue={(initialData && initialData.name) ? initialData.name : defaultName ? defaultName : ""}
+                            name='name'
+                            control={control}
+                            label="Nome"
+                            as={
+                                <TextField fullWidth variant="outlined"
+                                    error={!!errors.name}
+                                    helperText={errors.name ? errors.name.message : ""}
+                                    inputProps={{
+                                        maxLength: 40
+                                    }}/>
+                                }/>
                         
                     </Grid>
                     <Grid item lg={6}>
@@ -316,7 +310,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                             as={
                                 <TextField fullWidth variant="outlined"
                                     error={!!errors.street}
-                                    helperText={errors.street ? errors.street.message : ''}/>
+                                    helperText={errors.street ? errors.street.message : ""}/>
                                 }/>
                     </Grid>
                     <Grid item lg={2}>
@@ -328,7 +322,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                             as={
                                 <TextField fullWidth variant="outlined"
                                     error={!!errors.number}
-                                    helperText={errors.number ? errors.number.message : ''}
+                                    helperText={errors.number ? errors.number.message : ""}
                                     inputProps={{
                                         maxLength: 8
                                     }}/>
@@ -343,7 +337,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                             as={
                                 <TextField fullWidth variant="outlined"
                                     error={!!errors.complement}
-                                    helperText={errors.complement ? errors.complement.message : ''}
+                                    helperText={errors.complement ? errors.complement.message : ""}
                                     inputProps={{
                                         maxLength: 8
                                     }}/>
@@ -362,7 +356,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                             as={
                                 <TextField fullWidth variant="outlined"
                                     error={!!errors.district}
-                                    helperText={errors.district ? errors.district.message : ''}
+                                    helperText={errors.district ? errors.district.message : ""}
                                     inputProps={{
                                         maxLength: 40
                                     }}/>
@@ -378,7 +372,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
                             as={
                                 <TextField fullWidth variant="outlined"
                                     error={!!errors.cidade}
-                                    helperText={errors.city ? errors.city.message : ''}
+                                    helperText={errors.city ? errors.city.message : ""}
                                     inputProps={{
                                         maxLength: 40
                                     }}/>
@@ -419,7 +413,7 @@ export const AddressForm: React.FC<AddressFormProps> = ({ initialData, defaultNa
 
                 <Grid item container direction='row-reverse' spacing={3} className={classes.actionRow}>
                     <Button variant="contained" color="primary" className={classes.button} type="submit">Salvar</Button>
-                    <Button variant="contained" color="primary" className={classes.button} onClick={handleRemove}>Excluir</Button>
+                    {initialData && <Button variant="contained" color="primary" className={classes.button} onClick={handleRemove}>Excluir</Button>}
                 </Grid>
 
                 {loading && 

@@ -2,22 +2,22 @@ import React from 'react';
 
 import { PFfetchCustomerByIdQuery } from '../../../graphql/generated';
 
-import { PFAddressForm } from '../../Forms';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 
+import Button from '@material-ui/core/Button';
+import Grid from '@material-ui/core/Grid';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionActions from '@material-ui/core/AccordionActions';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import Badge from '@material-ui/core/Badge';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
 
 import Typography from '@material-ui/core/Typography';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
-import {PFgenerateDefaultName} from '../../../utilities/misc'
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { PFContactForm } from '../../Forms';
+import { Badge } from '@material-ui/core';
+import { PFgenerateDefaultName } from '../../../utilities/misc';
 
 
 const useStyles = makeStyles(
@@ -38,14 +38,14 @@ const useStyles = makeStyles(
         },
         accordionHeading: {
             flexBasis: '40%',
-            flexShrink: 0
+            flexShrink: 0,
         },
         accordionSubHeading: {
             flexBasis: '40%',
-            flexShrink: 0
+            flexShrink: 0,
         },
         accordionHeadingText: {
-            fontWeight: 'bold'
+            fontWeight: 'bold',
         },
         accordionSubHeadingText: {
             color: theme.palette.text.disabled,
@@ -53,29 +53,31 @@ const useStyles = makeStyles(
     })
 )
 
-interface AddressAccordionProps {
-    address?: any;
-    setNewAddressFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+interface ContactAccordionProps {
+    contact?: any;
     defaultName?: string;
+    setNewContactFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;
     hasMain: boolean
     PFCustomerID: string;
 }
 
-const AddressAccordion:React.FC<AddressAccordionProps> = ({address, setNewAddressFormOpen, defaultName, hasMain, PFCustomerID}) => {
+const ContactAccordion:React.FC<ContactAccordionProps> = (
+    {contact, defaultName, setNewContactFormOpen, hasMain, PFCustomerID}
+) => {
     
     // State
-    const [open, setOpen] = React.useState(address ? false : true);
+    const [open, setOpen] = React.useState(contact ? false : true);
 
     // Methods
     const handleChange = () => {
         setOpen(!open);
-        if (!address && setNewAddressFormOpen) setTimeout(() => setNewAddressFormOpen(false), 500);
+        if (!contact && setNewContactFormOpen) setTimeout(() => setNewContactFormOpen(false), 500);
     }
 
     // CSS
     const classes = useStyles();
     
-    if (address) {
+    if (contact) {
         return (
             <Accordion 
                 className={classes.accordion}
@@ -87,23 +89,28 @@ const AddressAccordion:React.FC<AddressAccordionProps> = ({address, setNewAddres
                         <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                             
                             <div className={classes.accordionHeading}>
-                                <Badge variant="dot" color="primary" invisible={!address.isMain}>
-                                    <Typography className={classes.accordionHeadingText}>{address.name}</Typography>
+                                <Badge variant="dot" color="primary" invisible={!contact.isMain}>
+                                    <Typography className={classes.accordionHeadingText}>
+                                        {contact.name}
+                                    </Typography>
                                 </Badge>
                             </div>
-                            
                             <div className={classes.accordionSubHeading}>
                                 <Typography className={classes.accordionSubHeadingText}>
-                                    {`${address.street}, ${address.number}`}
-                                    {address.district && ` - ${address.district}`}
-                                    {` - ${address.city} - ${address.state}/${address.country}`}
+                                    {contact.email ? `${contact.email}` : 
+                                        contact.mobilePhone ?
+                                            <Badge variant="dot" color="primary" invisible={!contact.isWhatsApp}>
+                                                {`Telefone Celular: ${contact.mobilePhone}`}
+                                            </Badge> : 
+                                        contact.phone ? `Telefone Fixo: ${contact.phone}` : 
+                                        `ID: ${contact.id}`}
                                 </Typography>
-                            </div>    
+                            </div>
                                 
                         </AccordionSummary>
 
                     <AccordionDetails>
-                        <PFAddressForm initialData={address} hasMain={hasMain} PFCustomerID={PFCustomerID}/>
+                        <PFContactForm initialData={contact} hasMain={hasMain} PFCustomerID={PFCustomerID}/>
                     </AccordionDetails>
 
                     
@@ -120,43 +127,38 @@ const AddressAccordion:React.FC<AddressAccordionProps> = ({address, setNewAddres
                 TransitionProps={{ unmountOnExit: true }}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                         <div className={classes.accordionHeading}>
-                            <Typography className={classes.accordionHeadingText}>Novo Endereço</Typography>
+                            <Typography className={classes.accordionHeadingText}>Novo Contato</Typography>
                         </div>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <PFAddressForm defaultName={defaultName} hasMain={hasMain} PFCustomerID={PFCustomerID}/>
+                        <PFContactForm defaultName={defaultName} hasMain={hasMain} PFCustomerID={PFCustomerID}/>
                     </AccordionDetails>
             </Accordion>
         ); 
     }
 }
 
-const customerHasMainAddress = (customer: PFfetchCustomerByIdQuery) => {
-    if (!customer || !customer.PFfetchCustomerById.PFextraInfo.addresses) return false;
-    let addresses = customer.PFfetchCustomerById.PFextraInfo.addresses;
+const customerHasMainContact = (customer: PFfetchCustomerByIdQuery) => {
+    if (!customer || !customer.PFfetchCustomerById.PFextraInfo.contacts) return false;
+    let contacts = customer.PFfetchCustomerById.PFextraInfo.contacts;
 
-    if (addresses.findIndex(address => address.isMain === true) === -1) {
+    if (contacts.findIndex(address => address.isMain === true) === -1) {
         return false
     } 
 
     return true;
 }
-export interface AddressTabProps {
+export interface ContactTabProps {
     customer?: PFfetchCustomerByIdQuery;
 }
 
-export const AddressTab: React.FC<AddressTabProps> = ({customer}) => {
+export const ContactTab: React.FC<ContactTabProps> = ({customer}) => {
     
     // CSS
     const classes = useStyles();
 
     // State
     const [newAddressFormOpen, setNewAddressFormOpen] = React.useState(false)
-
-    // Methods
-    
-
-    //const {data, loading, error} = usePFfetchCustomerByIdQuery({variables: {PFCustomerID: customerID}})
     
     return (
         <Grid container direction='column'>
@@ -166,24 +168,24 @@ export const AddressTab: React.FC<AddressTabProps> = ({customer}) => {
                     variant='contained'
                     color='primary'
                     onClick={() => setNewAddressFormOpen(true)}>
-                        Adicionar Endereço
+                        Adicionar Contato
                 </Button>
             </Grid>
             <Grid item>
                 {customer && newAddressFormOpen &&
-                    <AddressAccordion 
-                        setNewAddressFormOpen={setNewAddressFormOpen}
-                        hasMain={customerHasMainAddress(customer)}
-                        defaultName={PFgenerateDefaultName(customer, "address")}
+                    <ContactAccordion 
+                        setNewContactFormOpen={setNewAddressFormOpen} 
+                        hasMain={customerHasMainContact(customer)}
+                        defaultName={PFgenerateDefaultName(customer, "contact")}
                         PFCustomerID={customer.PFfetchCustomerById.id}
                         />}
                 {   customer && 
-                    customer.PFfetchCustomerById.PFextraInfo.addresses &&
-                    customer.PFfetchCustomerById.PFextraInfo.addresses.map(address => 
-                        <AddressAccordion 
-                            key={address.id}
-                            address={address}
-                            hasMain={customerHasMainAddress(customer)}
+                    customer.PFfetchCustomerById.PFextraInfo.contacts &&
+                    customer.PFfetchCustomerById.PFextraInfo.contacts.map(contact => 
+                        <ContactAccordion 
+                            key={contact.id}
+                            contact={contact}
+                            hasMain={customerHasMainContact(customer)}
                             PFCustomerID={customer.PFfetchCustomerById.id}/>
                     ) 
                 }
@@ -192,4 +194,4 @@ export const AddressTab: React.FC<AddressTabProps> = ({customer}) => {
     );
 }
 
-export default AddressTab;
+export default ContactTab;

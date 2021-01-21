@@ -22,13 +22,16 @@ import { Logger } from "winston";
 import { PFExtraInfo } from "./index";
 import logger from "../../../../../loaders/logger";
 import ErrorService from "../../../../../services/error";
-import { PFContactInput } from "../../../../../graphQL/schemas/Customer/PF/_input";
 
 @Entity()
 export class PFContact extends BaseEntity {
 	// -- UUID PK
 	@PrimaryGeneratedColumn("uuid")
 	id: string;
+
+	// -- Identification
+	@Column({ length: 40, nullable: true })
+	name: string;
 
 	// -- Data Fields
 	@Column({ nullable: true })
@@ -37,12 +40,12 @@ export class PFContact extends BaseEntity {
 
 	@Column({ length: 13, nullable: true })
 	@IsPhoneNumber("BR", { message: "Invalid Phone Number" })
-	@Length(13, 13)
+	@Length(10, 11)
 	phone: string;
 
 	@Column({ length: 14, nullable: true })
 	@IsPhoneNumber("BR", { message: "Invalid Phone Number" })
-	@Length(14, 14)
+	@Length(11, 12)
 	mobilePhone: string;
 
 	// -- Flags

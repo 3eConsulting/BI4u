@@ -22,6 +22,7 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import { Edit } from "../../Forms/PF/Edit";
 import AddressTab from "./AddressTab";
+import ContactTab from "./ContactTab"
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -130,7 +131,7 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
                                 <Tab label='Endereços' value='addresses' />
                                 <Tab label='Contatos' value='contacts' />
                                 {customer.hasDisability && <Tab label='Deficiências' value='disabilities' />}
-                                <Tab label='Histórico Profissional' value='professionalHistory' />
+                                <Tab label='Historico Profissional' value='professionalHistory' />
 
                             </Tabs>
                         </Grid>
@@ -139,7 +140,9 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
                             <TabPanel value={tab} index={'addresses'}>
                                 <AddressTab customer={data}/>
                             </TabPanel>
-                            <TabPanel value={tab} index={'contacts'}><h1>Contacts</h1></TabPanel>
+                            <TabPanel value={tab} index={'contacts'}>
+                                <ContactTab customer={data}/>
+                            </TabPanel>
                             {customer.hasDisability && <TabPanel value={tab} index={'disabilities'}><h1>Disabilities</h1></TabPanel>}
                             <TabPanel value={tab} index={'professionalHistory'}><h1>ProfessionalHistory</h1></TabPanel>
                         </Grid>

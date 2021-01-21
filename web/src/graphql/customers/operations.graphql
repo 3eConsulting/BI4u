@@ -4,6 +4,7 @@
 ## PF
 fragment PFContactInfo on PFContact {
 	id
+	name
 	email
 	phone
 	mobilePhone
@@ -348,6 +349,7 @@ mutation PFremoveAddresses($PFAddressIDS: [ID!]!) {
 # CONTACT
 mutation PFaddContact(
 	$PFCustomerID: ID!
+	$name: String!
 	$email: String
 	$phone: String
 	$mobilePhone: String
@@ -356,7 +358,14 @@ mutation PFaddContact(
 ) {
 	PFaddContact(
 		PFCustomerID: $PFCustomerID
-		PFContact: { email: $email, phone: $phone, mobilePhone: $mobilePhone, isWhatsApp: $isWhatsApp, isMain: $isMain }
+		PFContact: {
+			name: $name
+			email: $email
+			phone: $phone
+			mobilePhone: $mobilePhone
+			isWhatsApp: $isWhatsApp
+			isMain: $isMain
+		}
 	) {
 		...PFCustomerInfo
 	}
@@ -364,6 +373,7 @@ mutation PFaddContact(
 
 mutation PFupdateContact(
 	$PFContactID: ID!
+	$name: String
 	$email: String
 	$phone: String
 	$mobilePhone: String
@@ -372,7 +382,14 @@ mutation PFupdateContact(
 ) {
 	PFupdateContact(
 		PFContactID: $PFContactID
-		PFContact: { email: $email, phone: $phone, mobilePhone: $mobilePhone, isWhatsApp: $isWhatsApp, isMain: $isMain }
+		PFContact: {
+			name: $name
+			email: $email
+			phone: $phone
+			mobilePhone: $mobilePhone
+			isWhatsApp: $isWhatsApp
+			isMain: $isMain
+		}
 	) {
 		...PFCustomerInfo
 	}

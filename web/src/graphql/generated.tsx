@@ -319,6 +319,7 @@ export type PfDisability = {
 export type PfContact = {
   __typename?: 'PFContact';
   id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   mobilePhone?: Maybe<Scalars['String']>;
@@ -377,6 +378,7 @@ export type PfDisabilityInput = {
 };
 
 export type PfContactInput = {
+  name: Scalars['String'];
   email?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   mobilePhone?: Maybe<Scalars['String']>;
@@ -442,6 +444,7 @@ export type PfDisabilityUpdateInput = {
 };
 
 export type PfContactUpdateInput = {
+  name?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   mobilePhone?: Maybe<Scalars['String']>;
@@ -661,7 +664,7 @@ export type SignInInput = {
 
 export type PfContactInfoFragment = (
   { __typename?: 'PFContact' }
-  & Pick<PfContact, 'id' | 'email' | 'phone' | 'mobilePhone' | 'isWhatsApp' | 'isMain' | 'createdAt' | 'updatedAt'>
+  & Pick<PfContact, 'id' | 'name' | 'email' | 'phone' | 'mobilePhone' | 'isWhatsApp' | 'isMain' | 'createdAt' | 'updatedAt'>
 );
 
 export type PfAddressInfoFragment = (
@@ -956,6 +959,7 @@ export type PFremoveAddressesMutation = (
 
 export type PFaddContactMutationVariables = Exact<{
   PFCustomerID: Scalars['ID'];
+  name: Scalars['String'];
   email?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   mobilePhone?: Maybe<Scalars['String']>;
@@ -974,6 +978,7 @@ export type PFaddContactMutation = (
 
 export type PFupdateContactMutationVariables = Exact<{
   PFContactID: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
   email?: Maybe<Scalars['String']>;
   phone?: Maybe<Scalars['String']>;
   mobilePhone?: Maybe<Scalars['String']>;
@@ -1344,6 +1349,7 @@ export type PJupdateActivityClassificationMutation = (
 export const PfContactInfoFragmentDoc = gql`
     fragment PFContactInfo on PFContact {
   id
+  name
   email
   phone
   mobilePhone
@@ -1990,10 +1996,10 @@ export type PFremoveAddressesMutationHookResult = ReturnType<typeof usePFremoveA
 export type PFremoveAddressesMutationResult = Apollo.MutationResult<PFremoveAddressesMutation>;
 export type PFremoveAddressesMutationOptions = Apollo.BaseMutationOptions<PFremoveAddressesMutation, PFremoveAddressesMutationVariables>;
 export const PFaddContactDocument = gql`
-    mutation PFaddContact($PFCustomerID: ID!, $email: String, $phone: String, $mobilePhone: String, $isWhatsApp: Boolean, $isMain: Boolean) {
+    mutation PFaddContact($PFCustomerID: ID!, $name: String!, $email: String, $phone: String, $mobilePhone: String, $isWhatsApp: Boolean, $isMain: Boolean) {
   PFaddContact(
     PFCustomerID: $PFCustomerID
-    PFContact: {email: $email, phone: $phone, mobilePhone: $mobilePhone, isWhatsApp: $isWhatsApp, isMain: $isMain}
+    PFContact: {name: $name, email: $email, phone: $phone, mobilePhone: $mobilePhone, isWhatsApp: $isWhatsApp, isMain: $isMain}
   ) {
     ...PFCustomerInfo
   }
@@ -2015,6 +2021,7 @@ export type PFaddContactMutationFn = Apollo.MutationFunction<PFaddContactMutatio
  * const [pFaddContactMutation, { data, loading, error }] = usePFaddContactMutation({
  *   variables: {
  *      PFCustomerID: // value for 'PFCustomerID'
+ *      name: // value for 'name'
  *      email: // value for 'email'
  *      phone: // value for 'phone'
  *      mobilePhone: // value for 'mobilePhone'
@@ -2030,10 +2037,10 @@ export type PFaddContactMutationHookResult = ReturnType<typeof usePFaddContactMu
 export type PFaddContactMutationResult = Apollo.MutationResult<PFaddContactMutation>;
 export type PFaddContactMutationOptions = Apollo.BaseMutationOptions<PFaddContactMutation, PFaddContactMutationVariables>;
 export const PFupdateContactDocument = gql`
-    mutation PFupdateContact($PFContactID: ID!, $email: String, $phone: String, $mobilePhone: String, $isWhatsApp: Boolean, $isMain: Boolean) {
+    mutation PFupdateContact($PFContactID: ID!, $name: String, $email: String, $phone: String, $mobilePhone: String, $isWhatsApp: Boolean, $isMain: Boolean) {
   PFupdateContact(
     PFContactID: $PFContactID
-    PFContact: {email: $email, phone: $phone, mobilePhone: $mobilePhone, isWhatsApp: $isWhatsApp, isMain: $isMain}
+    PFContact: {name: $name, email: $email, phone: $phone, mobilePhone: $mobilePhone, isWhatsApp: $isWhatsApp, isMain: $isMain}
   ) {
     ...PFCustomerInfo
   }
@@ -2055,6 +2062,7 @@ export type PFupdateContactMutationFn = Apollo.MutationFunction<PFupdateContactM
  * const [pFupdateContactMutation, { data, loading, error }] = usePFupdateContactMutation({
  *   variables: {
  *      PFContactID: // value for 'PFContactID'
+ *      name: // value for 'name'
  *      email: // value for 'email'
  *      phone: // value for 'phone'
  *      mobilePhone: // value for 'mobilePhone'

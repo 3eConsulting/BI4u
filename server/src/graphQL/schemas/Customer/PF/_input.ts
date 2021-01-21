@@ -7,6 +7,7 @@ export interface PFDisabilityInput {
 }
 
 export interface PFContactInput {
+	name: string;
 	email?: string;
 	phone?: string;
 	mobilePhone?: string;
@@ -62,6 +63,7 @@ const Input = `
     }
     
     input PFContactInput {
+        name: String!
         email: String
         phone: String
         mobilePhone: String
@@ -126,6 +128,7 @@ const Input = `
     }
 
     input PFContactUpdateInput {
+        name: String
         email: String
         phone: String
         mobilePhone: String

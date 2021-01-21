@@ -36,6 +36,7 @@ const Customer = `
 
     type PFContact {
         id: ID!
+        name: String
         email: String
         phone: String
         mobilePhone: String
