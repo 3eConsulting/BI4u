@@ -189,6 +189,16 @@ query PFfetchCustomerByID($PFCustomerID: String!) {
 	}
 }
 
+##### THIS IS A MUTATION ON PURPOSE. IT WAS PUT HERE ON PURPOSE.
+##### IT NEEDS TO BE A MUTATION BECAUSE CURRENTLY APOLLO CAN'T RETURN A PROMISE FROM A LAZY QUERY
+##### REFER TO: https://github.com/apollographql/react-apollo/issues/3499
+mutation PFfetchDisabilityNomenclature($CID: String!) {
+	PFfetchDisabilityNomenclature(CID: $CID) {
+		CID
+		nomenclature
+	}
+}
+
 ## PJ
 query PJfetchCustomers {
 	PJfetchCustomers {

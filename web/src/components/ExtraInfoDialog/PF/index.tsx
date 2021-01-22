@@ -20,10 +20,10 @@ import { TransitionProps } from "@material-ui/core/transitions";
 
 import CloseIcon from '@material-ui/icons/Close';
 
-import { Edit } from "../../Forms/PF/Edit";
+import { PFCustomerForm } from "../../Forms";
 import AddressTab from "./AddressTab";
 import ContactTab from "./ContactTab"
-import { PFCustomerForm } from "../../Forms";
+import DisabilityTab from "./DisabilityTab";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -146,7 +146,10 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
                             <TabPanel value={tab} index={'contacts'}>
                                 <ContactTab customer={data}/>
                             </TabPanel>
-                            {customer.hasDisability && <TabPanel value={tab} index={'disabilities'}><h1>Disabilities</h1></TabPanel>}
+                            {customer.hasDisability &&
+                                <TabPanel value={tab} index={'disabilities'}>
+                                    <DisabilityTab customer={data} />
+                                </TabPanel>}
                             <TabPanel value={tab} index={'professionalHistory'}><h1>ProfessionalHistory</h1></TabPanel>
                         </Grid>
 

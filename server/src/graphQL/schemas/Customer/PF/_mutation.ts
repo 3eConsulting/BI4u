@@ -1,4 +1,5 @@
 import { getCustomRepository, In } from "typeorm";
+import { queryCIDByCode } from "../../../../database/data/CID10/query";
 import { PFCustomerRepository } from "../../../../database/models/Customer/PF/PFCustomer";
 import { PFExtraInfoRepository } from "../../../../database/models/Customer/PF/PFExtraInfo";
 import { PFAddressRepository } from "../../../../database/models/Customer/PF/PFExtraInfo/PFAddress";
@@ -51,6 +52,8 @@ const Mutation = `
 		PFupdateDisability(PFDisabilityID: ID!, PFDisability: PFDisabilityUpdateInput!): PFCustomer!
 		PFupdateProfessionalHistory(PFProfessionalHistoryID: ID!, PFProfessionalHistory: PFProfessionalHistoryUpdateInput!): PFCustomer!
 		PFupdateLeaveHistory(PFLeaveHistoryID: ID!, PFLeaveHistory: PFLeaveHistoryUpdateInput!): PFCustomer!
+
+		PFfetchDisabilityNomenclature(CID: String!): PFPossibleDisability
     }
 `;
 
@@ -603,6 +606,17 @@ export const mutationResolvers = {
 			// Reload and return Customer.
 			let response = await PFCustomerRep.fetchCustomer(customer.id);
 			return response;
+		},
+		// MISC
+		PFfetchDisabilityNomenclature: (
+			root,
+			{ CID }: { CID: string },
+			context: ContextWithAuthentication,
+			info: {}
+		) => {
+			let data = queryCIDByCode(CID);
+			if (data) return { CID: data.code, nomenclature: data.name };
+			return null;
 		},
 	},
 };

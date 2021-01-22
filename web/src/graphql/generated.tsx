@@ -92,6 +92,7 @@ export type Mutation = {
   PFupdateDisability: PfCustomer;
   PFupdateProfessionalHistory: PfCustomer;
   PFupdateLeaveHistory: PfCustomer;
+  PFfetchDisabilityNomenclature?: Maybe<PfPossibleDisability>;
   PJaddCustomer: PjCustomer;
   PJremoveCustomers: Scalars['Boolean'];
   PJupdateCustomer: PjCustomer;
@@ -206,6 +207,11 @@ export type MutationPFupdateProfessionalHistoryArgs = {
 export type MutationPFupdateLeaveHistoryArgs = {
   PFLeaveHistoryID: Scalars['ID'];
   PFLeaveHistory: PfLeaveHistoryUpdateInput;
+};
+
+
+export type MutationPFfetchDisabilityNomenclatureArgs = {
+  CID: Scalars['String'];
 };
 
 
@@ -370,6 +376,12 @@ export type PfProfessionalHistory = {
   leaveHistory?: Maybe<Array<PfLeaveHistory>>;
   createdAt: Scalars['Date'];
   updatedAt: Scalars['Date'];
+};
+
+export type PfPossibleDisability = {
+  __typename?: 'PFPossibleDisability';
+  CID: Scalars['String'];
+  nomenclature: Scalars['String'];
 };
 
 export type PfDisabilityInput = {
@@ -795,6 +807,19 @@ export type PFfetchCustomerByIdQuery = (
     { __typename?: 'PFCustomer' }
     & PfCustomerInfoFragment
   ) }
+);
+
+export type PFfetchDisabilityNomenclatureMutationVariables = Exact<{
+  CID: Scalars['String'];
+}>;
+
+
+export type PFfetchDisabilityNomenclatureMutation = (
+  { __typename?: 'Mutation' }
+  & { PFfetchDisabilityNomenclature?: Maybe<(
+    { __typename?: 'PFPossibleDisability' }
+    & Pick<PfPossibleDisability, 'CID' | 'nomenclature'>
+  )> }
 );
 
 export type PJfetchCustomersQueryVariables = Exact<{ [key: string]: never; }>;
@@ -1628,6 +1653,39 @@ export function usePFfetchCustomerByIdLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type PFfetchCustomerByIdQueryHookResult = ReturnType<typeof usePFfetchCustomerByIdQuery>;
 export type PFfetchCustomerByIdLazyQueryHookResult = ReturnType<typeof usePFfetchCustomerByIdLazyQuery>;
 export type PFfetchCustomerByIdQueryResult = Apollo.QueryResult<PFfetchCustomerByIdQuery, PFfetchCustomerByIdQueryVariables>;
+export const PFfetchDisabilityNomenclatureDocument = gql`
+    mutation PFfetchDisabilityNomenclature($CID: String!) {
+  PFfetchDisabilityNomenclature(CID: $CID) {
+    CID
+    nomenclature
+  }
+}
+    `;
+export type PFfetchDisabilityNomenclatureMutationFn = Apollo.MutationFunction<PFfetchDisabilityNomenclatureMutation, PFfetchDisabilityNomenclatureMutationVariables>;
+
+/**
+ * __usePFfetchDisabilityNomenclatureMutation__
+ *
+ * To run a mutation, you first call `usePFfetchDisabilityNomenclatureMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePFfetchDisabilityNomenclatureMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [pFfetchDisabilityNomenclatureMutation, { data, loading, error }] = usePFfetchDisabilityNomenclatureMutation({
+ *   variables: {
+ *      CID: // value for 'CID'
+ *   },
+ * });
+ */
+export function usePFfetchDisabilityNomenclatureMutation(baseOptions?: Apollo.MutationHookOptions<PFfetchDisabilityNomenclatureMutation, PFfetchDisabilityNomenclatureMutationVariables>) {
+        return Apollo.useMutation<PFfetchDisabilityNomenclatureMutation, PFfetchDisabilityNomenclatureMutationVariables>(PFfetchDisabilityNomenclatureDocument, baseOptions);
+      }
+export type PFfetchDisabilityNomenclatureMutationHookResult = ReturnType<typeof usePFfetchDisabilityNomenclatureMutation>;
+export type PFfetchDisabilityNomenclatureMutationResult = Apollo.MutationResult<PFfetchDisabilityNomenclatureMutation>;
+export type PFfetchDisabilityNomenclatureMutationOptions = Apollo.BaseMutationOptions<PFfetchDisabilityNomenclatureMutation, PFfetchDisabilityNomenclatureMutationVariables>;
 export const PJfetchCustomersDocument = gql`
     query PJfetchCustomers {
   PJfetchCustomers {

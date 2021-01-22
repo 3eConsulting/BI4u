@@ -14,6 +14,7 @@ export const yupLocale = {
 			CPF: "Deve ser um CPF válido.",
 			CNPJ: "Deve ser um CPF válido.",
 			CEP: "Deve ser um CEP válido.",
+			CID: "Deve ser um CID válido.",
 			phone: "Deve ser um Telefone Fixo válido.",
 			mobilePhone: "Deve ser um Telefone Celular válido.",
 		},

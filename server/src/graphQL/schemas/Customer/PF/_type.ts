@@ -86,7 +86,10 @@ const Customer = `
         updatedAt: Date!
     }
 
-    
+    type PFPossibleDisability {
+        CID: String!
+        nomenclature: String!
+    }
 
 `;
 
