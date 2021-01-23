@@ -24,6 +24,7 @@ import { PFCustomerForm } from "../../Forms";
 import AddressTab from "./AddressTab";
 import ContactTab from "./ContactTab"
 import DisabilityTab from "./DisabilityTab";
+import ProfessionalHistoryTab from "./ProfessionalHistoryTab";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -133,7 +134,7 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
 
                                 <Tab label='Endereços' value='addresses' />
                                 <Tab label='Contatos' value='contacts' />
-                                {customer.hasDisability && <Tab label='Deficiências' value='disabilities' />}
+                                {customer.hasDisability && <Tab label='Condições Médicas' value='disabilities' />}
                                 <Tab label='Historico Profissional' value='professionalHistory' />
 
                             </Tabs>
@@ -150,7 +151,9 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
                                 <TabPanel value={tab} index={'disabilities'}>
                                     <DisabilityTab customer={data} />
                                 </TabPanel>}
-                            <TabPanel value={tab} index={'professionalHistory'}><h1>ProfessionalHistory</h1></TabPanel>
+                            <TabPanel value={tab} index={'professionalHistory'}>
+                                <ProfessionalHistoryTab customer={data} />
+                            </TabPanel>
                         </Grid>
 
                     </Grid>

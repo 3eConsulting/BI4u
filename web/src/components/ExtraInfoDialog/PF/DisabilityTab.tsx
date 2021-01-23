@@ -50,12 +50,13 @@ const useStyles = makeStyles(
 
 interface DisabilityAccordionProps {
     disability?: Partial<PfDisability>;
-    setNewDisabilityFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;    
     PFCustomerID: string;
+    setNewDisabilityFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+    hasCID(CID:string): boolean;
 }
 
 const DisabilityAccordion:React.FC<DisabilityAccordionProps> = (
-    {disability, setNewDisabilityFormOpen, PFCustomerID}
+    {disability, setNewDisabilityFormOpen, hasCID, PFCustomerID}
 ) => {
     
     // State
@@ -94,7 +95,7 @@ const DisabilityAccordion:React.FC<DisabilityAccordionProps> = (
                     </AccordionSummary>
 
                     <AccordionDetails>
-                        <PFDisabilityForm initialData={disability} PFCustomerID={PFCustomerID}/>
+                        <PFDisabilityForm initialData={disability} PFCustomerID={PFCustomerID} hasCID={hasCID}/>
                     </AccordionDetails>
             </Accordion>
             
@@ -108,10 +109,10 @@ const DisabilityAccordion:React.FC<DisabilityAccordionProps> = (
                 elevation={4} 
                 TransitionProps={{ unmountOnExit: true }}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                        <Typography className={classes.accordionHeadingText}>Nova Deficiência</Typography>
+                        <Typography className={classes.accordionHeadingText}>Nova Condição Médica</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <PFDisabilityForm initialData={disability} PFCustomerID={PFCustomerID}/>
+                        <PFDisabilityForm initialData={disability} PFCustomerID={PFCustomerID} hasCID={hasCID}/>
                     </AccordionDetails>
             </Accordion>
         ); 
@@ -130,6 +131,14 @@ export const DisabilityTab: React.FC<DisabilityTabProps> = ({customer}) => {
     // State
     const [newDisabilityFormOpen, setNewDisabilityFormOpen] = React.useState(false)
     
+    // Methods
+    const hasCID = (CID: string) => {
+        if (!customer || !customer.PFfetchCustomerById.PFextraInfo.disabilities) return false;
+        return customer.PFfetchCustomerById.PFextraInfo.disabilities.findIndex(
+            disability => disability.CID === CID
+        ) !== -1;
+    }
+
     return (
         <Grid container direction='column'>
             <Grid item container direction='row-reverse' className={classes.actionRow}>
@@ -138,18 +147,18 @@ export const DisabilityTab: React.FC<DisabilityTabProps> = ({customer}) => {
                     variant='contained'
                     color='primary'
                     onClick={() => setNewDisabilityFormOpen(true)}>
-                        Adicionar Deficiência
+                        Adicionar Condição Médica
                 </Button>
             </Grid>
             <Grid item>
                 {customer && newDisabilityFormOpen &&
-                    <DisabilityAccordion 
+                    <DisabilityAccordion hasCID={hasCID}
                         setNewDisabilityFormOpen={setNewDisabilityFormOpen}
                         PFCustomerID={customer.PFfetchCustomerById.id}/>}
                 {   customer && 
                     customer.PFfetchCustomerById.PFextraInfo.disabilities &&
                     customer.PFfetchCustomerById.PFextraInfo.disabilities.map(disability => 
-                        <DisabilityAccordion 
+                        <DisabilityAccordion hasCID={hasCID}
                             key={disability.id}
                             disability={disability}
                             PFCustomerID={customer.PFfetchCustomerById.id}/>

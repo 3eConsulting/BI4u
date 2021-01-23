@@ -224,6 +224,13 @@ query PJfetchEmployees($PJCustomerID: String!) {
 	}
 }
 
+query PJfetchCustomersTradingName {
+	PJfetchCustomers {
+		id
+		tradingName
+	}
+}
+
 ### MUTATION (BY TABLE AFFECTED)
 ## PF
 # BASE OBJECT

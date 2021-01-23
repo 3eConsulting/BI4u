@@ -9,6 +9,7 @@ export const yupLocale = {
 	string: {
 		messages: {
 			max: ({ max }: { max: number }) => `Deve ter no máximo ${max} caractéres.`,
+			min: ({ min }: { min: number }) => `Deve ter no mínimo ${min} caractéres.`,
 			length: ({ length }: { length: number }) => `Deve ter exatamente ${length} caractéres.`,
 			uppercase: "Deve ser em letras maiusculas.",
 			CPF: "Deve ser um CPF válido.",

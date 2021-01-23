@@ -65,9 +65,10 @@ const useStyles = makeStyles(
 export interface DisabilityFormProps {
     initialData?: any;
     PFCustomerID: string;
+    hasCID(CID:string): boolean;
 }
 
-export const DisabilityForm: React.FC<DisabilityFormProps> = ({ initialData, PFCustomerID }) => {
+export const DisabilityForm: React.FC<DisabilityFormProps> = ({ initialData, PFCustomerID, hasCID }) => {
 
     const [loading, setLoading] = React.useState(false)
 
@@ -103,6 +104,12 @@ export const DisabilityForm: React.FC<DisabilityFormProps> = ({ initialData, PFC
     }
 
     const handleAddUpdate = async (data: any) => {
+        
+        if(hasCID(data.CID)) {
+            enqueueSnackbar("CID Já Cadastrado Para Este Cliente.", {variant: "info"});
+            return;
+        }
+        
         try {
             setLoading(true)
             if (initialData) {

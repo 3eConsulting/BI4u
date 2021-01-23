@@ -6,9 +6,6 @@ import { onError } from "@apollo/client/link/error";
 import { authFunctionalities, iAccessTokenPayload } from './utilities/authentication';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
 
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import MomentUtils from '@date-io/moment';
-
 import Button from '@material-ui/core/Button';
 
 const apolloCache = new InMemoryCache();
@@ -113,11 +110,11 @@ function App() {
 					Fechar
 				</Button>
 			)}>
-			<MuiPickersUtilsProvider utils={MomentUtils}>
-				<ApolloProvider client={client}>
-					<BaseRouter />
-				</ApolloProvider>
-			</MuiPickersUtilsProvider>
+			
+			<ApolloProvider client={client}>
+				<BaseRouter />
+			</ApolloProvider>
+			
 		</SnackbarProvider>
 	);
 }

@@ -872,6 +872,17 @@ export type PJfetchEmployeesQuery = (
   )>> }
 );
 
+export type PJfetchCustomersTradingNameQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PJfetchCustomersTradingNameQuery = (
+  { __typename?: 'Query' }
+  & { PJfetchCustomers: Array<(
+    { __typename?: 'PJCustomer' }
+    & Pick<PjCustomer, 'id' | 'tradingName'>
+  )> }
+);
+
 export type PFaddCustomerMutationVariables = Exact<{
   firstName: Scalars['String'];
   lastName: Scalars['String'];
@@ -1817,6 +1828,39 @@ export function usePJfetchEmployeesLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type PJfetchEmployeesQueryHookResult = ReturnType<typeof usePJfetchEmployeesQuery>;
 export type PJfetchEmployeesLazyQueryHookResult = ReturnType<typeof usePJfetchEmployeesLazyQuery>;
 export type PJfetchEmployeesQueryResult = Apollo.QueryResult<PJfetchEmployeesQuery, PJfetchEmployeesQueryVariables>;
+export const PJfetchCustomersTradingNameDocument = gql`
+    query PJfetchCustomersTradingName {
+  PJfetchCustomers {
+    id
+    tradingName
+  }
+}
+    `;
+
+/**
+ * __usePJfetchCustomersTradingNameQuery__
+ *
+ * To run a query within a React component, call `usePJfetchCustomersTradingNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePJfetchCustomersTradingNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePJfetchCustomersTradingNameQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePJfetchCustomersTradingNameQuery(baseOptions?: Apollo.QueryHookOptions<PJfetchCustomersTradingNameQuery, PJfetchCustomersTradingNameQueryVariables>) {
+        return Apollo.useQuery<PJfetchCustomersTradingNameQuery, PJfetchCustomersTradingNameQueryVariables>(PJfetchCustomersTradingNameDocument, baseOptions);
+      }
+export function usePJfetchCustomersTradingNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PJfetchCustomersTradingNameQuery, PJfetchCustomersTradingNameQueryVariables>) {
+          return Apollo.useLazyQuery<PJfetchCustomersTradingNameQuery, PJfetchCustomersTradingNameQueryVariables>(PJfetchCustomersTradingNameDocument, baseOptions);
+        }
+export type PJfetchCustomersTradingNameQueryHookResult = ReturnType<typeof usePJfetchCustomersTradingNameQuery>;
+export type PJfetchCustomersTradingNameLazyQueryHookResult = ReturnType<typeof usePJfetchCustomersTradingNameLazyQuery>;
+export type PJfetchCustomersTradingNameQueryResult = Apollo.QueryResult<PJfetchCustomersTradingNameQuery, PJfetchCustomersTradingNameQueryVariables>;
 export const PFaddCustomerDocument = gql`
     mutation PFaddCustomer($firstName: String!, $lastName: String!, $birthDate: Date!, $CPF: CPF!, $gender: GenderEnum!, $preferedPronoun: PreferedPronounEnum!, $isActive: Boolean, $hasDisability: Boolean) {
   PFaddCustomer(

@@ -81,7 +81,7 @@ const IsWhatsAppSwitch = ({ control, controllerProps, initialData }: { control: 
     const mobilePhone = useWatch({
         control,
         name: "mobilePhone",
-        defaultValue: initialData.mobilePhone
+        defaultValue: (initialData && initialData.mobilePhone) ? initialData.mobilePhone : null
     });
 
     return (
