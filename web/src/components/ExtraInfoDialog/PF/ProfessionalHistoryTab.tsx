@@ -10,10 +10,12 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-
 import Typography from '@material-ui/core/Typography';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
+import IconButton from '@material-ui/core/IconButton';
+import Slide from '@material-ui/core/Slide';
 
 
 const useStyles = makeStyles(
@@ -66,6 +68,8 @@ const ProfessionalHistoryAccordion:React.FC<ProfessionalHistoryAccordionProps> =
 
     // State
     const [open, setOpen] = React.useState(professionalHistory ? false : true);
+    const [leaveHistoryOpen, setLeaveHistoryOpen] = React.useState(false)
+    const [professionalHistoryOpen, setProfessionalHistoryOpen] = React.useState(true)
 
     const {
         data: PJCustomerQueryData,
@@ -79,6 +83,15 @@ const ProfessionalHistoryAccordion:React.FC<ProfessionalHistoryAccordionProps> =
         if (!professionalHistory && setNewProfessionalHistoryFormOpen) setTimeout(() => setNewProfessionalHistoryFormOpen(false), 500);
     }
 
+    const handleAnimation = () => {
+        if (leaveHistoryOpen && !professionalHistoryOpen) {
+            setLeaveHistoryOpen(false);
+            setTimeout(() => setProfessionalHistoryOpen(true), 300)
+        } else {
+            setProfessionalHistoryOpen(false);
+            setTimeout(() => setLeaveHistoryOpen(true), 300)
+        }
+    }
     
     if (professionalHistory) {
         return (
@@ -89,33 +102,51 @@ const ProfessionalHistoryAccordion:React.FC<ProfessionalHistoryAccordionProps> =
                 elevation={4} 
                 TransitionProps={{ unmountOnExit: true }}>
                     
-                        <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                            
-                            <Grid container direction="row" alignContent="center" alignItems="center" spacing={3}>
-                                <Grid item lg={4}>
-                                    <Typography className={classes.accordionHeadingText}>
-                                        {professionalHistory.company ? 
-                                            professionalHistory.company.tradingName : 
-                                            professionalHistory.id}
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Grid container alignContent="center" alignItems="center" spacing={3}>
-                                        <Grid item className={classes.accordionSubHeadingText}>
-                                            {professionalHistory.office ? professionalHistory.office : ""}
-                                        </Grid>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+                        
+                        <Grid container direction="row" alignContent="center" alignItems="center" spacing={3}>
+                            <Grid item lg={4}>
+                                <Typography className={classes.accordionHeadingText}>
+                                    {professionalHistory.company ? 
+                                        professionalHistory.company.tradingName : 
+                                        professionalHistory.id}
+                                </Typography>
+                            </Grid>
+                            <Grid item lg ={5}>
+                                <Grid container alignContent="center" alignItems="center" spacing={3}>
+                                    <Grid item className={classes.accordionSubHeadingText}>
+                                        {professionalHistory.office ? professionalHistory.office : ""}
                                     </Grid>
                                 </Grid>
                             </Grid>
+                        </Grid>
 
-                        </AccordionSummary>
+                    </AccordionSummary>
 
                     <AccordionDetails>
-                        <PFProfessionalHistoryForm refetch={refetch}
-                            initialData={professionalHistory} PFCustomerID={PFCustomerID}
-                            PJCustomerQueryLoading={PJCustomerQueryLoading} 
-                            PJCustomerQueryData={PJCustomerQueryData}
-                            PJCustomerQueryError={PJCustomerQueryError}/>
+                        <Grid container direction="row" alignContent="center" alignItems="center" spacing={3}>
+                            <Grid item lg={11} >
+                                <Slide direction="right" in={professionalHistoryOpen} mountOnEnter unmountOnExit>
+                                    <div>
+                                        <PFProfessionalHistoryForm refetch={refetch}
+                                            initialData={professionalHistory} PFCustomerID={PFCustomerID}
+                                            PJCustomerQueryLoading={PJCustomerQueryLoading} 
+                                            PJCustomerQueryData={PJCustomerQueryData}
+                                            PJCustomerQueryError={PJCustomerQueryError}/>
+                                    </div>
+                                </Slide>
+                                <Slide direction="left" in={leaveHistoryOpen} mountOnEnter unmountOnExit>
+                                    <div>
+                                        <h1>LEAVE HISTORY</h1>
+                                    </div>
+                                </Slide>
+                            </Grid>
+                            <Grid item>
+                                <IconButton onClick={handleAnimation}>
+                                    <DoubleArrowIcon />
+                                </IconButton>
+                            </Grid>
+                        </Grid>
                     </AccordionDetails>
 
                     
