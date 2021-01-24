@@ -2,22 +2,19 @@ import React from 'react';
 
 import { PfDisability, PFfetchCustomerByIdQuery } from '../../../graphql/generated';
 
-import { PFAddressForm, PFDisabilityForm } from '../../Forms';
+import { PFDisabilityForm } from '../../Forms';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 
 import Accordion from '@material-ui/core/Accordion';
-import AccordionActions from '@material-ui/core/AccordionActions';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import Badge from '@material-ui/core/Badge';
+
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
 import Typography from '@material-ui/core/Typography';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
-import {PFgenerateDefaultName} from '../../../utilities/misc'
 
 
 const useStyles = makeStyles(

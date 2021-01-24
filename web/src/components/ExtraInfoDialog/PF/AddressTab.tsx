@@ -6,7 +6,6 @@ import { PFAddressForm } from '../../Forms';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 
 import Accordion from '@material-ui/core/Accordion';
-import AccordionActions from '@material-ui/core/AccordionActions';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Badge from '@material-ui/core/Badge';

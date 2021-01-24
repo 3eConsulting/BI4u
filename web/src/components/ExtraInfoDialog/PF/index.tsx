@@ -1,6 +1,6 @@
 import React from "react";
 
-import { usePFfetchCustomerByIdQuery, usePFfetchCustomersByIdQuery } from "../../../graphql/generated";
+import { usePFfetchCustomerByIdQuery } from "../../../graphql/generated";
 
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -72,7 +72,7 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
 
     const [tab, setTab] = React.useState<'addresses' | 'contacts' | 'disabilities' | 'professionalHistory'>('addresses')
 
-    const { data, loading, error } = usePFfetchCustomerByIdQuery({ variables: { PFCustomerID: PFcustomerID } })
+    const { data, loading, error, refetch } = usePFfetchCustomerByIdQuery({ variables: { PFCustomerID: PFcustomerID } })
 
     // TODO: Better Handle Fetch Error
     if (error) {
@@ -152,7 +152,7 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
                                     <DisabilityTab customer={data} />
                                 </TabPanel>}
                             <TabPanel value={tab} index={'professionalHistory'}>
-                                <ProfessionalHistoryTab customer={data} />
+                                <ProfessionalHistoryTab customer={data} refetch={refetch} />
                             </TabPanel>
                         </Grid>
 

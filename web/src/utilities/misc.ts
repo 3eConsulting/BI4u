@@ -1,4 +1,4 @@
-import { PFfetchCustomerByIdQuery, PJfetchCustomerByIdQuery } from "../graphql/generated";
+import { PFfetchCustomerByIdQuery } from "../graphql/generated";
 
 export const localeCurrency = (currency: number, locale: string = "pt-BR", currencySymbol: string = "BRL") => {
 	return currency.toLocaleString(locale, { style: "currency", currency: currencySymbol });

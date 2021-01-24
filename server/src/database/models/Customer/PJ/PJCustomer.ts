@@ -109,6 +109,7 @@ export class PJCustomerRepository extends Repository<PJCustomer> {
 	}
 
 	public async fetchCustomers(ids?: string[]) {
+		this.logger.silly(`Fetching PJCustomers ${ids ? `IDS - ${ids}` : ""}`);
 		if (!ids) {
 			return await this.createQueryBuilder("customer")
 				.leftJoinAndSelect("customer.PJextraInfo", "extraInfo")

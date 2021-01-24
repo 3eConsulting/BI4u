@@ -146,6 +146,7 @@ export class PFCustomerRepository extends Repository<PFCustomer> {
 	}
 
 	public async fetchCustomers(ids?: string[]) {
+		this.logger.silly(`Fetching PFCustomers ${ids ? `IDS - ${ids}` : ""}`);
 		if (!ids) {
 			return await this.createQueryBuilder("customer")
 				.leftJoinAndSelect("customer.PFextraInfo", "extraInfo")
@@ -155,6 +156,7 @@ export class PFCustomerRepository extends Repository<PFCustomer> {
 				.leftJoinAndSelect("extraInfo.professionalHistory", "professionalHistory")
 				.leftJoinAndSelect("professionalHistory.leaveHistory", "leaveHistory")
 				.leftJoinAndSelect("professionalHistory.company", "company")
+				.leftJoinAndSelect("company.PJextraInfo", "PJextraInfo")
 				.getMany();
 		} else {
 			return await this.createQueryBuilder("customer")
@@ -165,6 +167,7 @@ export class PFCustomerRepository extends Repository<PFCustomer> {
 				.leftJoinAndSelect("extraInfo.professionalHistory", "professionalHistory")
 				.leftJoinAndSelect("professionalHistory.leaveHistory", "leaveHistory")
 				.leftJoinAndSelect("professionalHistory.company", "company")
+				.leftJoinAndSelect("company.PJextraInfo", "PJextraInfo")
 				.where("customer.id in (:...ids)", { ids: ids })
 				.getMany();
 		}
@@ -179,6 +182,7 @@ export class PFCustomerRepository extends Repository<PFCustomer> {
 			.leftJoinAndSelect("extraInfo.professionalHistory", "professionalHistory")
 			.leftJoinAndSelect("professionalHistory.leaveHistory", "leaveHistory")
 			.leftJoinAndSelect("professionalHistory.company", "company")
+			.leftJoinAndSelect("company.PJextraInfo", "PJextraInfo")
 			.where("customer.id = :id", { id: id })
 			.getOne();
 	}

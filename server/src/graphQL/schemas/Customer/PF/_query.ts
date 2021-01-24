@@ -17,8 +17,10 @@ export const queryTypes = () => [Query];
 
 export const queryResolvers = {
 	Query: {
-		PFfetchCustomers: async (root, args: {}, context: ContextWithAuthentication, info: {}) =>
-			await PFCustomerRep.fetchCustomers(),
+		PFfetchCustomers: async (root, args: {}, context: ContextWithAuthentication, info: {}) => {
+			console.log("PFfetchCustomers Query Resolver");
+			return await PFCustomerRep.fetchCustomers();
+		},
 		PFfetchCustomersById: async (
 			root,
 			{ PFCustomerIDS }: { PFCustomerIDS: string[] },

@@ -5,37 +5,43 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { yupLocale } from '../../../utilities/misc';
 
+import PJCustomerSelect from '../../PJCustomerSelect';
+
+import Backdrop from '@material-ui/core/Backdrop';
+import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import Switch from '@material-ui/core/Switch';
+import TextField from '@material-ui/core/TextField';
+
 import {
-    FormControlLabel,
-    Grid,
-    Switch,
-    TextField,
-    Typography,
-    CircularProgress,
-    Backdrop,
     makeStyles,
     createStyles,
-    IconButton
-} from '@material-ui/core';
-import Button from '@material-ui/core/Button';
+} from '@material-ui/core/styles';
 
-import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
+import {
+    KeyboardDatePicker,
+    KeyboardDatePickerProps
+} from '@material-ui/pickers';
+import moment from 'moment';
 
-import { KeyboardDatePicker, KeyboardDatePickerProps } from '@material-ui/pickers';
-
-import { PfProfessionalHistory, usePFaddProfessionalHistoryMutation, usePFremoveProfessionalHistoryMutation, usePFupdateProfessionalHistoryMutation } from '../../../graphql/generated';
+import {
+    PfProfessionalHistory,
+    PJfetchCustomersQuery,
+    usePFaddProfessionalHistoryMutation,
+    usePFremoveProfessionalHistoryMutation,
+    usePFupdateProfessionalHistoryMutation
+} from '../../../graphql/generated';
+import { ApolloError } from '@apollo/client';
 
 import { useSnackbar } from 'notistack';
 
-import Cleave from 'cleave.js/react';
-
-import axios from 'axios';
-import moment from 'moment';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-
-
 const validationSchema = yup.object().shape({
     EPI: yup.boolean().required(yupLocale.required),
+    company: yup.string().required(yupLocale.required),
     office: yup.string()
         .max(40, yupLocale.string.messages.max)
         .required(yupLocale.required),
@@ -47,8 +53,7 @@ const validationSchema = yup.object().shape({
     admissionDate: yup.date()
         .required(yupLocale.required),
     startDate: yup.date(),
-    recisionDate: yup.date(),
-        
+    recisionDate: yup.date(),    
 });
 
 const useStyles = makeStyles(
@@ -93,82 +98,49 @@ const DatePickerField = (props: KeyboardDatePickerProps) => {
 const StartDateField = (
     props: KeyboardDatePickerProps & {control: any, initialData?: Partial<PfProfessionalHistory>}
 ) => {
+
+    let {initialData, ...restOfProps} = props;
+
     let admissionDate = useWatch({
-        control: props.control,
+        control: restOfProps.control,
         name: "admissionDate",
-        defaultValue: props.initialData ? props.initialData.admissionDate : null
+        defaultValue: initialData ? initialData.admissionDate : null
     })
 
-    return <DatePickerField {...props} minDate={admissionDate}/>;
+    return <DatePickerField {...restOfProps} minDate={admissionDate}/>;
 }
 
 const RecisionDateField = (
     props: KeyboardDatePickerProps & {control: any, initialData?: Partial<PfProfessionalHistory>}
 ) => {
+
+    let {initialData, ...restOfProps} = props;
+
     let startDate = useWatch({
-        control: props.control,
+        control: restOfProps.control,
         name: "startDate",
-        defaultValue: props.initialData ? props.initialData.startDate : null
+        defaultValue: initialData ? initialData.startDate : null
     })
 
-    return <DatePickerField {...props} minDate={startDate}/>;
+    return <DatePickerField {...restOfProps} minDate={startDate}/>;
 }
-
-const CleaveTextField = ({ inputRef, options, ...otherProps }: any) => (
-    <Cleave {...otherProps} htmlRef={inputRef} options={options} />
-);
-
-/* function CompanySelect({ initialData, error, helperText, inputRef }:
-    { initialData?: Partial<PfProfessionalHistory>, error: boolean, helperText?: string, inputRef: any }) {
-    const classes = useStyles();
-
-    return (
-        <Autocomplete
-            options={countryCodes.map(value => value.code) as string[]}
-            defaultValue={defaultValue}
-            classes={{
-                option: classes.option,
-            }}
-            autoHighlight
-            renderOption={(option) => (
-                <React.Fragment>
-                    <span>{countryToFlag(option)}</span>
-                    {option}
-                </React.Fragment>
-            )}
-            renderInput={(params) => (
-                <TextField variant="outlined"
-                    {...params}
-                    name="country"
-                    label="Pais"
-                    error={error}
-                    helperText={helperText}
-                    inputRef={inputRef}
-                    inputProps={{
-                        ...params.inputProps,
-                        autoComplete: 'new-password', // Disable AutoComplete and AutoFill
-                        maxLength: 2
-                    }}
-                />
-            )}
-        />
-    );
-} */
-
-
 export interface ProfessionalHistoryFormProps {
-    initialData?: Partial<PfProfessionalHistory>;
+    initialData?: Partial<PfProfessionalHistory>;    
     PFCustomerID: string;
+    PJCustomerQueryData?: PJfetchCustomersQuery;
+    PJCustomerQueryLoading: boolean;
+    PJCustomerQueryError?: ApolloError;
+    refetch(): any
 }
 
 export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
-    { initialData, PFCustomerID }
+    { initialData, PFCustomerID, PJCustomerQueryData, PJCustomerQueryLoading, PJCustomerQueryError, refetch}
 ) => {
 
     const [loading, setLoading] = React.useState(false)
 
     // Hooks
-    const { handleSubmit, errors, control } = useForm({ resolver: yupResolver(validationSchema) });
+    const { handleSubmit, errors, control, register } = useForm({ resolver: yupResolver(validationSchema) });
     const { enqueueSnackbar } = useSnackbar();
     
     const [addProfessionalHistory] = usePFaddProfessionalHistoryMutation();
@@ -177,7 +149,27 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
 
     const handleAddUpdate = async (data: any) => {
         try {
-            setLoading(true)
+            setLoading(true);
+
+            try {
+                if (PJCustomerQueryData) {
+                    let PJCustomer = PJCustomerQueryData.PJfetchCustomers.find(value =>
+                        value.tradingName === data.companyID
+                    );
+                    if (!PJCustomer) throw new Error("PJCustomer Not Found");
+                    data.companyID = PJCustomer.id;
+                } else {
+                    throw new Error("PJCustomer Query Unsuccessfull");
+                }
+            } catch (err) {
+                enqueueSnackbar(
+                    "Tivemos para Encontrar a Empresa Selecionada. Se o Problema Persistir, Entre em Contato com o Suporte.",
+                    {variant: "error"}
+                );
+                setLoading(false);
+                return;
+            }
+
             if (initialData && initialData.id) {
                 let updateResponse = await updateProfessionalHistory({variables: {
                     PFProfessionalHistoryID: initialData.id,
@@ -215,6 +207,7 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                 }});
                 
                 if (removeResponse.data) enqueueSnackbar("Endereço Removido com Sucesso !", {variant: "success"});
+                refetch();
             } else {
                 throw new Error("ID Not Found");
             }
@@ -266,8 +259,16 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                                     }}/>
                                 }/>
                     </Grid>
-                    <Grid item lg={1}><IconButton><DoubleArrowIcon className={classes.invertedIcon}/></IconButton></Grid>
-                    <Grid item lg={1}><IconButton><DoubleArrowIcon/></IconButton></Grid>
+                    <Grid item lg={1}>
+                        <IconButton disabled={true}>
+                            <DoubleArrowIcon className={classes.invertedIcon}/>
+                        </IconButton>
+                    </Grid>
+                    <Grid item lg={1}>
+                        <IconButton disabled={true}>
+                            <DoubleArrowIcon/>
+                        </IconButton>
+                    </Grid>
                     <Grid item lg={4}>
                         <Controller 
                             defaultValue={(initialData && initialData.office) ? initialData.office : ""}
@@ -286,20 +287,14 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                     </Grid>
 
                     <Grid item lg={4}>
-                        <Controller 
-                            defaultValue={(initialData && initialData.company) ?
-                                    initialData.company : null}
-                            name='company'
-                            control={control}
-                            label="Empresa"
-                            as={
-                                <TextField fullWidth select variant="outlined"
-                                    error={!!errors.company}
-                                    helperText={errors.company ? errors.company.message : ""}
-                                    inputProps={{
-                                        maxLength: 40
-                                    }}/>
-                                }/>
+                        <PJCustomerSelect name="companyID"
+                            queryData={PJCustomerQueryData}
+                            queryLoading={PJCustomerQueryLoading}
+                            queryError={PJCustomerQueryError}
+                            defaultValue={(initialData && initialData.company) ? initialData.company : undefined}
+                            error={!!errors.company}
+                            helperText={errors.company ? errors.company.message : ""}
+                            inputRef={register} />
                         
                     </Grid>
 
@@ -313,7 +308,13 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                             name='admissionDate'
                             control={control}
                             label="Data de Admissão"
-                            render={props => <DatePickerField label="Data de Admissão" value={props.value} onChange={props.onChange}/>} />
+                            render={props => <DatePickerField
+                                error={!!errors.admissionDate}
+                                helperText={errors.admissionDate ? "Data Invalida" : ""}
+                                label="Data de Admissão"
+                                value={props.value}
+                                onChange={props.onChange}/>
+                            } />
                     </Grid>
                     <Grid item lg={4}>
                         <Controller 
@@ -322,8 +323,14 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                             name='startDate'
                             control={control}
                             label="Data de Início"
-                            render={props => <StartDateField control={control} initialData={initialData}
-                                label="Data de Início" value={props.value} onChange={props.onChange}/>
+                            render={props => <StartDateField
+                                error={!!errors.startDate}
+                                helperText={errors.startDate ? "Data Invalida" : ""}
+                                label="Data de Início"
+                                value={props.value}
+                                onChange={props.onChange}
+                                control={control}
+                                initialData={initialData}/>
                                 } />
                     </Grid>
                     <Grid item lg={4}>
@@ -333,8 +340,14 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                             name='recisionDate'
                             control={control}
                             label="Data de Recisão"
-                            render={props => <RecisionDateField control={control} initialData={initialData}
-                                label="Data de Recisão" value={props.value} onChange={props.onChange}/>
+                            render={props => <RecisionDateField
+                                error={!!errors.startDate}
+                                helperText={errors.startDate ? "Data Invalida" : ""}
+                                label="Data de Recisão"
+                                value={props.value}
+                                onChange={props.onChange}
+                                control={control}
+                                initialData={initialData}/>
                                 } />
                     </Grid>
                 </Grid>

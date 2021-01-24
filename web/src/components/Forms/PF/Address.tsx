@@ -1,31 +1,34 @@
 import React from 'react'
 
 import * as yup from "yup";
-import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { yupLocale } from '../../../utilities/misc';
+import { Controller, useForm } from 'react-hook-form';
+
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import Backdrop from '@material-ui/core/Backdrop';
+import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
+import Switch from '@material-ui/core/Switch';
+import TextField from '@material-ui/core/TextField';
 
 import {
-    FormControlLabel,
-    Grid,
-    Switch,
-    TextField,
-    Typography,
-    CircularProgress,
-    Backdrop,
     makeStyles,
     createStyles
-} from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-
-import { usePFaddAddressMutation, usePFupdateAddressMutation, usePFremoveAddressesMutation } from '../../../graphql/generated';
+} from '@material-ui/core/styles';
 
 import { useSnackbar } from 'notistack';
 
 import Cleave from 'cleave.js/react';
-
 import countryCodes from '../../../utilities/countryCodes';
+
+import {
+    usePFaddAddressMutation,
+    usePFupdateAddressMutation,
+    usePFremoveAddressesMutation
+} from '../../../graphql/generated';
 
 import axios from 'axios';
 

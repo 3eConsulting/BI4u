@@ -1,23 +1,19 @@
 import React from 'react';
 
-import { PFfetchCustomerByIdQuery, PfProfessionalHistory } from '../../../graphql/generated';
+import { PFfetchCustomerByIdQuery, PfProfessionalHistory, usePJfetchCustomersQuery } from '../../../graphql/generated';
 
 import { PFProfessionalHistoryForm } from '../../Forms';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 
 import Accordion from '@material-ui/core/Accordion';
-import AccordionActions from '@material-ui/core/AccordionActions';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
 import Typography from '@material-ui/core/Typography';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
-import {PFgenerateDefaultName} from '../../../utilities/misc'
 
 
 const useStyles = makeStyles(
@@ -57,14 +53,25 @@ interface ProfessionalHistoryAccordionProps {
     professionalHistory?: Partial<PfProfessionalHistory>;
     setNewProfessionalHistoryFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;
     PFCustomerID: string;
+    refetch(): any;
+    
 }
 
-const AddressAccordion:React.FC<ProfessionalHistoryAccordionProps> = (
-    {professionalHistory, setNewProfessionalHistoryFormOpen, PFCustomerID}
+const ProfessionalHistoryAccordion:React.FC<ProfessionalHistoryAccordionProps> = (
+    {professionalHistory, setNewProfessionalHistoryFormOpen, PFCustomerID, refetch}
 ) => {
     
+    // CSS
+    const classes = useStyles();
+
     // State
     const [open, setOpen] = React.useState(professionalHistory ? false : true);
+
+    const {
+        data: PJCustomerQueryData,
+        loading: PJCustomerQueryLoading,
+        error: PJCustomerQueryError,
+    } = usePJfetchCustomersQuery();
 
     // Methods
     const handleChange = () => {
@@ -72,8 +79,6 @@ const AddressAccordion:React.FC<ProfessionalHistoryAccordionProps> = (
         if (!professionalHistory && setNewProfessionalHistoryFormOpen) setTimeout(() => setNewProfessionalHistoryFormOpen(false), 500);
     }
 
-    // CSS
-    const classes = useStyles();
     
     if (professionalHistory) {
         return (
@@ -106,7 +111,11 @@ const AddressAccordion:React.FC<ProfessionalHistoryAccordionProps> = (
                         </AccordionSummary>
 
                     <AccordionDetails>
-                        <PFProfessionalHistoryForm initialData={professionalHistory} PFCustomerID={PFCustomerID}/>
+                        <PFProfessionalHistoryForm refetch={refetch}
+                            initialData={professionalHistory} PFCustomerID={PFCustomerID}
+                            PJCustomerQueryLoading={PJCustomerQueryLoading} 
+                            PJCustomerQueryData={PJCustomerQueryData}
+                            PJCustomerQueryError={PJCustomerQueryError}/>
                     </AccordionDetails>
 
                     
@@ -127,7 +136,10 @@ const AddressAccordion:React.FC<ProfessionalHistoryAccordionProps> = (
                         </div>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <PFProfessionalHistoryForm PFCustomerID={PFCustomerID}/>
+                        <PFProfessionalHistoryForm PFCustomerID={PFCustomerID} refetch={refetch}
+                            PJCustomerQueryLoading={PJCustomerQueryLoading} 
+                            PJCustomerQueryData={PJCustomerQueryData}
+                            PJCustomerQueryError={PJCustomerQueryError}/>
                     </AccordionDetails>
             </Accordion>
         ); 
@@ -136,16 +148,17 @@ const AddressAccordion:React.FC<ProfessionalHistoryAccordionProps> = (
 
 export interface ProfessionalHistoryTabProps {
     customer?: PFfetchCustomerByIdQuery;
+    refetch(): any
 }
 
-export const ProfessionalHistoryTab: React.FC<ProfessionalHistoryTabProps> = ({customer}) => {
+export const ProfessionalHistoryTab: React.FC<ProfessionalHistoryTabProps> = ({customer, refetch}) => {
     
     // CSS
     const classes = useStyles();
 
     // State
     const [newProfesisonalHistoryFormOpen, setNewProfessionalHistoryFormOpen] = React.useState(false)
-    
+
     return (
         <Grid container direction='column'>
             <Grid item container direction='row-reverse' className={classes.actionRow}>
@@ -159,15 +172,15 @@ export const ProfessionalHistoryTab: React.FC<ProfessionalHistoryTabProps> = ({c
             </Grid>
             <Grid item>
                 {customer && newProfesisonalHistoryFormOpen &&
-                    <AddressAccordion 
+                    <ProfessionalHistoryAccordion refetch={refetch}
                         setNewProfessionalHistoryFormOpen={setNewProfessionalHistoryFormOpen}
                         PFCustomerID={customer.PFfetchCustomerById.id}
                         />}
                 {   customer && 
                     customer.PFfetchCustomerById.PFextraInfo.professionalHistory &&
                     customer.PFfetchCustomerById.PFextraInfo.professionalHistory.map(professionalHistory => 
-                        <AddressAccordion 
-                            key={professionalHistory.id}
+                        <ProfessionalHistoryAccordion
+                            key={professionalHistory.id} refetch={refetch}
                             professionalHistory={professionalHistory}
                             PFCustomerID={customer.PFfetchCustomerById.id}/>) 
                 }

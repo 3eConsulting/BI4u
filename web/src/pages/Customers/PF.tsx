@@ -10,7 +10,6 @@ import {
     PJfetchCustomersQuery,
     usePFfetchCustomersQuery,
     usePFremoveCustomersMutation,
-    usePFfetchCustomersByIdQuery,
 } from "../../graphql/generated";
 
 import {
@@ -29,8 +28,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
-import Grid, { GridProps } from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
