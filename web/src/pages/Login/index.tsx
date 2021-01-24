@@ -106,7 +106,7 @@ export const LoginPage = () => {
 						variant='outlined'
 						margin='normal'
 						id='username'
-						label='Username'
+						label='Nome de Usuário'
 						name='username'
 						autoComplete='username'
 					/>
