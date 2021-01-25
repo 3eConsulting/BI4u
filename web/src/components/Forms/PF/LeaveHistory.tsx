@@ -90,6 +90,21 @@ const DatePickerField = (props: KeyboardDatePickerProps) => {
         onChange={props.onChange}/>
 }
 
+const LeaveDateField = (
+    props: KeyboardDatePickerProps & {control: any, defaultMaxDate: any }
+) => {
+        
+    let {defaultMaxDate, ...restOfProps} = props
+    
+    let returnDate = useWatch({
+        control: props.control,
+        name: "returnDate",
+        defaultValue: defaultMaxDate
+    })
+
+    return <DatePickerField {...restOfProps} maxDate={returnDate ? returnDate : defaultMaxDate}/>;
+}
+
 const ReturnDateField = (
     props: KeyboardDatePickerProps & {control: any, defaultMinDate: any }
 ) => {
@@ -102,22 +117,7 @@ const ReturnDateField = (
         defaultValue: defaultMinDate
     })
 
-    return <DatePickerField {...restOfProps} minDate={leaveDate}/>;
-}
-
-const LeaveDateField = (
-    props: KeyboardDatePickerProps & {control: any, defaultMaxDate: any }
-) => {
-
-    let {defaultMaxDate, ...restOfProps} = props
-
-    let returnDate = useWatch({
-        control: props.control,
-        name: "returnDate",
-        defaultValue: defaultMaxDate
-    })
-
-    return <DatePickerField {...restOfProps} maxDate={returnDate}/>;
+    return <DatePickerField {...restOfProps} minDate={leaveDate ? leaveDate : defaultMinDate}/>;
 }
 
 export interface LeaveHistoryFormProps {
@@ -231,8 +231,8 @@ export const LeaveHistoryForm: React.FC<LeaveHistoryFormProps> = (
                                 value={props.value}
                                 onChange={props.onChange}
                                 control={control}
-                                defaultMaxDate={professionalHistory.recisionDate}
-                                minDate={professionalHistory.admissionDate}/>
+                                defaultMaxDate={new Date(professionalHistory.recisionDate).toISOString()}
+                                minDate={new Date(professionalHistory.admissionDate).toISOString()}/>
                             }/>
                     </Grid>
                     <Grid item lg={6}>

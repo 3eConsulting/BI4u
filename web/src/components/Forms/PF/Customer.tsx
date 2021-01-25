@@ -180,7 +180,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ initialData }) => {
                                         <EditIcon/>
                                     </IconButton>
                                 </Tooltip>
-                                <Tooltip title='Editar' placement='top' arrow>
+                                <Tooltip title='Excluir' placement='top' arrow>
                                     <IconButton onClick={handleRemove}>
                                         <DeleteForeverIcon/>
                                     </IconButton>
