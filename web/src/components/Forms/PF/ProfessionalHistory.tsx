@@ -17,6 +17,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
 
+import ClearIcon from '@material-ui/icons/Clear';
+
 import {
     makeStyles,
     createStyles,
@@ -41,7 +43,7 @@ import { useSnackbar } from 'notistack';
 
 const validationSchema = yup.object().shape({
     EPI: yup.boolean().required(yupLocale.required),
-    company: yup.string().required(yupLocale.required),
+    companyID: yup.string().required(yupLocale.required),
     office: yup.string()
         .max(40, yupLocale.string.messages.max)
         .required(yupLocale.required),
@@ -52,8 +54,8 @@ const validationSchema = yup.object().shape({
         .required(yupLocale.required),
     admissionDate: yup.date()
         .required(yupLocale.required),
-    startDate: yup.date(),
-    recisionDate: yup.date(),    
+    startDate: yup.date().nullable(),
+    recisionDate: yup.date().nullable(),
 });
 
 const useStyles = makeStyles(
@@ -83,7 +85,7 @@ const useStyles = makeStyles(
 );
 
 const DatePickerField = (props: KeyboardDatePickerProps) => {
-    return <KeyboardDatePicker {...props} autoOk
+    return <KeyboardDatePicker {...props} autoOk disableToolbar
         invalidDateMessage="Data Inválida"
         maxDateMessage={props.maxDateMessage ? props.maxDateMessage : "Não é uma Data Valida"}
         minDateMessage={props.minDateMessage ? props.minDateMessage : "Não é uma Data Valida"}
@@ -113,7 +115,6 @@ const StartDateField = (
 const RecisionDateField = (
     props: KeyboardDatePickerProps & {control: any, initialData?: Partial<PfProfessionalHistory>}
 ) => {
-
     let {initialData, ...restOfProps} = props;
 
     let startDate = useWatch({
@@ -122,7 +123,7 @@ const RecisionDateField = (
         defaultValue: initialData ? initialData.startDate : null
     })
 
-    return <DatePickerField {...restOfProps} minDate={startDate}/>;
+    return <DatePickerField {...restOfProps} minDate={startDate} />;
 }
 export interface ProfessionalHistoryFormProps {
     initialData?: Partial<PfProfessionalHistory>;    
@@ -140,7 +141,7 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
     const [loading, setLoading] = React.useState(false)
 
     // Hooks
-    const { handleSubmit, errors, control, register } = useForm({ resolver: yupResolver(validationSchema) });
+    const { handleSubmit, errors, control, register, setValue } = useForm({ resolver: yupResolver(validationSchema) });
     const { enqueueSnackbar } = useSnackbar();
     
     const [addProfessionalHistory] = usePFaddProfessionalHistoryMutation();
@@ -150,7 +151,6 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
     const handleAddUpdate = async (data: any) => {
         try {
             setLoading(true);
-
             try {
                 if (PJCustomerQueryData) {
                     let PJCustomer = PJCustomerQueryData.PJfetchCustomers.find(value =>
@@ -163,7 +163,7 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                 }
             } catch (err) {
                 enqueueSnackbar(
-                    "Tivemos para Encontrar a Empresa Selecionada. Se o Problema Persistir, Entre em Contato com o Suporte.",
+                    "Tivemos Dificuldades para Encontrar a Empresa Selecionada. Se o Problema Persistir, Entre em Contato com o Suporte.",
                     {variant: "error"}
                 );
                 setLoading(false);
@@ -222,7 +222,7 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
     const classes = useStyles();
 
     return (
-        <form id="PFProfessionalHistory" className={classes.root} onSubmit={handleSubmit((data) => handleAddUpdate(data))} autoComplete="false">
+        <form id="PFProfessionalHistory" className={classes.root} onSubmit={handleSubmit((data) => handleAddUpdate(data), (errors) => console.error(errors))} autoComplete="false">
             <Grid container direction='column' spacing={3}>
                 
                 <Grid item container direction='row-reverse' >
@@ -304,7 +304,7 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                     <Grid item lg={4}>
                         <Controller 
                             defaultValue={(initialData && initialData.admissionDate) ?
-                                moment.utc(new Date(initialData.admissionDate)).format('DD/MM/yyyy') : null}                            
+                                moment.utc((new Date(initialData.admissionDate)).toISOString()).format('DD/MM/yyyy') : null}                            
                             name='admissionDate'
                             control={control}
                             label="Data de Admissão"
@@ -319,7 +319,7 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                     <Grid item lg={4}>
                         <Controller 
                             defaultValue={(initialData && initialData.startDate) ?
-                                moment.utc(new Date(initialData.startDate)).format('yyyy-MM-DD') : null}                            
+                                moment.utc((new Date(initialData.startDate)).toISOString()).format('yyyy-MM-DD') : null}                            
                             name='startDate'
                             control={control}
                             label="Data de Início"
@@ -336,11 +336,18 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                     <Grid item lg={4}>
                         <Controller 
                             defaultValue={(initialData && initialData.recisionDate) ?
-                                moment.utc(new Date(initialData.recisionDate)).format('yyyy-MM-DD') : null}                            
+                                moment.utc((new Date(initialData.recisionDate)).toISOString()).format('yyyy-MM-DD') : null}                            
                             name='recisionDate'
                             control={control}
                             label="Data de Recisão"
                             render={props => <RecisionDateField
+                                InputProps={{
+                                    endAdornment: <React.Fragment>
+                                        <IconButton onClick={() => setValue('recisionDate', null)}>
+                                            <ClearIcon />
+                                        </IconButton>
+                                    </React.Fragment>
+                                }}
                                 error={!!errors.startDate}
                                 helperText={errors.startDate ? "Data Invalida" : ""}
                                 label="Data de Recisão"

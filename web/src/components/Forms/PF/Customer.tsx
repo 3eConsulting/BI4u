@@ -20,11 +20,11 @@ import {
 } from '@material-ui/core/styles';
 
 import CheckIcon from '@material-ui/icons/Check';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import EditIcon from '@material-ui/icons/Edit';
-import HotelIcon from '@material-ui/icons/Hotel';
+import LocalHospitalOutlinedIcon from '@material-ui/icons/LocalHospitalOutlined';
+import CheckBoxOutlinedIcon from '@material-ui/icons/CheckBoxOutlined';
 
 import {
     PfCustomer,
@@ -138,69 +138,72 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ initialData }) => {
     return (
         <form id="PFCustomer" className={classes.root} onSubmit={handleSubmit((data) => handleAddUpdate(data))} autoComplete="false">
             <Grid container direction='column' spacing={3}>
-                <Grid item container alignItems='center' justify='space-between' direction='row-reverse' spacing={1} >
+                <Grid item container alignItems='center' justify='space-between' direction='row-reverse' spacing={1}>
                     
-                    {editable ? <Grid item>
-                        <Controller
-                            name="isActive"
-                            control={control}
-                            defaultValue={(initialData && initialData.isActive) ? initialData.isActive : false}
-                            render={props => 
-                                <FormControlLabel label="Ativo" labelPlacement='start' disabled={!editable}
-                                    control={
-                                        <Switch color="primary" checked={props.value} size='small'
-                                            onChange={e => props.onChange(e.target.checked)} />
-                                    }
-                                />
-                            }
-                        />
-                    </Grid> : (initialData && initialData.isActive) ? <CheckBoxIcon color="primary"/> : ""}
-                    {editable ? <Grid item>
-                        <Controller
-                            name="hasDisability"
-                            control={control}
-                            defaultValue={(initialData && initialData.hasDisability) ? initialData.hasDisability : false}
-                            render={props =>
-                                <FormControlLabel label="Portador de Deficiência" labelPlacement='start' disabled={!editable}
-                                    control={
-                                        <Switch color="primary" checked={props.value} size='small'
-                                            onChange={e => props.onChange(e.target.checked)} />
-                                    }
-                                />
-                            }
-                        />
-                    </Grid> : (initialData && initialData.hasDisability) ? <HotelIcon color="primary"/> : ""}
-                    
-                    {!editable ? (
-                        <Grid item>
-                            <Tooltip title='Editar' placement='top' arrow>
-                                <IconButton onClick={() => setEditable(true)}>
-                                    <EditIcon/>
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title='Editar' placement='top' arrow>
-                                <IconButton onClick={handleRemove}>
-                                    <DeleteForeverIcon/>
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
-                    ) : (
-                        <Grid item>
-                            <Tooltip title='Cancelar' placement='top' arrow>
-                                <IconButton onClick={() => {
-                                    setEditable(false);
-                                    reset();
-                                }}>
-                                    <CloseIcon/>
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title='Salvar' placement='top' arrow>
-                                <IconButton type='submit'>
-                                    <CheckIcon/>
-                                </IconButton>
-                            </Tooltip>
-                        </Grid>
-                    )}
+                    <Grid item lg={8} container direction="row" justify="flex-end" spacing={1}>
+                        {editable ? <Grid item>
+                            <Controller
+                                name="isActive"
+                                control={control}
+                                defaultValue={(initialData && initialData.isActive) ? initialData.isActive : false}
+                                render={props => 
+                                    <FormControlLabel label="Ativo" labelPlacement='start' disabled={!editable}
+                                        control={
+                                            <Switch color="primary" checked={props.value} size='small'
+                                                onChange={e => props.onChange(e.target.checked)} />
+                                        }
+                                    />
+                                }
+                            />
+                        </Grid> : (initialData && initialData.isActive) ? <CheckBoxOutlinedIcon color="primary"/> : ""}
+                        {editable ? <Grid item>
+                            <Controller
+                                name="hasDisability"
+                                control={control}
+                                defaultValue={(initialData && initialData.hasDisability) ? initialData.hasDisability : false}
+                                render={props =>
+                                    <FormControlLabel label="Portador de Deficiência" labelPlacement='start' disabled={!editable}
+                                        control={
+                                            <Switch color="primary" checked={props.value} size='small'
+                                                onChange={e => props.onChange(e.target.checked)} />
+                                        }
+                                    />
+                                }
+                            />
+                        </Grid> : (initialData && initialData.hasDisability) ? <LocalHospitalOutlinedIcon color="primary"/> : ""}
+                    </Grid>
+                    <Grid item lg={4} container direction="row" justify="flex-start" spacing={1}>
+                        {!editable ? (
+                            <Grid item>
+                                <Tooltip title='Editar' placement='top' arrow>
+                                    <IconButton onClick={() => setEditable(true)}>
+                                        <EditIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Editar' placement='top' arrow>
+                                    <IconButton onClick={handleRemove}>
+                                        <DeleteForeverIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
+                        ) : (
+                            <Grid item>
+                                <Tooltip title='Cancelar' placement='top' arrow>
+                                    <IconButton onClick={() => {
+                                        setEditable(false);
+                                        reset();
+                                    }}>
+                                        <CloseIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title='Salvar' placement='top' arrow>
+                                    <IconButton type='submit'>
+                                        <CheckIcon/>
+                                    </IconButton>
+                                </Tooltip>
+                            </Grid>
+                        )}
+                    </Grid>
                 </Grid>
 
                 

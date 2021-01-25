@@ -10,13 +10,14 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
 import IconButton from '@material-ui/core/IconButton';
 import Slide from '@material-ui/core/Slide';
+import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
 
+import CachedOutlinedIcon from '@material-ui/icons/CachedOutlined';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import LeaveHistoryTab from './LeaveHistoryTab';
 
 const useStyles = makeStyles(
     (theme) => createStyles({
@@ -52,7 +53,7 @@ const useStyles = makeStyles(
 )
 
 interface ProfessionalHistoryAccordionProps {
-    professionalHistory?: Partial<PfProfessionalHistory>;
+    professionalHistory?: PfProfessionalHistory;
     setNewProfessionalHistoryFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;
     PFCustomerID: string;
     refetch(): any;
@@ -135,15 +136,19 @@ const ProfessionalHistoryAccordion:React.FC<ProfessionalHistoryAccordionProps> =
                                             PJCustomerQueryError={PJCustomerQueryError}/>
                                     </div>
                                 </Slide>
-                                <Slide direction="left" in={leaveHistoryOpen} mountOnEnter unmountOnExit>
+                                <Slide direction="right" in={leaveHistoryOpen} mountOnEnter unmountOnExit>
                                     <div>
-                                        <h1>LEAVE HISTORY</h1>
+                                        <LeaveHistoryTab customerID={PFCustomerID}
+                                            professionalHistory={professionalHistory}/>
                                     </div>
                                 </Slide>
                             </Grid>
                             <Grid item>
                                 <IconButton onClick={handleAnimation}>
-                                    <DoubleArrowIcon />
+                                    <Tooltip arrow
+                                        title={professionalHistoryOpen ? "Histórico de Ausência" : "Histórico Profissional"}>
+                                        <CachedOutlinedIcon />
+                                    </Tooltip>
                                 </IconButton>
                             </Grid>
                         </Grid>
