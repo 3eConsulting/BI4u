@@ -18,6 +18,7 @@ import logger from "../../../../../loaders/logger";
 import ErrorService from "../../../../../services/error";
 import { PFCustomer } from "../PFCustomer";
 import { PFAddress, PFAddressRepository } from "./PFAddress";
+import { PFAttachment } from "./PFAttachment";
 import { PFContact, PFContactRepository } from "./PFContact";
 import { PFDisability, PFDisabilityRepository } from "./PFDisability";
 import { PFProfessionalHistory } from "./PFProfessionalHistory";
@@ -52,6 +53,12 @@ export class PFExtraInfo extends BaseEntity {
 		cascade: true,
 	})
 	disabilities: PFDisability[];
+
+	@OneToMany((type) => PFDisability, (attachment) => attachment.PFextraInfo, {
+		eager: true,
+		cascade: true,
+	})
+	attachments: PFAttachment[];
 
 	@OneToOne((type) => PFCustomer, (customerUnit) => customerUnit.PFextraInfo, {
 		onDelete: "CASCADE",

@@ -29,6 +29,7 @@
     "cleave.js": "^1.6.0",
     "graphql": "^15.3.0",
     "jsonwebtoken": "^8.5.1",
+    "material-ui-dropzone": "^3.5.0",
     "moment": "^2.29.1",
     "notistack": "^1.0.1",
     "react": "^16.13.1",
