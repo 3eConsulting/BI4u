@@ -48,6 +48,14 @@ const useStyles = makeStyles(
         },
         accordionSubHeadingText: {
             color: theme.palette.text.disabled,
+        },
+        noCustomerFoundWarning: {
+            fontSize: '2rem',
+            textAlign: 'center',
+            color: '#afafaf',
+            padding: '5px',
+            marginTop: '20px',
+            marginBottom: '20px'
         }
     })
 )
@@ -154,11 +162,6 @@ export const AddressTab: React.FC<AddressTabProps> = ({customer}) => {
 
     // State
     const [newAddressFormOpen, setNewAddressFormOpen] = React.useState(false)
-
-    // Methods
-    
-
-    //const {data, loading, error} = usePFfetchCustomerByIdQuery({variables: {PFCustomerID: customerID}})
     
     return (
         <Grid container direction='column'>
@@ -188,6 +191,20 @@ export const AddressTab: React.FC<AddressTabProps> = ({customer}) => {
                             hasMain={customerHasMainAddress(customer)}
                             PFCustomerID={customer.PFfetchCustomerById.id}/>
                     ) 
+                }
+                {
+                    customer &&
+                    (!customer.PFfetchCustomerById.PFextraInfo.addresses || 
+                        customer.PFfetchCustomerById.PFextraInfo.addresses.length === 0) && (
+                            <React.Fragment>
+                                <Typography className={classes.noCustomerFoundWarning}>
+                                    Nenhum Endereço Encontrado.
+                                </Typography>
+                                <Typography className={classes.noCustomerFoundWarning}>
+                                    Para Adicionar Novos Endereços, Utilize o Atalho Acima !
+                                </Typography>
+                            </React.Fragment>
+                        )
                 }
             </Grid>
         </Grid>

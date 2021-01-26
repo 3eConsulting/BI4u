@@ -49,6 +49,14 @@ const useStyles = makeStyles(
         },
         accordionSubHeadingText: {
             color: theme.palette.text.disabled,
+        },
+        noCustomerFoundWarning: {
+            fontSize: '2rem',
+            textAlign: 'center',
+            color: '#afafaf',
+            padding: '5px',
+            marginTop: '20px',
+            marginBottom: '20px'
         }
     })
 )
@@ -192,6 +200,20 @@ export const ContactTab: React.FC<ContactTabProps> = ({customer}) => {
                             hasMain={customerHasMainContact(customer)}
                             PFCustomerID={customer.PFfetchCustomerById.id}/>
                     ) 
+                }
+                {
+                    customer &&
+                    (!customer.PFfetchCustomerById.PFextraInfo.contacts || 
+                        customer.PFfetchCustomerById.PFextraInfo.contacts.length === 0) && (
+                            <React.Fragment>
+                                <Typography className={classes.noCustomerFoundWarning}>
+                                    Nenhum Contato Encontrado.
+                                </Typography>
+                                <Typography className={classes.noCustomerFoundWarning}>
+                                    Para Adicionar Novos Contatos, Utilize o Atalho Acima !
+                                </Typography>
+                            </React.Fragment>
+                        )
                 }
             </Grid>
         </Grid>

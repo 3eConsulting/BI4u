@@ -48,6 +48,14 @@ const useStyles = makeStyles(
         },
         accordionSubHeadingText: {
             color: theme.palette.text.disabled,
+        },
+        noCustomerFoundWarning: {
+            fontSize: '2rem',
+            textAlign: 'center',
+            color: '#afafaf',
+            padding: '5px',
+            marginTop: '20px',
+            marginBottom: '20px'
         }
     })
 )
@@ -138,8 +146,7 @@ const ProfessionalHistoryAccordion:React.FC<ProfessionalHistoryAccordionProps> =
                                 </Slide>
                                 <Slide direction="right" in={leaveHistoryOpen} mountOnEnter unmountOnExit>
                                     <div>
-                                        <LeaveHistoryTab customerID={PFCustomerID}
-                                            professionalHistory={professionalHistory}/>
+                                        <LeaveHistoryTab professionalHistory={professionalHistory}/>
                                     </div>
                                 </Slide>
                             </Grid>
@@ -219,6 +226,20 @@ export const ProfessionalHistoryTab: React.FC<ProfessionalHistoryTabProps> = ({c
                             key={professionalHistory.id} refetch={refetch}
                             professionalHistory={professionalHistory}
                             PFCustomerID={customer.PFfetchCustomerById.id}/>) 
+                }
+                {
+                    customer && !newProfesisonalHistoryFormOpen &&
+                    (!customer.PFfetchCustomerById.PFextraInfo.professionalHistory || 
+                        customer.PFfetchCustomerById.PFextraInfo.professionalHistory.length === 0) && (
+                            <React.Fragment>
+                                <Typography className={classes.noCustomerFoundWarning}>
+                                    Nenhum Registro Profissional Encontrada.
+                                </Typography>
+                                <Typography className={classes.noCustomerFoundWarning}>
+                                    Para Adicionar Novos Registros Profissionais, Utilize o Atalho Acima !
+                                </Typography>
+                            </React.Fragment>
+                        )
                 }
             </Grid>
         </Grid>

@@ -149,7 +149,7 @@ export const LeaveHistoryForm: React.FC<LeaveHistoryFormProps> = (
                     ...data
                 }});
                 
-                if (updateResponse.data) enqueueSnackbar("Ausência Alterada com Sucesso !", {variant: "success"});
+                if (updateResponse.data) enqueueSnackbar("Afastamento Alterado com Sucesso !", {variant: "success"});
 
             } else {
                 let addResponse = await addLeaveHistory({variables: {
@@ -157,15 +157,15 @@ export const LeaveHistoryForm: React.FC<LeaveHistoryFormProps> = (
                     ...data
                 }});
                 
-                if (addResponse.data) enqueueSnackbar("Nova Ausência Adicionada com Sucesso !", {variant: "success"});
+                if (addResponse.data) enqueueSnackbar("Novo Afastamento Adicionado com Sucesso !", {variant: "success"});
             }
         } catch (err) {
             console.error(err);
             setLoading(false)
             if (initialData) {
-                enqueueSnackbar("Erro ao Atualizar Ausência. Tente Novamente em Alguns Minutos.", {variant: "error"});
+                enqueueSnackbar("Erro ao Atualizar Afastamento. Tente Novamente em Alguns Minutos.", {variant: "error"});
             } else {
-                enqueueSnackbar("Erro ao Adicionar Ausência. Tente Novamente em Alguns Minutos.", {variant: "error"});
+                enqueueSnackbar("Erro ao Adicionar Afastamento. Tente Novamente em Alguns Minutos.", {variant: "error"});
             }
         }
     }
@@ -179,7 +179,7 @@ export const LeaveHistoryForm: React.FC<LeaveHistoryFormProps> = (
                     PFLeaveHistoryIDS: [initialData.id],
                 }});
                 
-                if (removeResponse.data) enqueueSnackbar("Ausência Removida com Sucesso !", {variant: "success"});
+                if (removeResponse.data) enqueueSnackbar("Afastamento Removido com Sucesso !", {variant: "success"});
                 
             } else {
                 throw new Error("ID Not Found");
@@ -187,7 +187,7 @@ export const LeaveHistoryForm: React.FC<LeaveHistoryFormProps> = (
         } catch (err) {
             console.error(err);
             setLoading(false);
-            enqueueSnackbar("Erro ao Remover Ausência. Tente Novamente em Alguns Minutos.", {variant: "error"})   
+            enqueueSnackbar("Erro ao Remover Afastamento. Tente Novamente em Alguns Minutos.", {variant: "error"})   
         }
     }
 
@@ -205,7 +205,7 @@ export const LeaveHistoryForm: React.FC<LeaveHistoryFormProps> = (
                             control={control}
                             defaultValue={(initialData && initialData.isINSS) ? initialData.isINSS : false}
                             render={props =>
-                                <FormControlLabel label="INSS" labelPlacement='start'
+                                <FormControlLabel label="Afastamento INSS" labelPlacement='start'
                                     control={
                                         <Switch color="primary" checked={props.value} size='small'
                                             onChange={e => props.onChange(e.target.checked)} />

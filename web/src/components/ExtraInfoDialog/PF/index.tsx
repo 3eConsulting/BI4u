@@ -25,6 +25,7 @@ import AddressTab from "./AddressTab";
 import ContactTab from "./ContactTab"
 import DisabilityTab from "./DisabilityTab";
 import ProfessionalHistoryTab from "./ProfessionalHistoryTab";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -130,11 +131,15 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
                                 onChange={(event, newValue) => setTab(newValue)}
                                 indicatorColor="primary"
                                 textColor="secondary"
+                                centered
                                 variant="fullWidth">
 
                                 <Tab label='Endereços' value='addresses' />
                                 <Tab label='Contatos' value='contacts' />
-                                {customer.hasDisability && <Tab label='Condições Médicas' value='disabilities' />}
+                                <Tab label={
+                                    <Tooltip arrow title={customer.hasDisability ? "" : "Para Habilitar o Cadastro de Condições Médicas, Ative a Flag de Paciente com Deficiência Neste Cliente"} >
+                                        <span>Condições Médicas</span>
+                                    </Tooltip>} value='disabilities' disabled={!customer.hasDisability} style={{ pointerEvents: "auto" }}/>
                                 <Tab label='Historico Profissional' value='professionalHistory' />
 
                             </Tabs>
