@@ -82,11 +82,13 @@ export type Mutation = {
   PFaddDisability: PfCustomer;
   PFaddProfessionalHistory: PfCustomer;
   PFaddLeaveHistory: PfCustomer;
+  PFaddAttachment: PfCustomer;
   PFremoveAddresses: PfCustomer;
   PFremoveContacts: PfCustomer;
   PFremoveDisabilities: PfCustomer;
   PFremoveProfessionalHistory: PfCustomer;
   PFremoveLeaveHistory: PfCustomer;
+  PFremoveAttachments: PfCustomer;
   PFupdateAddress: PfCustomer;
   PFupdateContact: PfCustomer;
   PFupdateDisability: PfCustomer;
@@ -155,6 +157,12 @@ export type MutationPFaddLeaveHistoryArgs = {
 };
 
 
+export type MutationPFaddAttachmentArgs = {
+  PFCustomerID: Scalars['ID'];
+  PFAttachment: PfAttachmentInput;
+};
+
+
 export type MutationPFremoveAddressesArgs = {
   PFAddressIDS: Array<Scalars['ID']>;
 };
@@ -177,6 +185,11 @@ export type MutationPFremoveProfessionalHistoryArgs = {
 
 export type MutationPFremoveLeaveHistoryArgs = {
   PFLeaveHistoryIDS: Array<Scalars['ID']>;
+};
+
+
+export type MutationPFremoveAttachmentsArgs = {
+  PFAttachmentIDS: Array<Scalars['ID']>;
 };
 
 
@@ -309,6 +322,16 @@ export type PfExtraInfo = {
   addresses?: Maybe<Array<PfAddress>>;
   professionalHistory?: Maybe<Array<PfProfessionalHistory>>;
   disabilities?: Maybe<Array<PfDisability>>;
+  attachments?: Maybe<Array<PfAttachment>>;
+  createdAt: Scalars['Date'];
+  updatedAt: Scalars['Date'];
+};
+
+export type PfAttachment = {
+  __typename?: 'PFAttachment';
+  id: Scalars['ID'];
+  key: Scalars['String'];
+  comments?: Maybe<Scalars['String']>;
   createdAt: Scalars['Date'];
   updatedAt: Scalars['Date'];
 };
@@ -437,6 +460,11 @@ export type PfCustomerInput = {
   preferedPronoun: PreferedPronounEnum;
   isActive?: Maybe<Scalars['Boolean']>;
   hasDisability?: Maybe<Scalars['Boolean']>;
+};
+
+export type PfAttachmentInput = {
+  key: Scalars['String'];
+  comments?: Maybe<Scalars['String']>;
 };
 
 export type PfCustomerUpdateInput = {
@@ -674,6 +702,11 @@ export type SignInInput = {
   password: Scalars['String'];
 };
 
+export type PfAttachmentInfoFragment = (
+  { __typename?: 'PFAttachment' }
+  & Pick<PfAttachment, 'id' | 'key' | 'comments' | 'createdAt' | 'updatedAt'>
+);
+
 export type PfContactInfoFragment = (
   { __typename?: 'PFContact' }
   & Pick<PfContact, 'id' | 'name' | 'email' | 'phone' | 'mobilePhone' | 'isWhatsApp' | 'isMain' | 'createdAt' | 'updatedAt'>
@@ -721,6 +754,9 @@ export type PfExtraInfoInfoFragment = (
   )>>, professionalHistory?: Maybe<Array<(
     { __typename?: 'PFProfessionalHistory' }
     & PfProfessionalHistoryInfoFragment
+  )>>, attachments?: Maybe<Array<(
+    { __typename?: 'PFAttachment' }
+    & PfAttachmentInfoFragment
   )>> }
 );
 
@@ -932,6 +968,34 @@ export type PFremoveCustomersMutationVariables = Exact<{
 export type PFremoveCustomersMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'PFremoveCustomers'>
+);
+
+export type PFaddAttachmentMutationVariables = Exact<{
+  PFCustomerID: Scalars['ID'];
+  key: Scalars['String'];
+  comments?: Maybe<Scalars['String']>;
+}>;
+
+
+export type PFaddAttachmentMutation = (
+  { __typename?: 'Mutation' }
+  & { PFaddAttachment: (
+    { __typename?: 'PFCustomer' }
+    & PfCustomerInfoFragment
+  ) }
+);
+
+export type PFremoveAttachmentsMutationVariables = Exact<{
+  PFAttachmentIDS: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type PFremoveAttachmentsMutation = (
+  { __typename?: 'Mutation' }
+  & { PFremoveAttachments: (
+    { __typename?: 'PFCustomer' }
+    & PfCustomerInfoFragment
+  ) }
 );
 
 export type PFaddAddressMutationVariables = Exact<{
@@ -1526,6 +1590,15 @@ export const PfProfessionalHistoryInfoFragmentDoc = gql`
 }
     ${PfLeaveHistoryInfoFragmentDoc}
 ${PjCustomerInfoFragmentDoc}`;
+export const PfAttachmentInfoFragmentDoc = gql`
+    fragment PFAttachmentInfo on PFAttachment {
+  id
+  key
+  comments
+  createdAt
+  updatedAt
+}
+    `;
 export const PfExtraInfoInfoFragmentDoc = gql`
     fragment PFExtraInfoInfo on PFExtraInfo {
   id
@@ -1543,11 +1616,15 @@ export const PfExtraInfoInfoFragmentDoc = gql`
   professionalHistory {
     ...PFProfessionalHistoryInfo
   }
+  attachments {
+    ...PFAttachmentInfo
+  }
 }
     ${PfContactInfoFragmentDoc}
 ${PfAddressInfoFragmentDoc}
 ${PfDisabilityInfoFragmentDoc}
-${PfProfessionalHistoryInfoFragmentDoc}`;
+${PfProfessionalHistoryInfoFragmentDoc}
+${PfAttachmentInfoFragmentDoc}`;
 export const PfCustomerInfoFragmentDoc = gql`
     fragment PFCustomerInfo on PFCustomer {
   id
@@ -1975,6 +2052,75 @@ export function usePFremoveCustomersMutation(baseOptions?: Apollo.MutationHookOp
 export type PFremoveCustomersMutationHookResult = ReturnType<typeof usePFremoveCustomersMutation>;
 export type PFremoveCustomersMutationResult = Apollo.MutationResult<PFremoveCustomersMutation>;
 export type PFremoveCustomersMutationOptions = Apollo.BaseMutationOptions<PFremoveCustomersMutation, PFremoveCustomersMutationVariables>;
+export const PFaddAttachmentDocument = gql`
+    mutation PFaddAttachment($PFCustomerID: ID!, $key: String!, $comments: String) {
+  PFaddAttachment(
+    PFCustomerID: $PFCustomerID
+    PFAttachment: {key: $key, comments: $comments}
+  ) {
+    ...PFCustomerInfo
+  }
+}
+    ${PfCustomerInfoFragmentDoc}`;
+export type PFaddAttachmentMutationFn = Apollo.MutationFunction<PFaddAttachmentMutation, PFaddAttachmentMutationVariables>;
+
+/**
+ * __usePFaddAttachmentMutation__
+ *
+ * To run a mutation, you first call `usePFaddAttachmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePFaddAttachmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [pFaddAttachmentMutation, { data, loading, error }] = usePFaddAttachmentMutation({
+ *   variables: {
+ *      PFCustomerID: // value for 'PFCustomerID'
+ *      key: // value for 'key'
+ *      comments: // value for 'comments'
+ *   },
+ * });
+ */
+export function usePFaddAttachmentMutation(baseOptions?: Apollo.MutationHookOptions<PFaddAttachmentMutation, PFaddAttachmentMutationVariables>) {
+        return Apollo.useMutation<PFaddAttachmentMutation, PFaddAttachmentMutationVariables>(PFaddAttachmentDocument, baseOptions);
+      }
+export type PFaddAttachmentMutationHookResult = ReturnType<typeof usePFaddAttachmentMutation>;
+export type PFaddAttachmentMutationResult = Apollo.MutationResult<PFaddAttachmentMutation>;
+export type PFaddAttachmentMutationOptions = Apollo.BaseMutationOptions<PFaddAttachmentMutation, PFaddAttachmentMutationVariables>;
+export const PFremoveAttachmentsDocument = gql`
+    mutation PFremoveAttachments($PFAttachmentIDS: [ID!]!) {
+  PFremoveAttachments(PFAttachmentIDS: $PFAttachmentIDS) {
+    ...PFCustomerInfo
+  }
+}
+    ${PfCustomerInfoFragmentDoc}`;
+export type PFremoveAttachmentsMutationFn = Apollo.MutationFunction<PFremoveAttachmentsMutation, PFremoveAttachmentsMutationVariables>;
+
+/**
+ * __usePFremoveAttachmentsMutation__
+ *
+ * To run a mutation, you first call `usePFremoveAttachmentsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePFremoveAttachmentsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [pFremoveAttachmentsMutation, { data, loading, error }] = usePFremoveAttachmentsMutation({
+ *   variables: {
+ *      PFAttachmentIDS: // value for 'PFAttachmentIDS'
+ *   },
+ * });
+ */
+export function usePFremoveAttachmentsMutation(baseOptions?: Apollo.MutationHookOptions<PFremoveAttachmentsMutation, PFremoveAttachmentsMutationVariables>) {
+        return Apollo.useMutation<PFremoveAttachmentsMutation, PFremoveAttachmentsMutationVariables>(PFremoveAttachmentsDocument, baseOptions);
+      }
+export type PFremoveAttachmentsMutationHookResult = ReturnType<typeof usePFremoveAttachmentsMutation>;
+export type PFremoveAttachmentsMutationResult = Apollo.MutationResult<PFremoveAttachmentsMutation>;
+export type PFremoveAttachmentsMutationOptions = Apollo.BaseMutationOptions<PFremoveAttachmentsMutation, PFremoveAttachmentsMutationVariables>;
 export const PFaddAddressDocument = gql`
     mutation PFaddAddress($PFCustomerID: ID!, $name: String!, $CEP: String!, $country: String, $state: String!, $city: String!, $district: String, $street: String!, $number: String!, $complement: String, $isMain: Boolean) {
   PFaddAddress(

@@ -50,7 +50,7 @@ const Mutation = `
 		PFremoveDisabilities(PFDisabilityIDS: [ID!]!): PFCustomer!
 		PFremoveProfessionalHistory(PFProfessionalHistoryIDS: [ID!]!): PFCustomer!
 		PFremoveLeaveHistory(PFLeaveHistoryIDS: [ID!]!): PFCustomer!
-		PFremoveAttachment(PFAttachmentIDS: [ID!]!): PFCustomer!
+		PFremoveAttachments(PFAttachmentIDS: [ID!]!): PFCustomer!
 
 		PFupdateAddress(PFAddressID: ID!, PFAddress: PFAddressUpdateInput!): PFCustomer!
 		PFupdateContact(PFContactID: ID!, PFContact: PFContactUpdateInput!): PFCustomer!
@@ -477,7 +477,7 @@ export const mutationResolvers = {
 				throw new Error("Failed to Remove Leave History");
 			}
 		},
-		async PFremoveAttachment(
+		async PFremoveAttachments(
 			parent: unknown,
 			{ PFAttachmentIDS }: { PFAttachmentIDS: string[] },
 			context: ContextWithAuthentication,

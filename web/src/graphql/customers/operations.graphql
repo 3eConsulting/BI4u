@@ -2,6 +2,14 @@
 
 ### FRAGMENTS
 ## PF
+fragment PFAttachmentInfo on PFAttachment {
+	id
+	key
+	comments
+	createdAt
+	updatedAt
+}
+
 fragment PFContactInfo on PFContact {
 	id
 	name
@@ -81,6 +89,9 @@ fragment PFExtraInfoInfo on PFExtraInfo {
 	}
 	professionalHistory {
 		...PFProfessionalHistoryInfo
+	}
+	attachments {
+		...PFAttachmentInfo
 	}
 }
 
@@ -290,6 +301,19 @@ mutation PFupdateCustomer(
 
 mutation PFremoveCustomers($PFCustomerIDS: [ID!]!) {
 	PFremoveCustomers(PFCustomerIDS: $PFCustomerIDS)
+}
+
+# ATTACHMENTS
+mutation PFaddAttachment($PFCustomerID: ID!, $key: String!, $comments: String) {
+	PFaddAttachment(PFCustomerID: $PFCustomerID, PFAttachment: { key: $key, comments: $comments }) {
+		...PFCustomerInfo
+	}
+}
+
+mutation PFremoveAttachments($PFAttachmentIDS: [ID!]!) {
+	PFremoveAttachments(PFAttachmentIDS: $PFAttachmentIDS) {
+		...PFCustomerInfo
+	}
 }
 
 # ADDRESS
