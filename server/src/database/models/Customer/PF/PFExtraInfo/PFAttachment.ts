@@ -1,8 +1,6 @@
 import { PFExtraInfo } from "./index";
 import {
 	BaseEntity,
-	BeforeInsert,
-	BeforeUpdate,
 	Column,
 	CreateDateColumn,
 	Entity,
@@ -54,7 +52,7 @@ export class PFAttachment extends BaseEntity {
 }
 
 @EntityRepository(PFAttachment)
-export class PFDisabilityRepository extends Repository<PFAttachment> {
+export class PFAttachmentRepository extends Repository<PFAttachment> {
 	private readonly logger: Logger = logger;
 	private readonly errorGenerator = new ErrorService(this.logger);
 

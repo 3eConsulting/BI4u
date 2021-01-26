@@ -22,6 +22,15 @@ const Customer = `
         addresses: [PFAddress!]
         professionalHistory: [PFProfessionalHistory!]
         disabilities: [PFDisability!]
+        attachments: [PFAttachment!]
+        createdAt: Date!
+        updatedAt: Date!
+    }
+
+    type PFAttachment {
+        id: ID!
+        key: String!
+        comments: String
         createdAt: Date!
         updatedAt: Date!
     }

@@ -56,6 +56,11 @@ export interface PFCustomerInput {
 	hasDisability?: boolean;
 }
 
+export interface PFAttachmentInput {
+	key: string;
+	comments?: string;
+}
+
 const Input = `
     input PFDisabilityInput {
         CID: String!
@@ -111,6 +116,12 @@ const Input = `
         isActive: Boolean
         hasDisability: Boolean
     }
+
+    input PFAttachmentInput {
+        key: String!
+        comments: String
+    }
+
     input PFCustomerUpdateInput {
         firstName: String
         lastName: String

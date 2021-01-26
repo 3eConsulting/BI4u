@@ -54,7 +54,7 @@ export class PFExtraInfo extends BaseEntity {
 	})
 	disabilities: PFDisability[];
 
-	@OneToMany((type) => PFDisability, (attachment) => attachment.PFextraInfo, {
+	@OneToMany((type) => PFAttachment, (attachment) => attachment.PFextraInfo, {
 		eager: true,
 		cascade: true,
 	})

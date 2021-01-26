@@ -3,6 +3,7 @@ import { queryCIDByCode } from "../../../../database/data/CID10/query";
 import { PFCustomerRepository } from "../../../../database/models/Customer/PF/PFCustomer";
 import { PFExtraInfoRepository } from "../../../../database/models/Customer/PF/PFExtraInfo";
 import { PFAddressRepository } from "../../../../database/models/Customer/PF/PFExtraInfo/PFAddress";
+import { PFAttachmentRepository } from "../../../../database/models/Customer/PF/PFExtraInfo/PFAttachment";
 import { PFContactRepository } from "../../../../database/models/Customer/PF/PFExtraInfo/PFContact";
 import { PFDisabilityRepository } from "../../../../database/models/Customer/PF/PFExtraInfo/PFDisability";
 import { PFLeaveHistoryRepository } from "../../../../database/models/Customer/PF/PFExtraInfo/PFLeaveHistory";
@@ -13,6 +14,7 @@ import { ContextWithAuthentication } from "../../../../interfaces/authentication
 import { AuthenticationResolverMiddleware } from "../../../middleware";
 import {
 	PFAddressInput,
+	PFAttachmentInput,
 	PFContactInput,
 	PFCustomerInput,
 	PFDisabilityInput,
@@ -28,6 +30,7 @@ const PFContactRep = getCustomRepository(PFContactRepository);
 const PFDisabilityRep = getCustomRepository(PFDisabilityRepository);
 const PFProfessionalHistoryRep = getCustomRepository(PFProfessionalHistoryRepository);
 const PFLeaveHistoryRep = getCustomRepository(PFLeaveHistoryRepository);
+const PFAttachmentRep = getCustomRepository(PFAttachmentRepository);
 
 const Mutation = `
     extend type Mutation {
@@ -40,12 +43,14 @@ const Mutation = `
 		PFaddDisability(PFCustomerID: ID!, PFDisability: PFDisabilityInput!): PFCustomer!
 		PFaddProfessionalHistory(PFCustomerID: ID!, PFProfessionalHistory: PFProfessionalHistoryInput!): PFCustomer!
 		PFaddLeaveHistory(PFProfessionalHistoryID: ID!, PFLeaveHistory: PFLeaveHistoryInput!): PFCustomer!
+		PFaddAttachment(PFCustomerID: ID!, PFAttachment: PFAttachmentInput!): PFCustomer!
 
 		PFremoveAddresses(PFAddressIDS: [ID!]!): PFCustomer!
 		PFremoveContacts(PFContactIDS: [ID!]!): PFCustomer!
 		PFremoveDisabilities(PFDisabilityIDS: [ID!]!): PFCustomer!
 		PFremoveProfessionalHistory(PFProfessionalHistoryIDS: [ID!]!): PFCustomer!
 		PFremoveLeaveHistory(PFLeaveHistoryIDS: [ID!]!): PFCustomer!
+		PFremoveAttachment(PFAttachmentIDS: [ID!]!): PFCustomer!
 
 		PFupdateAddress(PFAddressID: ID!, PFAddress: PFAddressUpdateInput!): PFCustomer!
 		PFupdateContact(PFContactID: ID!, PFContact: PFContactUpdateInput!): PFCustomer!
@@ -290,6 +295,41 @@ export const mutationResolvers = {
 			let response = await PFCustomerRep.fetchCustomer(PFProfessionalHistory.PFextraInfo.customer.id);
 			return response;
 		},
+		async PFaddAttachment(
+			parent: unknown,
+			{
+				PFCustomerID,
+				PFAttachment,
+			}: {
+				PFCustomerID: string;
+				PFAttachment: PFAttachmentInput;
+			},
+			context: ContextWithAuthentication,
+			info: unknown
+		) {
+			// Check if Customer exists & fetch object
+			var customer = await PFCustomerRep.findOne(PFCustomerID, { relations: ["PFextraInfo"] });
+			if (!customer) throw new Error("Customer Not Found");
+
+			// Check if extraInfo exists, if not create it !
+			if (!customer.PFextraInfo) {
+				let extrainfo = await PFExtraInfoRep.validateAndCreate({});
+				customer.PFextraInfo = extrainfo;
+				await customer.save();
+				await customer.reload();
+			}
+
+			// Create address and link to extraInfo
+			let attachment = await PFAttachmentRep.validateAndCreate(PFAttachment);
+			attachment.PFextraInfo = customer.PFextraInfo;
+
+			// Save Address object
+			await attachment.save();
+
+			// Reload and return Customer.
+			let response = await PFCustomerRep.fetchCustomer(PFCustomerID);
+			return response;
+		},
 		// REMOVE
 		async PFremoveAddresses(
 			parent: unknown,
@@ -435,6 +475,34 @@ export const mutationResolvers = {
 				throw new Error("No Leave History Found");
 			} else {
 				throw new Error("Failed to Remove Leave History");
+			}
+		},
+		async PFremoveAttachment(
+			parent: unknown,
+			{ PFAttachmentIDS }: { PFAttachmentIDS: string[] },
+			context: ContextWithAuthentication,
+			info: unknown
+		) {
+			let customer = await PFCustomerRep.createQueryBuilder("c")
+				.leftJoinAndSelect("c.PFextraInfo", "extraInfo")
+				.leftJoinAndSelect("extraInfo.attachments", "attachments")
+				.where("attachments.id in (:...ids)", { ids: PFAttachmentIDS })
+				.getOne();
+
+			let [attachments, count] = await PFAttachmentRep.findAndCount({
+				where: { id: In(PFAttachmentIDS) },
+			});
+
+			let deleted = await PFAttachmentRep.remove(attachments);
+
+			if (deleted.length === count && count > 0) {
+				// Reload and return Customer.
+				let response = await PFCustomerRep.fetchCustomer(customer.id);
+				return response;
+			} else if (count === 0) {
+				throw new Error("No Attachment Found");
+			} else {
+				throw new Error("Failed to Remove Attachments");
 			}
 		},
 		// UPDATE
