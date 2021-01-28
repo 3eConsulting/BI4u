@@ -3,6 +3,7 @@ import path from "path";
 import { merge } from "lodash";
 import { ITypedef, makeExecutableSchema } from "graphql-tools";
 import { GraphQLScalarType, Kind } from "graphql";
+import { GraphQLUpload } from "apollo-server-express";
 
 /**
  *
@@ -32,6 +33,8 @@ export enum PreferedPronounEnum {
 
 const Query = `
 	scalar Date
+
+	scalar Upload
 	
 	scalar CPF
 	
@@ -93,6 +96,7 @@ let resolvers = {
 			return null;
 		},
 	}),
+	Upload: GraphQLUpload,
 	CPF: new GraphQLScalarType({
 		name: "CPF",
 		description: "Custom CPF Scalar Type",

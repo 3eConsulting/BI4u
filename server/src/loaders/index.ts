@@ -3,6 +3,7 @@ import { Container } from "typedi";
 //import path from 'path';
 //import fs from 'fs';
 
+import config from "../config";
 import databaseConnection from "./database";
 import middleware from "./middleware";
 import routes from "./routes";
@@ -10,6 +11,7 @@ import logger from "./logger";
 import events from "./events";
 import server from "./server";
 import apollo from "./apollo";
+import s3 from "./S3";
 
 const loggerInstance = logger;
 
@@ -66,6 +68,13 @@ export default async ({ expressApp }: { expressApp: Application }): Promise<void
 	 */
 	await routes({ app: expressApp });
 	loggerInstance.debug(`👍 Loaded Stand Alone Routes.`);
+
+	/**
+	 * Loading AWS S3 Configuration
+	 */
+	Container.set("s3", s3);
+	Container.set("s3Bucket", config.AWS.bucket);
+	loggerInstance.debug("👍 Injected S3 Bucket into Container");
 
 	/* 
         @TODO make Dynamic Container Set Work
