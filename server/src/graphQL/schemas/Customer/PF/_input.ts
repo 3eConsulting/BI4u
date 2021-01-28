@@ -1,3 +1,4 @@
+import { Stream } from "stream";
 import { GenderEnum, PreferedPronounEnum } from "../..";
 import { eGender, ePreferedPronoun } from "../../../../database/models/Customer/PF/PFCustomer";
 
@@ -58,6 +59,12 @@ export interface PFCustomerInput {
 
 export interface PFAttachmentInput {
 	key: string;
+	file: Promise<{
+		filename: string;
+		mimetype: string;
+		encoding: string;
+		stream?: Stream;
+	}>;
 	comments?: string;
 }
 
@@ -119,6 +126,7 @@ const Input = `
 
     input PFAttachmentInput {
         key: String!
+        file: Upload!
         comments: String
     }
 

@@ -23,6 +23,13 @@ export default async ({ expressApp }: { expressApp: Application }): Promise<void
 	loggerInstance.debug(`👍 Loaded logger.`);
 
 	/**
+	 * Loading AWS S3 Configuration
+	 */
+	Container.set("s3", s3);
+	Container.set("s3Bucket", config.AWS.bucket);
+	loggerInstance.debug("👍 Injected S3 Bucket into Container");
+
+	/**
 	 * Create the Database Connection
 	 */
 	await databaseConnection();
@@ -68,13 +75,6 @@ export default async ({ expressApp }: { expressApp: Application }): Promise<void
 	 */
 	await routes({ app: expressApp });
 	loggerInstance.debug(`👍 Loaded Stand Alone Routes.`);
-
-	/**
-	 * Loading AWS S3 Configuration
-	 */
-	Container.set("s3", s3);
-	Container.set("s3Bucket", config.AWS.bucket);
-	loggerInstance.debug("👍 Injected S3 Bucket into Container");
 
 	/* 
         @TODO make Dynamic Container Set Work

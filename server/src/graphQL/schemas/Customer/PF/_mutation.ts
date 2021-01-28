@@ -1,3 +1,4 @@
+import Container from "typedi";
 import { getCustomRepository, In } from "typeorm";
 import { queryCIDByCode } from "../../../../database/data/CID10/query";
 import { PFCustomerRepository } from "../../../../database/models/Customer/PF/PFCustomer";
@@ -10,6 +11,7 @@ import { PFLeaveHistoryRepository } from "../../../../database/models/Customer/P
 import { PFProfessionalHistoryRepository } from "../../../../database/models/Customer/PF/PFExtraInfo/PFProfessionalHistory";
 import { PJCustomerRepository } from "../../../../database/models/Customer/PJ/PJCustomer";
 import { ContextWithAuthentication } from "../../../../interfaces/authentication";
+import UtilitiesService from "../../../../services/utilities";
 
 import { AuthenticationResolverMiddleware } from "../../../middleware";
 import {
@@ -31,6 +33,7 @@ const PFDisabilityRep = getCustomRepository(PFDisabilityRepository);
 const PFProfessionalHistoryRep = getCustomRepository(PFProfessionalHistoryRepository);
 const PFLeaveHistoryRep = getCustomRepository(PFLeaveHistoryRepository);
 const PFAttachmentRep = getCustomRepository(PFAttachmentRepository);
+const utilitiesInstance = Container.get(UtilitiesService);
 
 const Mutation = `
     extend type Mutation {
@@ -319,8 +322,23 @@ export const mutationResolvers = {
 				await customer.reload();
 			}
 
-			// Create address and link to extraInfo
-			let attachment = await PFAttachmentRep.validateAndCreate(PFAttachment);
+			// Deestructure file from attachment object
+			let { file, ...attachmentInput } = PFAttachment;
+
+			// Treat file object
+			const { stream, filename, mimetype, encoding } = await file;
+
+			// Create an upload stream that goes to S3
+			const uploadStream = utilitiesInstance.createS3FileUploadStream(filename);
+
+			// Pipe the file data into the upload stream
+			stream.pipe(uploadStream.writeStream);
+
+			// Start the stream and await for result
+			const result = await uploadStream.promise;
+
+			// Create attachment and link to extraInfo
+			let attachment = await PFAttachmentRep.validateAndCreate(attachmentInput);
 			attachment.PFextraInfo = customer.PFextraInfo;
 
 			// Save Address object
