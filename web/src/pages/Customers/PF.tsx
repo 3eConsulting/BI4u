@@ -172,7 +172,7 @@ export const PFPage: React.FC<PFPageProps> = ({
                     { name: 'CPF', alignment: 'center', fetchedName: 'CPF', formatDate: false },
                     { name: 'Criado Em', alignment: 'center', fetchedName: 'createdAt', formatDate: true },
                     { name: 'Atualizado Em', alignment: 'center', fetchedName: 'updatedAt', formatDate: true },
-                ]} query={usePFfetchCustomersQuery} tabledProperty="PFfetchCustomers" rowCallback={(id) => history.push(`/customer/${id}`)}
+                ]} query={usePFfetchCustomersQuery} tabledProperty="PFfetchCustomers" rowCallback={(id) => history.push(`/customers/PF/${id}`)}
                     filterBy={['firstName', 'lastName', 'CPF']} rowsPerPage={6}
                     selected={PFselected} setSelected={setPFselected}
                     extraComponents={[

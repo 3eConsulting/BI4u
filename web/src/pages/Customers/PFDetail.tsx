@@ -1,40 +1,37 @@
 import React from "react";
 
-import { usePFfetchCustomerByIdQuery } from "../../../graphql/generated";
+import { usePFfetchCustomerByIdQuery } from "../../graphql/generated";
 
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
+
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
 import Divider from "@material-ui/core/Divider";
 import Grid, { GridProps } from "@material-ui/core/Grid";
-import IconButton from "@material-ui/core/IconButton";
-import Slide from "@material-ui/core/Slide";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import { TransitionProps } from "@material-ui/core/transitions";
-
-import CloseIcon from '@material-ui/icons/Close';
-
-import { PFCustomerForm } from "../../Forms";
-import AddressTab from "./AddressTab";
-import ContactTab from "./ContactTab"
-import DisabilityTab from "./DisabilityTab";
-import ProfessionalHistoryTab from "./ProfessionalHistoryTab";
 import Tooltip from "@material-ui/core/Tooltip";
-import AttachmentTab from "./AttachmentsTab";
+
+import { PFCustomerForm } from "../../components/Forms";
+import AddressTab from "../../components/ExtraInfoDialog/PF/AddressTab";
+import ContactTab from "../../components/ExtraInfoDialog/PF/ContactTab"
+import DisabilityTab from "../../components/ExtraInfoDialog/PF/DisabilityTab";
+import ProfessionalHistoryTab from "../../components/ExtraInfoDialog/PF/ProfessionalHistoryTab";
+import AttachmentTab from "../../components/ExtraInfoDialog/PF/AttachmentsTab";
+import { Redirect, useParams } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import Container from "@material-ui/core/Container";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
         root: {
-            overflowX: 'hidden'
+            maxWidth: '100%',
+            marginTop: theme.spacing(4),
+            maxHeight: `100%`,
         },
         extraInfoDialogContentRoot: {
-            height: `calc(100vh - ${theme.spacing(3)}px)`,
+            overflowY: 'hidden',
+            
         },
         tabPanel: {
             height: '75vh',
@@ -47,19 +44,10 @@ const useStyles = makeStyles((theme) =>
     })
 );
 
-// Dialog Transition Component
-const Transition = React.forwardRef(function Transition(
-    props: TransitionProps & { children?: React.ReactElement },
-    ref: React.Ref<unknown>,
-  ) {
-    return <Slide direction="up" ref={ref} {...props} />;
-  });
-
 // PF Customer Extra Info Dialog
-interface ExtraInfoDialogProps {
-    open: boolean;
-    onClose(): void;
-    PFcustomerID: string;
+interface PFDetailPageProps {
+    
+    
 }
 
 interface TabPanelProps extends GridProps {
@@ -68,12 +56,12 @@ interface TabPanelProps extends GridProps {
     value: any;
 }
 
-export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
-    open, PFcustomerID,
-    onClose,
-}) => {
+export const PFDetailPage: React.FC<PFDetailPageProps> = () => {
 
     const classes = useStyles();
+    const { enqueueSnackbar } = useSnackbar();
+    const { PFcustomerID } = useParams<{PFcustomerID: string}>();
+
 
     const [tab, setTab] = React.useState<'addresses' | 'contacts' | 'disabilities' | 'professionalHistory | attachments'>('addresses')
 
@@ -82,6 +70,8 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
     // TODO: Better Handle Fetch Error
     if (error) {
         console.error(error);
+        enqueueSnackbar("Cliente Não Encontrado !" , {variant: "error"});
+        return <Redirect to="/customers" />;
     }
 
     if (data) {
@@ -103,21 +93,8 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
 
 
     return (
-        <Dialog open={open} onClose={onClose} fullScreen TransitionComponent={Transition}>
-            <AppBar>
-                <Toolbar>
-                    <Grid container justify='space-between' alignItems='center'>
-                        <Typography variant="h6" color='secondary'>
-                            Informações Adicionais - {data && data.PFfetchCustomerById.firstName} {data && data.PFfetchCustomerById.lastName}
-                        </Typography>
-                        <IconButton edge="end" color="inherit" onClick={onClose} aria-label="close">
-                            <CloseIcon />
-                        </IconButton>
-                    </Grid>
-                </Toolbar>
-            </AppBar>
-
-            {data && customer && <DialogContent className={classes.root}>
+        <Container  className={classes.root}>
+            {data && customer && 
                 <Grid container direction='row' justify='center' spacing={3} className={classes.extraInfoDialogContentRoot}>
                     <Grid item xs={4} container direction='column' justify='space-evenly' spacing={3}>
                         <Grid item>
@@ -167,10 +144,10 @@ export const ExtraInfoDialog: React.FC<ExtraInfoDialogProps> = ({
 
                     </Grid>
                 </Grid>
-            </DialogContent>}
+            }
             <Backdrop open={loading} style={{ zIndex: 10 }}>
                 <CircularProgress size={75} color='secondary' />
             </Backdrop>
-        </Dialog>
+        </Container>
     );
 }
