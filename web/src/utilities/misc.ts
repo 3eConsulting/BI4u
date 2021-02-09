@@ -1,4 +1,4 @@
-import { PFfetchCustomerByIdQuery } from "../graphql/generated";
+import { PFfetchCustomerByIdQuery, PJfetchCustomerByIdQuery } from "../graphql/generated";
 
 export const localeCurrency = (currency: number, locale: string = "pt-BR", currencySymbol: string = "BRL") => {
 	return currency.toLocaleString(locale, { style: "currency", currency: currencySymbol });
@@ -13,7 +13,7 @@ export const yupLocale = {
 			length: ({ length }: { length: number }) => `Deve ter exatamente ${length} caractéres.`,
 			uppercase: "Deve ser em letras maiusculas.",
 			CPF: "Deve ser um CPF válido.",
-			CNPJ: "Deve ser um CPF válido.",
+			CNPJ: "Deve ser um CNPJ válido.",
 			CEP: "Deve ser um CEP válido.",
 			CID: "Deve ser um CID válido.",
 			phone: "Deve ser um Telefone Fixo válido.",
@@ -102,6 +102,28 @@ export const PFgenerateDefaultName = (customer: PFfetchCustomerByIdQuery, varian
 	if (defaultName.length > 36) defaultName = defaultName.substring(0, 36);
 
 	let addresses = customer.PFfetchCustomerById.PFextraInfo.addresses!;
+
+	let defaultNamedAddresses = addresses.filter((address) => {
+		return address.name && address.name.startsWith(defaultName);
+	});
+
+	if (defaultNamedAddresses.length > 0) {
+		return `${defaultName} (${defaultNamedAddresses.length})`;
+	} else {
+		return defaultName;
+	}
+};
+
+export const PJgenerateDefaultName = (customer: PJfetchCustomerByIdQuery, variant: "address" | "contact") => {
+	let defaultName = `${DefaultNamesVariantToLabel[variant]} de ${
+		customer.PJfetchCustomerById.tradingName && customer.PJfetchCustomerById.tradingName !== ""
+			? customer.PJfetchCustomerById.tradingName
+			: customer.PJfetchCustomerById.legalName
+	}`;
+
+	if (defaultName.length > 36) defaultName = defaultName.substring(0, 36);
+
+	let addresses = customer.PJfetchCustomerById.PJextraInfo.addresses!;
 
 	let defaultNamedAddresses = addresses.filter((address) => {
 		return address.name && address.name.startsWith(defaultName);

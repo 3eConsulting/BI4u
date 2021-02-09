@@ -41,17 +41,13 @@ export default class UtilitiesService {
 		}
 	}
 
-	public createS3FileUploadStream(key: string): S3UploadStream {
-		const pass = new stream.PassThrough();
-		return {
-			writeStream: pass,
-			promise: this.s3
-				.upload({
-					Bucket: this.s3Bucket,
-					Key: key,
-					Body: pass,
-				})
-				.promise(),
+	public getS3SignedURL(operation: "putObject", key: string) {
+		var params = {
+			Bucket: this.s3Bucket,
+			Key: key,
+			Expires: 15 * 60,
 		};
+
+		return this.s3.getSignedUrl(operation, params);
 	}
 }

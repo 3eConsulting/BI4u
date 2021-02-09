@@ -13,11 +13,14 @@ export type Scalars = {
   Float: number;
   /** Custom Date Scalar Type */
   Date: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
   /** Custom CPF Scalar Type */
   CPF: any;
   /** Custom CNPJ Scalar Type */
   CNPJ: any;
 };
+
 
 
 
@@ -464,6 +467,7 @@ export type PfCustomerInput = {
 
 export type PfAttachmentInput = {
   key: Scalars['String'];
+  file: Scalars['Upload'];
   comments?: Maybe<Scalars['String']>;
 };
 
@@ -972,6 +976,7 @@ export type PFremoveCustomersMutation = (
 
 export type PFaddAttachmentMutationVariables = Exact<{
   PFCustomerID: Scalars['ID'];
+  file: Scalars['Upload'];
   key: Scalars['String'];
   comments?: Maybe<Scalars['String']>;
 }>;
@@ -2053,10 +2058,10 @@ export type PFremoveCustomersMutationHookResult = ReturnType<typeof usePFremoveC
 export type PFremoveCustomersMutationResult = Apollo.MutationResult<PFremoveCustomersMutation>;
 export type PFremoveCustomersMutationOptions = Apollo.BaseMutationOptions<PFremoveCustomersMutation, PFremoveCustomersMutationVariables>;
 export const PFaddAttachmentDocument = gql`
-    mutation PFaddAttachment($PFCustomerID: ID!, $key: String!, $comments: String) {
+    mutation PFaddAttachment($PFCustomerID: ID!, $file: Upload!, $key: String!, $comments: String) {
   PFaddAttachment(
     PFCustomerID: $PFCustomerID
-    PFAttachment: {key: $key, comments: $comments}
+    PFAttachment: {key: $key, comments: $comments, file: $file}
   ) {
     ...PFCustomerInfo
   }
@@ -2078,6 +2083,7 @@ export type PFaddAttachmentMutationFn = Apollo.MutationFunction<PFaddAttachmentM
  * const [pFaddAttachmentMutation, { data, loading, error }] = usePFaddAttachmentMutation({
  *   variables: {
  *      PFCustomerID: // value for 'PFCustomerID'
+ *      file: // value for 'file'
  *      key: // value for 'key'
  *      comments: // value for 'comments'
  *   },

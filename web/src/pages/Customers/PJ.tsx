@@ -163,7 +163,7 @@ export const PJPage: React.FC<PJPageProps> = ({
                     {name: 'CNPJ', alignment: 'center', fetchedName: 'CNPJ', formatDate: false},
                     {name: 'Criado Em', alignment: 'center', fetchedName: 'createdAt', formatDate: true},
                     {name: 'Atualizado Em', alignment: 'center', fetchedName: 'updatedAt', formatDate: true},
-                ]} query={usePJfetchCustomersQuery} tabledProperty="PJfetchCustomers" rowCallback={(id) => history.push(`/customer/${id}`)}
+                ]} query={usePJfetchCustomersQuery} tabledProperty="PJfetchCustomers" rowCallback={(id) => history.push(`/customers/PJ/${id}`)}
                 filterBy={['tradingName', 'legalName', 'CNPJ']} rowsPerPage={6}
                 selected={selected} setSelected={setSelected} 
                 extraComponents={[

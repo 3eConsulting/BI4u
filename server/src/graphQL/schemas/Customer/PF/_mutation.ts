@@ -46,14 +46,12 @@ const Mutation = `
 		PFaddDisability(PFCustomerID: ID!, PFDisability: PFDisabilityInput!): PFCustomer!
 		PFaddProfessionalHistory(PFCustomerID: ID!, PFProfessionalHistory: PFProfessionalHistoryInput!): PFCustomer!
 		PFaddLeaveHistory(PFProfessionalHistoryID: ID!, PFLeaveHistory: PFLeaveHistoryInput!): PFCustomer!
-		PFaddAttachment(PFCustomerID: ID!, PFAttachment: PFAttachmentInput!): PFCustomer!
 
 		PFremoveAddresses(PFAddressIDS: [ID!]!): PFCustomer!
 		PFremoveContacts(PFContactIDS: [ID!]!): PFCustomer!
 		PFremoveDisabilities(PFDisabilityIDS: [ID!]!): PFCustomer!
 		PFremoveProfessionalHistory(PFProfessionalHistoryIDS: [ID!]!): PFCustomer!
 		PFremoveLeaveHistory(PFLeaveHistoryIDS: [ID!]!): PFCustomer!
-		PFremoveAttachments(PFAttachmentIDS: [ID!]!): PFCustomer!
 
 		PFupdateAddress(PFAddressID: ID!, PFAddress: PFAddressUpdateInput!): PFCustomer!
 		PFupdateContact(PFContactID: ID!, PFContact: PFContactUpdateInput!): PFCustomer!
@@ -62,6 +60,7 @@ const Mutation = `
 		PFupdateLeaveHistory(PFLeaveHistoryID: ID!, PFLeaveHistory: PFLeaveHistoryUpdateInput!): PFCustomer!
 
 		PFfetchDisabilityNomenclature(CID: String!): PFPossibleDisability
+		PFfetchAttachmentUploadSignedURL(PFCustomerID: ID!, PFAttachment: PFAttachmentInput!): String!
     }
 `;
 
@@ -298,56 +297,6 @@ export const mutationResolvers = {
 			let response = await PFCustomerRep.fetchCustomer(PFProfessionalHistory.PFextraInfo.customer.id);
 			return response;
 		},
-		async PFaddAttachment(
-			parent: unknown,
-			{
-				PFCustomerID,
-				PFAttachment,
-			}: {
-				PFCustomerID: string;
-				PFAttachment: PFAttachmentInput;
-			},
-			context: ContextWithAuthentication,
-			info: unknown
-		) {
-			// Check if Customer exists & fetch object
-			var customer = await PFCustomerRep.findOne(PFCustomerID, { relations: ["PFextraInfo"] });
-			if (!customer) throw new Error("Customer Not Found");
-
-			// Check if extraInfo exists, if not create it !
-			if (!customer.PFextraInfo) {
-				let extrainfo = await PFExtraInfoRep.validateAndCreate({});
-				customer.PFextraInfo = extrainfo;
-				await customer.save();
-				await customer.reload();
-			}
-
-			// Deestructure file from attachment object
-			let { file, ...attachmentInput } = PFAttachment;
-
-			// Treat file object
-			const { stream, filename, mimetype, encoding } = await file;
-
-			// Create an upload stream that goes to S3
-			const uploadStream = utilitiesInstance.createS3FileUploadStream(filename);
-
-			// Pipe the file data into the upload stream
-			stream.pipe(uploadStream.writeStream);
-
-			// Start the stream and await for result
-			const result = await uploadStream.promise;
-
-			// Create attachment and link to extraInfo
-			let attachment = await PFAttachmentRep.validateAndCreate(attachmentInput);
-			attachment.PFextraInfo = customer.PFextraInfo;
-
-			// Save Address object
-			await attachment.save();
-
-			// Reload and return Customer.
-			let response = await PFCustomerRep.fetchCustomer(PFCustomerID);
-			return response;
-		},
 		// REMOVE
 		async PFremoveAddresses(
 			parent: unknown,
@@ -493,34 +442,6 @@ export const mutationResolvers = {
 				throw new Error("No Leave History Found");
 			} else {
 				throw new Error("Failed to Remove Leave History");
-			}
-		},
-		async PFremoveAttachments(
-			parent: unknown,
-			{ PFAttachmentIDS }: { PFAttachmentIDS: string[] },
-			context: ContextWithAuthentication,
-			info: unknown
-		) {
-			let customer = await PFCustomerRep.createQueryBuilder("c")
-				.leftJoinAndSelect("c.PFextraInfo", "extraInfo")
-				.leftJoinAndSelect("extraInfo.attachments", "attachments")
-				.where("attachments.id in (:...ids)", { ids: PFAttachmentIDS })
-				.getOne();
-
-			let [attachments, count] = await PFAttachmentRep.findAndCount({
-				where: { id: In(PFAttachmentIDS) },
-			});
-
-			let deleted = await PFAttachmentRep.remove(attachments);
-
-			if (deleted.length === count && count > 0) {
-				// Reload and return Customer.
-				let response = await PFCustomerRep.fetchCustomer(customer.id);
-				return response;
-			} else if (count === 0) {
-				throw new Error("No Attachment Found");
-			} else {
-				throw new Error("Failed to Remove Attachments");
 			}
 		},
 		// UPDATE
@@ -703,6 +624,44 @@ export const mutationResolvers = {
 			let data = queryCIDByCode(CID);
 			if (data) return { CID: data.code, nomenclature: data.name };
 			return null;
+		},
+		async PFfetchAttachmentUploadSignedURL(
+			parent: unknown,
+			{
+				PFCustomerID,
+				PFAttachment,
+			}: {
+				PFCustomerID: string;
+				PFAttachment: PFAttachmentInput;
+			},
+			context: ContextWithAuthentication,
+			info: unknown
+		) {
+			// Check if Customer exists & fetch object
+			var customer = await PFCustomerRep.findOne(PFCustomerID, { relations: ["PFextraInfo"] });
+			if (!customer) throw new Error("Customer Not Found");
+
+			// Check if extraInfo exists, if not create it !
+			if (!customer.PFextraInfo) {
+				let extrainfo = await PFExtraInfoRep.validateAndCreate({});
+				customer.PFextraInfo = extrainfo;
+				await customer.save();
+				await customer.reload();
+			}
+
+			let fullPathKey = `attachments/PF/${PFAttachment.key}`;
+			return utilitiesInstance.getS3SignedURL("putObject", fullPathKey);
+
+			/* // Create attachment and link to extraInfo
+			let attachment = await PFAttachmentRep.validateAndCreate(PFAttachment);
+			attachment.PFextraInfo = customer.PFextraInfo;
+
+			// Save Address object
+			await attachment.save();
+
+			// Reload and return Customer.
+			let response = await PFCustomerRep.fetchCustomer(PFCustomerID);
+			return response; */
 		},
 	},
 };

@@ -5,6 +5,7 @@ import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache, Obse
 import { onError } from "@apollo/client/link/error";
 import { authFunctionalities, iAccessTokenPayload } from './utilities/authentication';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';
+import { createUploadLink } from 'apollo-upload-client'
 
 import Button from '@material-ui/core/Button';
 
@@ -50,6 +51,12 @@ const requestLink = new ApolloLink(
 		})
 );
 
+// WORKAROUND FOR TYPING ISSUES ON apollo-upload-client TYPE DEFINITIONS
+const uploadLink = (createUploadLink({
+	uri: `${process.env.REACT_APP_SEVER_BASE_URI}/api`,
+	credentials: 'include'
+}) as unknown) as ApolloLink;
+
 const client = new ApolloClient({
 	cache: apolloCache,
 	link: ApolloLink.from([
@@ -81,10 +88,12 @@ const client = new ApolloClient({
 			},
 		}),
 		requestLink,
-		new HttpLink({
+		uploadLink
+		/* new HttpLink({
 			uri: `${process.env.REACT_APP_SEVER_BASE_URI}/api`,
 			credentials: 'include',
-		}),
+		}), */
+		
 	]),
 	defaultOptions: {
 		watchQuery: {

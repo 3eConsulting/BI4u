@@ -304,8 +304,8 @@ mutation PFremoveCustomers($PFCustomerIDS: [ID!]!) {
 }
 
 # ATTACHMENTS
-mutation PFaddAttachment($PFCustomerID: ID!, $key: String!, $comments: String) {
-	PFaddAttachment(PFCustomerID: $PFCustomerID, PFAttachment: { key: $key, comments: $comments }) {
+mutation PFaddAttachment($PFCustomerID: ID!, $file: Upload!, $key: String!, $comments: String) {
+	PFaddAttachment(PFCustomerID: $PFCustomerID, PFAttachment: { key: $key, comments: $comments, file: $file }) {
 		...PFCustomerInfo
 	}
 }

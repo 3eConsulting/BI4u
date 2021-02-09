@@ -7,6 +7,7 @@ const s3 = new AWS.S3({
 		accessKeyId: config.AWS.accessKey,
 		secretAccessKey: config.AWS.secretKey,
 	},
+	signatureVersion: "v4",
 });
 
 export default s3;

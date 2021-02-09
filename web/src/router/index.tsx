@@ -5,6 +5,7 @@ import { Switch, Route, RouteProps, Redirect, useLocation } from 'react-router-d
 import { PrimarySearchAppBar } from '../components/NavBar';
 import { HomePage, LoginPage, CustomersPage } from '../pages';
 import { PFDetailPage } from '../pages/Customers/PFDetail';
+import { PJDetailPage } from '../pages/Customers/PJDetail';
 import { authFunctionalities } from '../utilities/authentication';
 
 interface AuthedRouteProps extends RouteProps {}
@@ -46,6 +47,9 @@ export const BaseRouter: React.FC<BaseRouterProps> = () => {
 		<Switch>
 			<PrivateOnlyRoute path='/Customers/PF/:PFcustomerID'>
 				<PFDetailPage />
+			</PrivateOnlyRoute>
+			<PrivateOnlyRoute path='/Customers/PJ/:PJcustomerID'>
+				<PJDetailPage />
 			</PrivateOnlyRoute>
 			<PrivateOnlyRoute path='/Customers'>
 				<CustomersPage />

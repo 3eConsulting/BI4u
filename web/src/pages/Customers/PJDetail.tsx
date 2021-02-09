@@ -1,6 +1,6 @@
 import React from "react";
 
-import { usePFfetchCustomerByIdQuery } from "../../graphql/generated";
+import { usePJfetchCustomerByIdQuery } from "../../graphql/generated";
 
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 
@@ -12,12 +12,11 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Tooltip from "@material-ui/core/Tooltip";
 
-import { PFCustomerForm } from "../../components/Forms";
-import AddressTab from "../../components/ExtraInfoDialog/PF/AddressTab";
-import ContactTab from "../../components/ExtraInfoDialog/PF/ContactTab"
-import DisabilityTab from "../../components/ExtraInfoDialog/PF/DisabilityTab";
-import ProfessionalHistoryTab from "../../components/ExtraInfoDialog/PF/ProfessionalHistoryTab";
-import AttachmentTab from "../../components/ExtraInfoDialog/PF/AttachmentsTab";
+import { PJCustomerForm } from "../../components/Forms";
+import AddressTab from "../../components/ExtraInfoDialog/PJ/AddressTab";
+import ContactTab from "../../components/ExtraInfoDialog/PJ/ContactTab"
+import ProfessionalHistoryTab from "../../components/ExtraInfoDialog/PJ/ProfessionalHistoryTab";
+import AttachmentTab from "../../components/ExtraInfoDialog/PJ/AttachmentsTab";
 import { Redirect, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import Container from "@material-ui/core/Container";
@@ -31,7 +30,7 @@ const useStyles = makeStyles((theme) =>
         },
         extraInfoDialogContentRoot: {
             overflowY: 'hidden',
-            
+            height: '100%',
         },
         tabPanel: {
             height: '75vh',
@@ -56,16 +55,16 @@ interface TabPanelProps extends GridProps {
     value: any;
 }
 
-export const PFDetailPage: React.FC<PFDetailPageProps> = () => {
+export const PJDetailPage: React.FC<PFDetailPageProps> = () => {
 
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
-    const { PFcustomerID } = useParams<{PFcustomerID: string}>();
+    const { PJcustomerID } = useParams<{PJcustomerID: string}>();
 
 
     const [tab, setTab] = React.useState<'addresses' | 'contacts' | 'disabilities' | 'professionalHistory | attachments'>('addresses')
 
-    const { data, loading, error, refetch } = usePFfetchCustomerByIdQuery({ variables: { PFCustomerID: PFcustomerID } })
+    const { data, loading, error, refetch } = usePJfetchCustomerByIdQuery({ variables: { PJCustomerID: PJcustomerID } })
 
     // TODO: Better Handle Fetch Error
     if (error) {
@@ -75,7 +74,7 @@ export const PFDetailPage: React.FC<PFDetailPageProps> = () => {
     }
 
     if (data) {
-        var { __typename, ...customer } = data.PFfetchCustomerById;
+        var { __typename, ...customer } = data.PJfetchCustomerById;
     }
 
     const TabPanel = (props: TabPanelProps) => {
@@ -99,7 +98,7 @@ export const PFDetailPage: React.FC<PFDetailPageProps> = () => {
                     <Grid item xs={4} container direction='column' justify='center' spacing={3}>
                         <h3 style={{textAlign: 'center'}}>Informações Básicas</h3>
                         <Grid item>
-                            <PFCustomerForm initialData={customer} />
+                            <PJCustomerForm  initialData={data.PJfetchCustomerById}/>
                         </Grid>
                     </Grid>
 
@@ -115,11 +114,8 @@ export const PFDetailPage: React.FC<PFDetailPageProps> = () => {
                                 variant="fullWidth">
                                 <Tab label='Endereços' value='addresses' />
                                 <Tab label='Contatos' value='contacts' />
-                                <Tab label={
-                                    <Tooltip arrow title={customer.hasDisability ? "" : "Para Habilitar o Cadastro de Condições Médicas, Ative a Flag de Paciente com Deficiência Neste Cliente"} >
-                                        <span>Condições Médicas</span>
-                                    </Tooltip>} value='disabilities' disabled={!customer.hasDisability} style={{ pointerEvents: "auto" }}/>
-                                <Tab label='Historico Profissional' value='professionalHistory' />
+                                <Tab label='Classificação de Atividades' value='activityClassification' />
+                                <Tab label='Funcionarios' value='employees' />
                                 <Tab label='Anexos' value='attachments' />
                             </Tabs>
                         </Grid>
@@ -129,17 +125,16 @@ export const PFDetailPage: React.FC<PFDetailPageProps> = () => {
                                 <AddressTab customer={data}/>
                             </TabPanel>
                             <TabPanel value={tab} index={'contacts'}>
-                                <ContactTab customer={data}/>
+                                {/* <ContactTab customer={data}/> */}
                             </TabPanel>
-                            {customer.hasDisability &&
-                                <TabPanel value={tab} index={'disabilities'}>
-                                    <DisabilityTab customer={data} />
-                                </TabPanel>}
-                            <TabPanel value={tab} index={'professionalHistory'}>
-                                <ProfessionalHistoryTab customer={data} refetch={refetch} />
+                            <TabPanel value={tab} index={'activityClassification'}>
+                                {/* <ProfessionalHistoryTab customer={data} refetch={refetch} /> */}
+                            </TabPanel>
+                            <TabPanel value={tab} index={'employees'}>
+                                {/* <ProfessionalHistoryTab customer={data} refetch={refetch} /> */}
                             </TabPanel>
                             <TabPanel value={tab} index={'attachments'}>
-                                <AttachmentTab customer={data} />
+                                {/* <AttachmentTab customer={data} /> */}
                             </TabPanel>
                         </Grid>
 
