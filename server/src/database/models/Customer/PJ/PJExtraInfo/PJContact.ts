@@ -30,12 +30,12 @@ export class PJContact extends BaseEntity {
 
 	@Column({ length: 13, nullable: true })
 	@IsPhoneNumber("BR", { message: "Invalid Phone Number" })
-	@Length(13, 13)
+	@Length(10, 11)
 	phone: string;
 
 	@Column({ length: 14, nullable: true })
 	@IsPhoneNumber("BR", { message: "Invalid Phone Number" })
-	@Length(14, 14)
+	@Length(11, 12)
 	mobilePhone: string;
 
 	@Column({ nullable: true })
