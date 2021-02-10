@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { PfDisability, PFfetchCustomerByIdQuery } from '../../../graphql/generated';
+import { PJfetchCustomerByIdQuery, PjActivityClassification } from '../../../graphql/generated';
 
-import { PFDisabilityForm } from '../../Forms';
+import { PJActivityClassificationForm } from '../../Forms';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 
 import Accordion from '@material-ui/core/Accordion';
@@ -53,30 +53,31 @@ const useStyles = makeStyles(
     })
 )
 
-interface DisabilityAccordionProps {
-    disability?: Partial<PfDisability>;
-    PFCustomerID: string;
-    setNewDisabilityFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-    hasCID(CID:string): boolean;
+interface ActivityClassificationAccordionProps {
+    activityClassification?: PjActivityClassification;
+    PJCustomerID: string;
+    setNewActivityClassificationFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+    hasMain: boolean;
+    hasCNAE(CNAE:string): boolean;
 }
 
-const DisabilityAccordion:React.FC<DisabilityAccordionProps> = (
-    {disability, setNewDisabilityFormOpen, hasCID, PFCustomerID}
+const ActivityClassificationAccordion:React.FC<ActivityClassificationAccordionProps> = (
+    {activityClassification, setNewActivityClassificationFormOpen, PJCustomerID, hasMain, hasCNAE}
 ) => {
     
     // State
-    const [open, setOpen] = React.useState(disability ? false : true);
+    const [open, setOpen] = React.useState(activityClassification ? false : true);
 
     // Methods
     const handleChange = () => {
         setOpen(!open);
-        if (!disability && setNewDisabilityFormOpen) setTimeout(() => setNewDisabilityFormOpen(false), 500);
+        if (!activityClassification && setNewActivityClassificationFormOpen) setTimeout(() => setNewActivityClassificationFormOpen(false), 500);
     }
 
     // CSS
     const classes = useStyles();
     
-    if (disability) {
+    if (activityClassification) {
         return (
             <Accordion 
                 className={classes.accordion}
@@ -87,12 +88,12 @@ const DisabilityAccordion:React.FC<DisabilityAccordionProps> = (
                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
                         <Grid container direction="row" alignContent="center" alignItems="center" spacing={3}>
                             <Grid item lg={8}>
-                                <Typography className={classes.accordionHeadingText}>{disability.nomenclature}</Typography>
+                                <Typography className={classes.accordionHeadingText}>{activityClassification.description}</Typography>
                             </Grid>
                             <Grid item>
                                 <Grid container alignContent="center" alignItems="center" spacing={3}>
                                     <Grid item className={classes.accordionSubHeadingText}>
-                                        {disability.CID}
+                                        {activityClassification.CNAE}
                                     </Grid>
                                 </Grid>
                             </Grid>
@@ -100,7 +101,8 @@ const DisabilityAccordion:React.FC<DisabilityAccordionProps> = (
                     </AccordionSummary>
 
                     <AccordionDetails>
-                        <PFDisabilityForm initialData={disability} PFCustomerID={PFCustomerID} hasCID={hasCID}/>
+                        <PJActivityClassificationForm hasMain={hasMain} hasCNAE={hasCNAE}
+                            initialData={activityClassification} PJCustomerID={PJCustomerID}/>
                     </AccordionDetails>
             </Accordion>
             
@@ -114,33 +116,45 @@ const DisabilityAccordion:React.FC<DisabilityAccordionProps> = (
                 elevation={4} 
                 TransitionProps={{ unmountOnExit: true }}>
                     <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
-                        <Typography className={classes.accordionHeadingText}>Nova Condição Médica</Typography>
+                        <Typography className={classes.accordionHeadingText}>Nova Classificação de Atividade</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <PFDisabilityForm initialData={disability} PFCustomerID={PFCustomerID} hasCID={hasCID}/>
+                        <PJActivityClassificationForm hasMain={hasMain} hasCNAE={hasCNAE}
+                            initialData={activityClassification} PJCustomerID={PJCustomerID}/>
                     </AccordionDetails>
             </Accordion>
         ); 
     }
 }
 
-export interface DisabilityTabProps {
-    customer?: PFfetchCustomerByIdQuery;
+export interface ActivityClassificationTabProps {
+    customer?: PJfetchCustomerByIdQuery;
 }
 
-export const DisabilityTab: React.FC<DisabilityTabProps> = ({customer}) => {
+const customerHasMainActivityClassification = (customer: PJfetchCustomerByIdQuery) => {
+    if (!customer || !customer.PJfetchCustomerById.PJextraInfo.activities) return false;
+    let activities = customer.PJfetchCustomerById.PJextraInfo.activities;
+
+    if (activities.findIndex(activity => activity.isMain === true) === -1) {
+        return false
+    } 
+
+    return true;
+}
+
+export const ActivityClassificationTab: React.FC<ActivityClassificationTabProps> = ({customer}) => {
     
     // CSS
     const classes = useStyles();
 
     // State
-    const [newDisabilityFormOpen, setNewDisabilityFormOpen] = React.useState(false)
-    
+    const [newActivityClassificationFormOpen, setNewActivityClassificationFormOpen] = React.useState(false);
+
     // Methods
-    const hasCID = (CID: string) => {
-        if (!customer || !customer.PFfetchCustomerById.PFextraInfo.disabilities) return false;
-        return customer.PFfetchCustomerById.PFextraInfo.disabilities.findIndex(
-            disability => disability.CID === CID
+    const hasCNAE = (CNAE: string) => {
+        if (!customer || !customer.PJfetchCustomerById.PJextraInfo.activities) return false;
+        return customer.PJfetchCustomerById.PJextraInfo.activities.findIndex(
+            activity => activity.CNAE === CNAE
         ) !== -1;
     }
 
@@ -151,34 +165,36 @@ export const DisabilityTab: React.FC<DisabilityTabProps> = ({customer}) => {
                     className={classes.button}
                     variant='contained'
                     color='primary'
-                    onClick={() => setNewDisabilityFormOpen(true)}>
-                        Adicionar Condição Médica
+                    onClick={() => setNewActivityClassificationFormOpen(true)}>
+                        Adicionar Classificação de Atividade
                 </Button>
             </Grid>
             <Grid item>
-                {customer && newDisabilityFormOpen &&
-                    <DisabilityAccordion hasCID={hasCID}
-                        setNewDisabilityFormOpen={setNewDisabilityFormOpen}
-                        PFCustomerID={customer.PFfetchCustomerById.id}/>}
+                {customer && newActivityClassificationFormOpen &&
+                    <ActivityClassificationAccordion hasMain={customerHasMainActivityClassification(customer)}
+                        hasCNAE={hasCNAE}
+                        setNewActivityClassificationFormOpen={setNewActivityClassificationFormOpen}
+                        PJCustomerID={customer.PJfetchCustomerById.id}/>}
                 {   customer && 
-                    customer.PFfetchCustomerById.PFextraInfo.disabilities &&
-                    customer.PFfetchCustomerById.PFextraInfo.disabilities.map(disability => 
-                        <DisabilityAccordion hasCID={hasCID}
-                            key={disability.id}
-                            disability={disability}
-                            PFCustomerID={customer.PFfetchCustomerById.id}/>
+                    customer.PJfetchCustomerById.PJextraInfo.activities &&
+                    customer.PJfetchCustomerById.PJextraInfo.activities.map(activityClassification => 
+                        <ActivityClassificationAccordion hasMain={customerHasMainActivityClassification(customer)}
+                            hasCNAE={hasCNAE}
+                            key={activityClassification.id}
+                            activityClassification={activityClassification}
+                            PJCustomerID={customer.PJfetchCustomerById.id}/>
                     ) 
                 }
                 {
                     customer &&
-                    (!customer.PFfetchCustomerById.PFextraInfo.disabilities || 
-                        customer.PFfetchCustomerById.PFextraInfo.disabilities.length === 0) && (
+                    (!customer.PJfetchCustomerById.PJextraInfo.activities || 
+                        customer.PJfetchCustomerById.PJextraInfo.activities.length === 0) && (
                             <React.Fragment>
                                 <Typography className={classes.noCustomerFoundWarning}>
-                                    Nenhuma Condição Médica Encontrada.
+                                    Nenhuma Classificação de Atividade Encontrada.
                                 </Typography>
                                 <Typography className={classes.noCustomerFoundWarning}>
-                                    Para Adicionar Novas Condições Médicas, Utilize o Atalho Acima !
+                                    Para Adicionar Novas Classificações de Atividade, Utilize o Atalho Acima !
                                 </Typography>
                             </React.Fragment>
                         )
@@ -188,4 +204,4 @@ export const DisabilityTab: React.FC<DisabilityTabProps> = ({customer}) => {
     );
 }
 
-export default DisabilityTab;
+export default ActivityClassificationTab;

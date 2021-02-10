@@ -1,7 +1,7 @@
 import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { BaseRouter } from './router';
-import { ApolloClient, ApolloLink, ApolloProvider, HttpLink, InMemoryCache, Observable } from '@apollo/client';
+import { ApolloClient, ApolloLink, ApolloProvider, InMemoryCache, Observable } from '@apollo/client';
 import { onError } from "@apollo/client/link/error";
 import { authFunctionalities, iAccessTokenPayload } from './utilities/authentication';
 import { TokenRefreshLink } from 'apollo-link-token-refresh';

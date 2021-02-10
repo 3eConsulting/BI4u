@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { PFfetchCustomerByIdQuery } from '../../../graphql/generated';
+import { PjContact, PJfetchCustomerByIdQuery } from '../../../graphql/generated';
 
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 
+import Badge from '@material-ui/core/Badge';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import Accordion from '@material-ui/core/Accordion';
@@ -15,9 +16,8 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import WhatsAppIcon from '@material-ui/icons/WhatsApp';
 
-import { PFContactForm } from '../../Forms';
-import { Badge } from '@material-ui/core';
-import { PFgenerateDefaultName } from '../../../utilities/misc';
+import { PJContactForm } from '../../Forms';
+import { PJgenerateDefaultName } from '../../../utilities/misc';
 
 
 const useStyles = makeStyles(
@@ -62,15 +62,15 @@ const useStyles = makeStyles(
 )
 
 interface ContactAccordionProps {
-    contact?: any;
+    contact?: PjContact;
     defaultName?: string;
     setNewContactFormOpen?: React.Dispatch<React.SetStateAction<boolean>>;
     hasMain: boolean
-    PFCustomerID: string;
+    PJCustomerID: string;
 }
 
 const ContactAccordion:React.FC<ContactAccordionProps> = (
-    {contact, defaultName, setNewContactFormOpen, hasMain, PFCustomerID}
+    {contact, defaultName, setNewContactFormOpen, hasMain, PJCustomerID}
 ) => {
     
     // State
@@ -100,7 +100,7 @@ const ContactAccordion:React.FC<ContactAccordionProps> = (
                                 <Grid item lg={4}>
                                     <Badge variant="dot" color="primary" invisible={!contact.isMain}>
                                         <Typography className={classes.accordionHeadingText}>
-                                            {contact.name}
+                                            {contact.contactEmployeeName}
                                         </Typography>
                                     </Badge>
                                 </Grid>
@@ -122,7 +122,7 @@ const ContactAccordion:React.FC<ContactAccordionProps> = (
                         </AccordionSummary>
 
                     <AccordionDetails>
-                        <PFContactForm initialData={contact} hasMain={hasMain} PFCustomerID={PFCustomerID}/>
+                        <PJContactForm initialData={contact} hasMain={hasMain} PJCustomerID={PJCustomerID}/>
                     </AccordionDetails>
 
                     
@@ -143,25 +143,25 @@ const ContactAccordion:React.FC<ContactAccordionProps> = (
                         </div>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <PFContactForm defaultName={defaultName} hasMain={hasMain} PFCustomerID={PFCustomerID}/>
+                        <PJContactForm defaultName={defaultName} hasMain={hasMain} PJCustomerID={PJCustomerID}/>
                     </AccordionDetails>
             </Accordion>
         ); 
     }
 }
 
-const customerHasMainContact = (customer: PFfetchCustomerByIdQuery) => {
-    if (!customer || !customer.PFfetchCustomerById.PFextraInfo.contacts) return false;
-    let contacts = customer.PFfetchCustomerById.PFextraInfo.contacts;
+const customerHasMainContact = (customer: PJfetchCustomerByIdQuery) => {
+    if (!customer || !customer.PJfetchCustomerById.PJextraInfo.contacts) return false;
+    let contacts = customer.PJfetchCustomerById.PJextraInfo.contacts;
 
-    if (contacts.findIndex(address => address.isMain === true) === -1) {
-        return false
+    if (contacts.findIndex(contact => contact.isMain === true) === -1) {
+        return false;
     } 
 
     return true;
 }
 export interface ContactTabProps {
-    customer?: PFfetchCustomerByIdQuery;
+    customer?: PJfetchCustomerByIdQuery;
 }
 
 export const ContactTab: React.FC<ContactTabProps> = ({customer}) => {
@@ -188,23 +188,23 @@ export const ContactTab: React.FC<ContactTabProps> = ({customer}) => {
                     <ContactAccordion 
                         setNewContactFormOpen={setNewAddressFormOpen} 
                         hasMain={customerHasMainContact(customer)}
-                        defaultName={PFgenerateDefaultName(customer, "contact")}
-                        PFCustomerID={customer.PFfetchCustomerById.id}
+                        defaultName={PJgenerateDefaultName(customer, "contact")}
+                        PJCustomerID={customer.PJfetchCustomerById.id}
                         />}
                 {   customer && 
-                    customer.PFfetchCustomerById.PFextraInfo.contacts &&
-                    customer.PFfetchCustomerById.PFextraInfo.contacts.map(contact => 
+                    customer.PJfetchCustomerById.PJextraInfo.contacts &&
+                    customer.PJfetchCustomerById.PJextraInfo.contacts.map(contact => 
                         <ContactAccordion 
                             key={contact.id}
                             contact={contact}
                             hasMain={customerHasMainContact(customer)}
-                            PFCustomerID={customer.PFfetchCustomerById.id}/>
+                            PJCustomerID={customer.PJfetchCustomerById.id}/>
                     ) 
                 }
                 {
                     customer &&
-                    (!customer.PFfetchCustomerById.PFextraInfo.contacts || 
-                        customer.PFfetchCustomerById.PFextraInfo.contacts.length === 0) && (
+                    (!customer.PJfetchCustomerById.PJextraInfo.contacts || 
+                        customer.PJfetchCustomerById.PJextraInfo.contacts.length === 0) && (
                             <React.Fragment>
                                 <Typography className={classes.noCustomerFoundWarning}>
                                     Nenhum Contato Encontrado.

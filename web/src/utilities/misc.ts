@@ -18,6 +18,8 @@ export const yupLocale = {
 			CID: "Deve ser um CID válido.",
 			phone: "Deve ser um Telefone Fixo válido.",
 			mobilePhone: "Deve ser um Telefone Celular válido.",
+			URL: "Deve ser uma URL válida",
+			CNAE: "Deve ser um CNAE válido",
 		},
 		validators: {
 			isCPF: (value?: string) => {

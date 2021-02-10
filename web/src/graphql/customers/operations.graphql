@@ -303,19 +303,6 @@ mutation PFremoveCustomers($PFCustomerIDS: [ID!]!) {
 	PFremoveCustomers(PFCustomerIDS: $PFCustomerIDS)
 }
 
-# ATTACHMENTS
-mutation PFaddAttachment($PFCustomerID: ID!, $file: Upload!, $key: String!, $comments: String) {
-	PFaddAttachment(PFCustomerID: $PFCustomerID, PFAttachment: { key: $key, comments: $comments, file: $file }) {
-		...PFCustomerInfo
-	}
-}
-
-mutation PFremoveAttachments($PFAttachmentIDS: [ID!]!) {
-	PFremoveAttachments(PFAttachmentIDS: $PFAttachmentIDS) {
-		...PFCustomerInfo
-	}
-}
-
 # ADDRESS
 mutation PFaddAddress(
 	$PFCustomerID: ID!
@@ -754,6 +741,12 @@ mutation PJupdateActivityClassification($PJActivityID: ID!, $CNAE: String!, $des
 		PJActivityID: $PJActivityID
 		PJActivityClassification: { CNAE: $CNAE, description: $description, isMain: $isMain }
 	) {
+		...PJCustomerInfo
+	}
+}
+
+mutation PJremoveActivityClassifications($PJActivityIDS: [ID!]!) {
+	PJremoveActivityClassifications(PJActivityIDS: $PJActivityIDS) {
 		...PJCustomerInfo
 	}
 }

@@ -6,20 +6,21 @@ import { createStyles, makeStyles } from "@material-ui/core/styles";
 
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Container from "@material-ui/core/Container";
 import Divider from "@material-ui/core/Divider";
 import Grid, { GridProps } from "@material-ui/core/Grid";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Tooltip from "@material-ui/core/Tooltip";
 
 import { PJCustomerForm } from "../../components/Forms";
 import AddressTab from "../../components/ExtraInfoDialog/PJ/AddressTab";
 import ContactTab from "../../components/ExtraInfoDialog/PJ/ContactTab"
-import ProfessionalHistoryTab from "../../components/ExtraInfoDialog/PJ/ProfessionalHistoryTab";
+import ActivityClassificationTab from "../../components/ExtraInfoDialog/PJ/ActivityClassificationTab";
 import AttachmentTab from "../../components/ExtraInfoDialog/PJ/AttachmentsTab";
+
 import { Redirect, useParams } from "react-router-dom";
+
 import { useSnackbar } from "notistack";
-import Container from "@material-ui/core/Container";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -43,8 +44,8 @@ const useStyles = makeStyles((theme) =>
     })
 );
 
-// PF Customer Extra Info Dialog
-interface PFDetailPageProps {
+// PJ Customer Extra Info Dialog
+interface PJDetailPageProps {
     
     
 }
@@ -55,7 +56,7 @@ interface TabPanelProps extends GridProps {
     value: any;
 }
 
-export const PJDetailPage: React.FC<PFDetailPageProps> = () => {
+export const PJDetailPage: React.FC<PJDetailPageProps> = () => {
 
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
@@ -64,7 +65,7 @@ export const PJDetailPage: React.FC<PFDetailPageProps> = () => {
 
     const [tab, setTab] = React.useState<'addresses' | 'contacts' | 'disabilities' | 'professionalHistory | attachments'>('addresses')
 
-    const { data, loading, error, refetch } = usePJfetchCustomerByIdQuery({ variables: { PJCustomerID: PJcustomerID } })
+    const { data, loading, error } = usePJfetchCustomerByIdQuery({ variables: { PJCustomerID: PJcustomerID } })
 
     // TODO: Better Handle Fetch Error
     if (error) {
@@ -114,7 +115,7 @@ export const PJDetailPage: React.FC<PFDetailPageProps> = () => {
                                 variant="fullWidth">
                                 <Tab label='Endereços' value='addresses' />
                                 <Tab label='Contatos' value='contacts' />
-                                <Tab label='Classificação de Atividades' value='activityClassification' />
+                                <Tab label='Classificação de Atividades' value='activityClassification'/>
                                 <Tab label='Funcionarios' value='employees' />
                                 <Tab label='Anexos' value='attachments' />
                             </Tabs>
@@ -125,10 +126,10 @@ export const PJDetailPage: React.FC<PFDetailPageProps> = () => {
                                 <AddressTab customer={data}/>
                             </TabPanel>
                             <TabPanel value={tab} index={'contacts'}>
-                                {/* <ContactTab customer={data}/> */}
+                                <ContactTab customer={data}/>
                             </TabPanel>
                             <TabPanel value={tab} index={'activityClassification'}>
-                                {/* <ProfessionalHistoryTab customer={data} refetch={refetch} /> */}
+                                <ActivityClassificationTab customer={data} />
                             </TabPanel>
                             <TabPanel value={tab} index={'employees'}>
                                 {/* <ProfessionalHistoryTab customer={data} refetch={refetch} /> */}

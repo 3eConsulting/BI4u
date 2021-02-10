@@ -85,19 +85,18 @@ export type Mutation = {
   PFaddDisability: PfCustomer;
   PFaddProfessionalHistory: PfCustomer;
   PFaddLeaveHistory: PfCustomer;
-  PFaddAttachment: PfCustomer;
   PFremoveAddresses: PfCustomer;
   PFremoveContacts: PfCustomer;
   PFremoveDisabilities: PfCustomer;
   PFremoveProfessionalHistory: PfCustomer;
   PFremoveLeaveHistory: PfCustomer;
-  PFremoveAttachments: PfCustomer;
   PFupdateAddress: PfCustomer;
   PFupdateContact: PfCustomer;
   PFupdateDisability: PfCustomer;
   PFupdateProfessionalHistory: PfCustomer;
   PFupdateLeaveHistory: PfCustomer;
   PFfetchDisabilityNomenclature?: Maybe<PfPossibleDisability>;
+  PFfetchAttachmentUploadSignedURL: Scalars['String'];
   PJaddCustomer: PjCustomer;
   PJremoveCustomers: Scalars['Boolean'];
   PJupdateCustomer: PjCustomer;
@@ -160,12 +159,6 @@ export type MutationPFaddLeaveHistoryArgs = {
 };
 
 
-export type MutationPFaddAttachmentArgs = {
-  PFCustomerID: Scalars['ID'];
-  PFAttachment: PfAttachmentInput;
-};
-
-
 export type MutationPFremoveAddressesArgs = {
   PFAddressIDS: Array<Scalars['ID']>;
 };
@@ -188,11 +181,6 @@ export type MutationPFremoveProfessionalHistoryArgs = {
 
 export type MutationPFremoveLeaveHistoryArgs = {
   PFLeaveHistoryIDS: Array<Scalars['ID']>;
-};
-
-
-export type MutationPFremoveAttachmentsArgs = {
-  PFAttachmentIDS: Array<Scalars['ID']>;
 };
 
 
@@ -228,6 +216,12 @@ export type MutationPFupdateLeaveHistoryArgs = {
 
 export type MutationPFfetchDisabilityNomenclatureArgs = {
   CID: Scalars['String'];
+};
+
+
+export type MutationPFfetchAttachmentUploadSignedUrlArgs = {
+  PFCustomerID: Scalars['ID'];
+  PFAttachment: PfAttachmentInput;
 };
 
 
@@ -467,7 +461,6 @@ export type PfCustomerInput = {
 
 export type PfAttachmentInput = {
   key: Scalars['String'];
-  file: Scalars['Upload'];
   comments?: Maybe<Scalars['String']>;
 };
 
@@ -974,35 +967,6 @@ export type PFremoveCustomersMutation = (
   & Pick<Mutation, 'PFremoveCustomers'>
 );
 
-export type PFaddAttachmentMutationVariables = Exact<{
-  PFCustomerID: Scalars['ID'];
-  file: Scalars['Upload'];
-  key: Scalars['String'];
-  comments?: Maybe<Scalars['String']>;
-}>;
-
-
-export type PFaddAttachmentMutation = (
-  { __typename?: 'Mutation' }
-  & { PFaddAttachment: (
-    { __typename?: 'PFCustomer' }
-    & PfCustomerInfoFragment
-  ) }
-);
-
-export type PFremoveAttachmentsMutationVariables = Exact<{
-  PFAttachmentIDS: Array<Scalars['ID']> | Scalars['ID'];
-}>;
-
-
-export type PFremoveAttachmentsMutation = (
-  { __typename?: 'Mutation' }
-  & { PFremoveAttachments: (
-    { __typename?: 'PFCustomer' }
-    & PfCustomerInfoFragment
-  ) }
-);
-
 export type PFaddAddressMutationVariables = Exact<{
   PFCustomerID: Scalars['ID'];
   name: Scalars['String'];
@@ -1446,6 +1410,19 @@ export type PJupdateActivityClassificationMutationVariables = Exact<{
 export type PJupdateActivityClassificationMutation = (
   { __typename?: 'Mutation' }
   & { PJupdateActivityClassification: (
+    { __typename?: 'PJCustomer' }
+    & PjCustomerInfoFragment
+  ) }
+);
+
+export type PJremoveActivityClassificationsMutationVariables = Exact<{
+  PJActivityIDS: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type PJremoveActivityClassificationsMutation = (
+  { __typename?: 'Mutation' }
+  & { PJremoveActivityClassifications: (
     { __typename?: 'PJCustomer' }
     & PjCustomerInfoFragment
   ) }
@@ -2057,76 +2034,6 @@ export function usePFremoveCustomersMutation(baseOptions?: Apollo.MutationHookOp
 export type PFremoveCustomersMutationHookResult = ReturnType<typeof usePFremoveCustomersMutation>;
 export type PFremoveCustomersMutationResult = Apollo.MutationResult<PFremoveCustomersMutation>;
 export type PFremoveCustomersMutationOptions = Apollo.BaseMutationOptions<PFremoveCustomersMutation, PFremoveCustomersMutationVariables>;
-export const PFaddAttachmentDocument = gql`
-    mutation PFaddAttachment($PFCustomerID: ID!, $file: Upload!, $key: String!, $comments: String) {
-  PFaddAttachment(
-    PFCustomerID: $PFCustomerID
-    PFAttachment: {key: $key, comments: $comments, file: $file}
-  ) {
-    ...PFCustomerInfo
-  }
-}
-    ${PfCustomerInfoFragmentDoc}`;
-export type PFaddAttachmentMutationFn = Apollo.MutationFunction<PFaddAttachmentMutation, PFaddAttachmentMutationVariables>;
-
-/**
- * __usePFaddAttachmentMutation__
- *
- * To run a mutation, you first call `usePFaddAttachmentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `usePFaddAttachmentMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [pFaddAttachmentMutation, { data, loading, error }] = usePFaddAttachmentMutation({
- *   variables: {
- *      PFCustomerID: // value for 'PFCustomerID'
- *      file: // value for 'file'
- *      key: // value for 'key'
- *      comments: // value for 'comments'
- *   },
- * });
- */
-export function usePFaddAttachmentMutation(baseOptions?: Apollo.MutationHookOptions<PFaddAttachmentMutation, PFaddAttachmentMutationVariables>) {
-        return Apollo.useMutation<PFaddAttachmentMutation, PFaddAttachmentMutationVariables>(PFaddAttachmentDocument, baseOptions);
-      }
-export type PFaddAttachmentMutationHookResult = ReturnType<typeof usePFaddAttachmentMutation>;
-export type PFaddAttachmentMutationResult = Apollo.MutationResult<PFaddAttachmentMutation>;
-export type PFaddAttachmentMutationOptions = Apollo.BaseMutationOptions<PFaddAttachmentMutation, PFaddAttachmentMutationVariables>;
-export const PFremoveAttachmentsDocument = gql`
-    mutation PFremoveAttachments($PFAttachmentIDS: [ID!]!) {
-  PFremoveAttachments(PFAttachmentIDS: $PFAttachmentIDS) {
-    ...PFCustomerInfo
-  }
-}
-    ${PfCustomerInfoFragmentDoc}`;
-export type PFremoveAttachmentsMutationFn = Apollo.MutationFunction<PFremoveAttachmentsMutation, PFremoveAttachmentsMutationVariables>;
-
-/**
- * __usePFremoveAttachmentsMutation__
- *
- * To run a mutation, you first call `usePFremoveAttachmentsMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `usePFremoveAttachmentsMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [pFremoveAttachmentsMutation, { data, loading, error }] = usePFremoveAttachmentsMutation({
- *   variables: {
- *      PFAttachmentIDS: // value for 'PFAttachmentIDS'
- *   },
- * });
- */
-export function usePFremoveAttachmentsMutation(baseOptions?: Apollo.MutationHookOptions<PFremoveAttachmentsMutation, PFremoveAttachmentsMutationVariables>) {
-        return Apollo.useMutation<PFremoveAttachmentsMutation, PFremoveAttachmentsMutationVariables>(PFremoveAttachmentsDocument, baseOptions);
-      }
-export type PFremoveAttachmentsMutationHookResult = ReturnType<typeof usePFremoveAttachmentsMutation>;
-export type PFremoveAttachmentsMutationResult = Apollo.MutationResult<PFremoveAttachmentsMutation>;
-export type PFremoveAttachmentsMutationOptions = Apollo.BaseMutationOptions<PFremoveAttachmentsMutation, PFremoveAttachmentsMutationVariables>;
 export const PFaddAddressDocument = gql`
     mutation PFaddAddress($PFCustomerID: ID!, $name: String!, $CEP: String!, $country: String, $state: String!, $city: String!, $district: String, $street: String!, $number: String!, $complement: String, $isMain: Boolean) {
   PFaddAddress(
@@ -3121,3 +3028,35 @@ export function usePJupdateActivityClassificationMutation(baseOptions?: Apollo.M
 export type PJupdateActivityClassificationMutationHookResult = ReturnType<typeof usePJupdateActivityClassificationMutation>;
 export type PJupdateActivityClassificationMutationResult = Apollo.MutationResult<PJupdateActivityClassificationMutation>;
 export type PJupdateActivityClassificationMutationOptions = Apollo.BaseMutationOptions<PJupdateActivityClassificationMutation, PJupdateActivityClassificationMutationVariables>;
+export const PJremoveActivityClassificationsDocument = gql`
+    mutation PJremoveActivityClassifications($PJActivityIDS: [ID!]!) {
+  PJremoveActivityClassifications(PJActivityIDS: $PJActivityIDS) {
+    ...PJCustomerInfo
+  }
+}
+    ${PjCustomerInfoFragmentDoc}`;
+export type PJremoveActivityClassificationsMutationFn = Apollo.MutationFunction<PJremoveActivityClassificationsMutation, PJremoveActivityClassificationsMutationVariables>;
+
+/**
+ * __usePJremoveActivityClassificationsMutation__
+ *
+ * To run a mutation, you first call `usePJremoveActivityClassificationsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `usePJremoveActivityClassificationsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [pJremoveActivityClassificationsMutation, { data, loading, error }] = usePJremoveActivityClassificationsMutation({
+ *   variables: {
+ *      PJActivityIDS: // value for 'PJActivityIDS'
+ *   },
+ * });
+ */
+export function usePJremoveActivityClassificationsMutation(baseOptions?: Apollo.MutationHookOptions<PJremoveActivityClassificationsMutation, PJremoveActivityClassificationsMutationVariables>) {
+        return Apollo.useMutation<PJremoveActivityClassificationsMutation, PJremoveActivityClassificationsMutationVariables>(PJremoveActivityClassificationsDocument, baseOptions);
+      }
+export type PJremoveActivityClassificationsMutationHookResult = ReturnType<typeof usePJremoveActivityClassificationsMutation>;
+export type PJremoveActivityClassificationsMutationResult = Apollo.MutationResult<PJremoveActivityClassificationsMutation>;
+export type PJremoveActivityClassificationsMutationOptions = Apollo.BaseMutationOptions<PJremoveActivityClassificationsMutation, PJremoveActivityClassificationsMutationVariables>;

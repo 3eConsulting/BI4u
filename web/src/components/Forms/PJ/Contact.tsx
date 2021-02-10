@@ -20,9 +20,10 @@ import {
 } from '@material-ui/core/styles';
 
 import {
-    usePFaddContactMutation,
-    usePFremoveContactMutation,
-    usePFupdateContactMutation
+    PjContact,
+    usePJaddContactMutation,
+    usePJremoveContactsMutation,
+    usePJupdateContactMutation
 } from '../../../graphql/generated';
 
 import { useSnackbar } from 'notistack';
@@ -35,8 +36,7 @@ const validationSchema = yup.object().shape({
             .required(yupLocale.required),
     isWhatsApp: yup.boolean()
             .required(yupLocale.required),
-    name: yup.string()
-            .max(40, yupLocale.string.messages.max)
+    contactEmployeeName: yup.string()
             .required(yupLocale.required),
     email: yup.string()
             .email()
@@ -47,6 +47,10 @@ const validationSchema = yup.object().shape({
     mobilePhone: yup.string()
             .matches(/(\d{2})-(\d{9})/, {message: yupLocale.string.messages.mobilePhone, excludeEmptyString: true})
             .nullable(),
+    site: yup.string()
+            .max(40, yupLocale.string.messages.max)
+            .url(yupLocale.string.messages.URL)
+            .nullable()
 });
 
 const useStyles = makeStyles(
@@ -96,30 +100,30 @@ const IsWhatsAppSwitch = ({ control, controllerProps, initialData }: { control: 
 }
 
 export interface ContactFormProps {
-    initialData?: any;
+    initialData?: PjContact;
     defaultName?: string;
     hasMain: boolean;
-    PFCustomerID: string;
+    PJCustomerID: string;
 }
 
-export const ContactForm: React.FC<ContactFormProps> = ({ initialData, defaultName, hasMain, PFCustomerID }) => {
+export const ContactForm: React.FC<ContactFormProps> = ({ initialData, defaultName, hasMain, PJCustomerID }) => {
 
     const [loading, setLoading] = React.useState(false)
-
+    
     // Hooks
     const { handleSubmit, errors, control } = useForm({ resolver: yupResolver(validationSchema) });
     const { enqueueSnackbar } = useSnackbar();
     
-    const [addContact] = usePFaddContactMutation();
-    const [updateContact] = usePFupdateContactMutation();
-    const [removeContact] = usePFremoveContactMutation();
+    const [addContact] = usePJaddContactMutation();
+    const [updateContact] = usePJupdateContactMutation();
+    const [removeContact] = usePJremoveContactsMutation();
 
     const handleAddUpdate = async (data: any) => {
         try {
             setLoading(true)
             if (initialData) {
                 let updateResponse = await updateContact({variables: {
-                    PFContactID: initialData.id,
+                    PJContactID: initialData.id,
                     ...data
                 }});
                 
@@ -127,7 +131,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialData, defaultNa
 
             } else {
                 let addResponse = await addContact({variables: {
-                    PFCustomerID: PFCustomerID,
+                    PJCustomerID: PJCustomerID,
                     ...data
                 }});
                 
@@ -150,7 +154,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialData, defaultNa
             if (initialData && initialData.id) {
                 setLoading(true);
                 let removeResponse = await removeContact({variables: {
-                    PFContactIDS: [initialData.id],
+                    PJContactIDS: [initialData.id],
                 }});
                 
                 if (removeResponse.data) enqueueSnackbar("Contato Removido com Sucesso !", {variant: "success"});
@@ -168,7 +172,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialData, defaultNa
     const classes = useStyles();
 
     return (
-        <form id="PFContact" className={classes.root} onSubmit={handleSubmit((data) => handleAddUpdate(data))} autoComplete="false">
+        <form id="PJContact" className={classes.root} onSubmit={handleSubmit((data) => handleAddUpdate(data))} autoComplete="false">
             <Grid container direction='column' spacing={3}>
                 
                 <Grid item container direction='row-reverse'>
@@ -203,15 +207,15 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialData, defaultNa
                 <Grid item container direction='row' spacing={3}>
                     <Grid item xs={12}>
                         <Controller
-                            name="name"
+                            name="contactEmployeeName"
                             control={control}
-                            defaultValue={(initialData && initialData.name) ? initialData.name : defaultName ? defaultName : ""}
+                            defaultValue={(initialData && initialData.contactEmployeeName) ? initialData.contactEmployeeName : defaultName ? defaultName : ""}
                             render={props => (
                                 <TextField fullWidth variant="outlined"
                                     {...props}
-                                    label="Nome"
-                                    error={!!errors.name}
-                                    helperText={errors.name ? errors.name.message : ""}/>
+                                    label="Nome do Responsável"
+                                    error={!!errors.contactEmployeeName}
+                                    helperText={errors.contactEmployeeName ? errors.contactEmployeeName.message : ""}/>
                             )}
                         />
                     </Grid>

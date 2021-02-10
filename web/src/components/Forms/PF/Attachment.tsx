@@ -13,9 +13,9 @@ import {
 
 import { useSnackbar } from 'notistack';
 
-import {
+/* import {
     usePFaddAttachmentMutation
-} from '../../../graphql/generated';
+} from '../../../graphql/generated'; */
 
 import { DropzoneAreaBase, FileObject } from 'material-ui-dropzone';
 
@@ -64,7 +64,7 @@ export const AttachmentForm: React.FC<AttachmentFormProps> = (
     // Hooks
     const { enqueueSnackbar } = useSnackbar();
     
-    const [addAttachment] = usePFaddAttachmentMutation();
+    /* const [addAttachment] = usePFaddAttachmentMutation(); */
 
     // Methods
     const handleKeyChange = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -88,7 +88,8 @@ export const AttachmentForm: React.FC<AttachmentFormProps> = (
 
     const handleAdd = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        try {
+        enqueueSnackbar("Anexos estão desabilitados no momento.", {variant: "warning"});
+        /* try {
             setLoading(true)
             
             let addResponse = await addAttachment({variables: {
@@ -104,7 +105,7 @@ export const AttachmentForm: React.FC<AttachmentFormProps> = (
             console.error(err);
             setLoading(false)
             enqueueSnackbar("Erro ao Anexar Arquivo. Tente Novamente em Alguns Minutos.", {variant: "error"});
-        }
+        } */
     }
 
     return (

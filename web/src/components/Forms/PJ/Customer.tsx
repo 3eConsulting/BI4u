@@ -10,10 +10,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import MenuItem from '@material-ui/core/MenuItem';
 import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
 import Tooltip from '@material-ui/core/Tooltip';
+
 import {
     makeStyles,
     createStyles
@@ -27,7 +27,6 @@ import EditIcon from '@material-ui/icons/Edit';
 import LoyaltyIcon from '@material-ui/icons/Loyalty';
 
 import {
-    PfCustomer,
     PjCustomer,
     usePJupdateCustomerMutation,
     usePJremoveCustomersMutation,
@@ -36,8 +35,6 @@ import {
 import { useSnackbar } from 'notistack';
 
 import Cleave from 'cleave.js/react';
-
-import moment from 'moment';
 
 const validationSchema = yup.object().shape({
     isActive: yup.boolean().required(yupLocale.required),
@@ -135,7 +132,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ initialData }) => {
     const classes = useStyles();
 
     return (
-        <form id="PJCustomer" className={classes.root} onSubmit={handleSubmit((data) => handleAddUpdate(data))} action="javascript:void(0);" autoComplete="false">
+        <form id="PJCustomer" className={classes.root} onSubmit={handleSubmit((data) => handleAddUpdate(data))} action="" autoComplete="false">
             <Grid container direction='column' spacing={3}>
                 <Grid item container alignItems='center' justify='space-between' direction='row-reverse' spacing={1}>
                     
