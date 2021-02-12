@@ -16,7 +16,7 @@ import { PJCustomerForm } from "../../components/Forms";
 import AddressTab from "../../components/ExtraInfoDialog/PJ/AddressTab";
 import ContactTab from "../../components/ExtraInfoDialog/PJ/ContactTab"
 import ActivityClassificationTab from "../../components/ExtraInfoDialog/PJ/ActivityClassificationTab";
-import AttachmentTab from "../../components/ExtraInfoDialog/PJ/AttachmentsTab";
+import EmployeesTab from "../../components/ExtraInfoDialog/PJ/EmployeesTab";
 
 import { Redirect, useParams } from "react-router-dom";
 
@@ -132,7 +132,7 @@ export const PJDetailPage: React.FC<PJDetailPageProps> = () => {
                                 <ActivityClassificationTab customer={data} />
                             </TabPanel>
                             <TabPanel value={tab} index={'employees'}>
-                                {/* <ProfessionalHistoryTab customer={data} refetch={refetch} /> */}
+                                <EmployeesTab customer={data}/>
                             </TabPanel>
                             <TabPanel value={tab} index={'attachments'}>
                                 {/* <AttachmentTab customer={data} /> */}

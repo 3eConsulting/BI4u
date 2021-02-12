@@ -41,6 +41,8 @@ import { ApolloError } from '@apollo/client';
 
 import { useSnackbar } from 'notistack';
 
+import {Link as RouterLink} from 'react-router-dom';
+
 const validationSchema = yup.object().shape({
     EPI: yup.boolean().required(yupLocale.required),
     companyID: yup.string().required(yupLocale.required),
@@ -362,6 +364,12 @@ export const ProfessionalHistoryForm: React.FC<ProfessionalHistoryFormProps> = (
                 <Grid item container direction='row-reverse' spacing={3} className={classes.actionRow}>
                     <Button variant="contained" color="primary" className={classes.button} type="submit">Salvar</Button>
                     {initialData && <Button variant="contained" color="primary" className={classes.button} onClick={handleRemove}>Excluir</Button>}
+                    {initialData && initialData.company && <Button component={RouterLink} to={`/customers/PJ/${initialData.company.id}`}
+                        className={classes.button}
+                        color='primary'
+                        variant='contained'>
+                            Abrir Empresa
+                    </Button>}
                 </Grid>
 
                 {loading && 

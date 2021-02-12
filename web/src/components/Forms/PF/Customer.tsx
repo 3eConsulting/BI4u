@@ -78,9 +78,10 @@ const CleaveTextField = ({ inputRef, options, ...otherProps }: any) => (
 
 export interface CustomerFormProps {
     initialData?: Partial<PfCustomer>;
+    forceReadOnly?: boolean;
 }
 
-export const CustomerForm: React.FC<CustomerFormProps> = ({ initialData }) => {
+export const CustomerForm: React.FC<CustomerFormProps> = ({ initialData, forceReadOnly }) => {
 
     const [loading, setLoading] = React.useState(false)
     const [editable, setEditable] = React.useState<boolean>(false);
@@ -172,7 +173,8 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ initialData }) => {
                             />
                         </Grid> : (initialData && initialData.hasDisability) ? <LocalHospitalOutlinedIcon color="primary"/> : ""}
                     </Grid>
-                    <Grid item lg={4} container direction="row" justify="flex-start" spacing={1}>
+                    {!forceReadOnly &&
+                        <Grid item lg={4} container direction="row" justify="flex-start" spacing={1}>
                         {!editable ? (
                             <Grid item>
                                 <Tooltip title='Editar' placement='top' arrow>
@@ -203,7 +205,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({ initialData }) => {
                                 </Tooltip>
                             </Grid>
                         )}
-                    </Grid>
+                    </Grid>}
                 </Grid>
 
                 

@@ -56,7 +56,7 @@ export const AttachmentForm: React.FC<AttachmentFormProps> = (
     const classes = useStyles();
 
     // State
-    const [loading, setLoading] = React.useState(false);
+    const [loading/* , setLoading */] = React.useState(false);
     const [key, setKey] = React.useState<string>('');
     const [comments, setComments] = React.useState<string>('');
     const [fileObjects, setFileObjects] = React.useState<FileObject[]>([]);

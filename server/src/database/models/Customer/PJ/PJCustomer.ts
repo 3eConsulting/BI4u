@@ -139,14 +139,22 @@ export class PJCustomerRepository extends Repository<PJCustomer> {
 	}
 
 	public async fetchEmployees(PJCustomerID: string) {
-		let PFCustomerIDS = await this.PFCustomerRepository.createQueryBuilder("employees")
+		let validEmployees = await this.PFCustomerRepository.createQueryBuilder("employees")
 			.select("employees.id")
-			.leftJoin("employees.PFextraInfo", "extraInfo")
-			.leftJoin("extraInfo.professionalHistory", "professionalHistory")
+			.leftJoinAndSelect("employees.PFextraInfo", "extraInfo")
+			.leftJoinAndSelect("extraInfo.professionalHistory", "professionalHistory")
 			.leftJoin("professionalHistory.company", "company")
 			.where("company.id = :id", { id: PJCustomerID })
+			.andWhere("professionalHistory.recisionDate IS NULL")
 			.getMany();
 
-		return await this.PFCustomerRepository.fetchCustomers(PFCustomerIDS.map((customer) => customer.id));
+		console.log(validEmployees);
+
+		if (validEmployees.length > 0) {
+			let validIDS = validEmployees.map((employee) => employee.id);
+			return await this.PFCustomerRepository.fetchCustomers(validIDS);
+		} else {
+			return [];
+		}
 	}
 }
