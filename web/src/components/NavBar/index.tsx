@@ -17,51 +17,6 @@ import Link from '@material-ui/core/Link';
 import { Link as RouterLink, useHistory } from 'react-router-dom';
 import { authFunctionalities } from '../../utilities/authentication';
 
-
-type iSubmenu = {
-	nome: string;
-	displayName: string;
-	submenuItens: { nome: string; onClick?(): any }[];
-	onClick?(): any;
-};
-
-const submenu: iSubmenu[] = [
-	{
-		nome: 'schedules-menu-item',
-		displayName: 'Agendamento',
-		submenuItens: [{ nome: 'Agenda Submenu Item 1', onClick: () => console.log('Agenda Submenu Item 1') }],
-	},
-	{
-		nome: 'customers-menu-item',
-		displayName: 'Clientes',
-		submenuItens: [],
-		onClick: () => console.log('Cliente Menu Clicked - No Submenu Available'),
-	},
-	{
-		nome: 'finances-menu-item',
-		displayName: 'Financeiro',
-		submenuItens: [{ nome: 'Financeiro Submenu Item 1', onClick: () => console.log('Financeiro Submenu Item 1') }],
-	},
-	{
-		nome: 'medical-records-menu-item',
-		displayName: 'Prontuário',
-		submenuItens: [{ nome: 'Prontuários Submenu Item 1', onClick: () => console.log('Prontuários Submenu Item 1') }],
-	},
-	{
-		nome: 'reports-menu-item',
-		displayName: 'Relatórios',
-		submenuItens: [{ nome: 'Relatórios Submenu Item 1', onClick: () => console.log('Relatórios Submenu Item 1') }],
-	},
-	{
-		nome: 'services-menu-item',
-		displayName: 'Serviços',
-		submenuItens: [
-			{ nome: 'Serviços Submenu Item 1', onClick: () => console.log('Serviços Submenu Item 1') },
-			{ nome: 'Serviços Submenu Item 2', onClick: () => console.log('Serviços Submenu Item 2') },
-		],
-	},
-];
-
 const useStyles = makeStyles((theme: Theme) =>
 	createStyles({
 		grow: {
@@ -147,9 +102,54 @@ export interface PrimarySearchAppBarProps {
 	title?: string;
 }
 
+type iSubmenu = {
+	nome: string;
+	displayName: string;
+	submenuItens: { nome: string; onClick?(): any }[];
+	onClick?(): any;
+};
+
 export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
+	
 	const classes = useStyles();
 	const history = useHistory();
+
+	const submenu: iSubmenu[] = [
+		{
+			nome: 'schedules-menu-item',
+			displayName: 'Agendamento',
+			submenuItens: [{ nome: 'Agenda Submenu Item 1', onClick: () => console.log('Agenda Submenu Item 1') }],
+		},
+		{
+			nome: 'customers-menu-item',
+			displayName: 'Clientes',
+			submenuItens: [],
+			onClick: () => history.push('customers'),
+		},
+		{
+			nome: 'finances-menu-item',
+			displayName: 'Financeiro',
+			submenuItens: [{ nome: 'Financeiro Submenu Item 1', onClick: () => console.log('Financeiro Submenu Item 1') }],
+		},
+		{
+			nome: 'medical-records-menu-item',
+			displayName: 'Prontuário',
+			submenuItens: [{ nome: 'Prontuários Submenu Item 1', onClick: () => console.log('Prontuários Submenu Item 1') }],
+		},
+		{
+			nome: 'reports-menu-item',
+			displayName: 'Relatórios',
+			submenuItens: [{ nome: 'Relatórios Submenu Item 1', onClick: () => console.log('Relatórios Submenu Item 1') }],
+		},
+		{
+			nome: 'services-menu-item',
+			displayName: 'Serviços',
+			submenuItens: [
+				{ nome: 'Serviços Submenu Item 1', onClick: () => console.log('Serviços Submenu Item 1') },
+				{ nome: 'Serviços Submenu Item 2', onClick: () => console.log('Serviços Submenu Item 2') },
+			],
+		},
+	];
 
 	const [profileAnchorEl, setProfileAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
