@@ -117,7 +117,7 @@ export const PJDetailPage: React.FC<PJDetailPageProps> = () => {
                                 <Tab label='Contatos' value='contacts' />
                                 <Tab label='Classificação de Atividades' value='activityClassification'/>
                                 <Tab label='Funcionarios' value='employees' />
-                                <Tab label='Anexos' value='attachments' />
+                                <Tab label='Anexos' value='attachments' disabled={true}/>
                             </Tabs>
                         </Grid>
 

@@ -17,6 +17,7 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import LinkIcon from '@material-ui/icons/Link';
+import { useLocation, useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
@@ -42,17 +43,28 @@ const useStyles = makeStyles((theme) =>
 export const CustomersPage: React.FC = () => {
 	// Hooks
 	const classes = useStyles();
-	
+	const location = useLocation();
+	const history = useHistory();
 
 	// State
 	const [speedDialOpen, setSpeedDialOpen] = React.useState<boolean>(false);
-	const [isPF, setIsPF] = React.useState<boolean>(true);
 	const [addModalOpen, setAddModalOpen] = React.useState<boolean>(false);
 	const [removalDialogOpen, setRemovalDialogOpen] = React.useState<boolean>(false);
 	const [connectionDialogOpen, setConnectionDialogOpen] = React.useState<boolean>(false);
 	const [extraInfoDialogOpen, setExtraInfoDialogOpen] = React.useState<boolean>(false);
 	const [selectedPF, setSelectedPF] = React.useState<string[]>([]);
 	const [selectedPJ, setSelectedPJ] = React.useState<string[]>([]);
+
+	//Methods
+	const isPF = () => {
+		if (location.pathname === '/customers/PF') {
+			return true;
+		} else if (location.pathname === '/customers/PJ') {
+			return false;
+		} else {
+			history.goBack()
+		}
+	}
 
 	// API
 	const [
@@ -71,7 +83,7 @@ export const CustomersPage: React.FC = () => {
 	}
 	
 	const openRemovalDialog = () => {
-		isPF ? PFfetchCustomers() : PJfetchCustomer();
+		isPF() ? PFfetchCustomers() : PJfetchCustomer();
 		setSpeedDialOpen(false);
 		setRemovalDialogOpen(true);
 	}
@@ -96,25 +108,24 @@ export const CustomersPage: React.FC = () => {
 		{ 	title: 'Deletar Cliente',
 			icon: <DeleteForeverIcon />,
 			handler: openRemovalDialog,
-			disabled: (isPF && selectedPF.length === 0) || (!isPF && selectedPJ.length === 0)
+			disabled: (isPF() && selectedPF.length === 0) || (!isPF() && selectedPJ.length === 0)
 		},
 		{ 	title: 'Editar Cliente',
 			icon: <EditIcon />,
 			handler: openExtraInfoDialog,
-			disabled: (isPF && selectedPF.length !== 1) || (!isPF && selectedPJ.length !== 1)
+			disabled: (isPF() && selectedPF.length !== 1) || (!isPF() && selectedPJ.length !== 1)
 		},
 		{ 	title: 'Vincular Cliente',
 			icon: <LinkIcon />,
 			handler: openConnectionDialog,
-			disabled: !isPF || selectedPF.length === 0
+			disabled: !isPF() || selectedPF.length === 0
 		},
 	];
 
 	return (
 		<>
-			{isPF ? (
+			{isPF() ? (
 				<PFPage 
-					isPF={isPF} setIsPF={setIsPF}
 					addModalOpen={addModalOpen} setAddModalOpen={setAddModalOpen}
 					removalDialogOpen={removalDialogOpen} setRemovalDialogOpen={setRemovalDialogOpen}
 					PFselected={selectedPF} setPFselected={setSelectedPF}
@@ -122,8 +133,7 @@ export const CustomersPage: React.FC = () => {
 					connectionDialogOpen={connectionDialogOpen} setConnectionDialogOpen={setConnectionDialogOpen}
 					extraInfoDialogOpen={extraInfoDialogOpen} setExtraInfoDialogOpen={setExtraInfoDialogOpen}/>
 			) : (
-				<PJPage 
-					isPF={isPF} setIsPF={setIsPF}
+				<PJPage
 					addModalOpen={addModalOpen} setAddModalOpen={setAddModalOpen}
 					removalDialogOpen={removalDialogOpen} setRemovalDialogOpen={setRemovalDialogOpen}
 					selected={selectedPJ} setSelected={setSelectedPJ}

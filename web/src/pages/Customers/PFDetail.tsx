@@ -120,7 +120,7 @@ export const PFDetailPage: React.FC<PFDetailPageProps> = () => {
                                         <span>Condições Médicas</span>
                                     </Tooltip>} value='disabilities' disabled={!customer.hasDisability} style={{ pointerEvents: "auto" }}/>
                                 <Tab label='Historico Profissional' value='professionalHistory' />
-                                <Tab label='Anexos' value='attachments' />
+                                <Tab label='Anexos' value='attachments' disabled={true}/>
                             </Tabs>
                         </Grid>
 

@@ -25,18 +25,24 @@ export const HomePage: React.FC = () => {
 	const isAdmin: boolean = authFunctionalities.getRole() === eRole.ADMIN;
 
 	const HomeButtons: iHomeButtonProps[] = [
-		{ startIcon: <TodayIcon />, title: 'Agendamento', variant: 'contained', color: 'secondary' },
+		{ startIcon: <TodayIcon />, title: 'Agendamento', variant: 'contained', color: 'secondary', disabled: true },
 		{
 			startIcon: <EmojiPeopleIcon />,
 			title: 'Clientes',
 			variant: 'contained',
 			color: 'secondary',
-			onClick: () => history.push('/customers'),
+			onClick: () => history.push('/customers/PF'),
 		},
-		{ startIcon: <MonetizationOnTwoToneIcon />, title: 'Financeiro', variant: 'contained', color: 'secondary' },
-		{ startIcon: <NotesIcon />, title: 'Prontuario', variant: 'contained', color: 'secondary' },
-		{ startIcon: <TrendingUpIcon />, title: 'Relatorios', variant: 'contained', color: 'secondary' },
-		{ startIcon: <LocalHospitalIcon />, title: 'Serviços', variant: 'contained', color: 'secondary' },
+		{ startIcon: <MonetizationOnTwoToneIcon />, title: 'Financeiro', variant: 'contained', color: 'secondary', disabled: true },
+		{ startIcon: <NotesIcon />, title: 'Prontuario', variant: 'contained', color: 'secondary', disabled: true },
+		{ startIcon: <TrendingUpIcon />, title: 'Relatorios', variant: 'contained', color: 'secondary', disabled: true },
+		{ 
+			startIcon: <LocalHospitalIcon />,
+			title: 'Serviços',
+			variant: 'contained',
+			color: 'secondary',
+			onClick: () => history.push('/services'), 
+		},
 	];
 
 	return (

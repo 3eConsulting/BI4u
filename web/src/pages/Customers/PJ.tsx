@@ -140,14 +140,12 @@ interface PJPageProps {
     setRemovalDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
     selected: string[],
     setSelected: React.Dispatch<React.SetStateAction<string[]>>;
-    isPF: boolean;
-    setIsPF: React.Dispatch<React.SetStateAction<boolean>>;
     customers?: PJfetchCustomersByIdQuery; 
 };
 
 export const PJPage: React.FC<PJPageProps> = ({
-    addModalOpen, removalDialogOpen, selected, customers, isPF,
-    setAddModalOpen, setRemovalDialogOpen, setSelected, setIsPF,
+    addModalOpen, removalDialogOpen, selected, customers,
+    setAddModalOpen, setRemovalDialogOpen, setSelected,
 }) => {
     
     // Hooks
@@ -168,7 +166,7 @@ export const PJPage: React.FC<PJPageProps> = ({
                 selected={selected} setSelected={setSelected} 
                 extraComponents={[
                     <Button 
-                        onClick={() => setIsPF(!isPF)} 
+                        onClick={() => history.replace('/customers/PF')} 
                         variant='outlined'
                         color='secondary'>
                             Trocar Tipo Pessoa

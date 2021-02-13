@@ -102,11 +102,13 @@ export interface PrimarySearchAppBarProps {
 	title?: string;
 }
 
+// FIX THIS TO BE RECURSIVE
 type iSubmenu = {
 	nome: string;
 	displayName: string;
-	submenuItens: { nome: string; onClick?(): any }[];
+	submenuItens?: iSubmenu[];
 	onClick?(): any;
+	disabled: boolean
 };
 
 export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
@@ -118,36 +120,47 @@ export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
 		{
 			nome: 'schedules-menu-item',
 			displayName: 'Agendamento',
-			submenuItens: [{ nome: 'Agenda Submenu Item 1', onClick: () => console.log('Agenda Submenu Item 1') }],
+			disabled: true,
 		},
 		{
 			nome: 'customers-menu-item',
-			displayName: 'Clientes',
-			submenuItens: [],
-			onClick: () => history.push('customers'),
+			displayName: 'Clientes',			
+			submenuItens: [
+				{
+					nome: 'customers-submenu-item-PF',
+					displayName: 'PF',
+					onClick: () => history.push('/customers/PF'),
+					disabled: false,
+				},
+				{
+					nome: 'customers-submenu-item-PJ',
+					displayName: 'PJ',
+					onClick: () => history.push('/customers/PJ'),
+					disabled: false,
+				}
+			],
+			disabled: false,
 		},
 		{
 			nome: 'finances-menu-item',
 			displayName: 'Financeiro',
-			submenuItens: [{ nome: 'Financeiro Submenu Item 1', onClick: () => console.log('Financeiro Submenu Item 1') }],
+			disabled: true,
 		},
 		{
 			nome: 'medical-records-menu-item',
 			displayName: 'Prontuário',
-			submenuItens: [{ nome: 'Prontuários Submenu Item 1', onClick: () => console.log('Prontuários Submenu Item 1') }],
+			disabled: true,
 		},
 		{
 			nome: 'reports-menu-item',
-			displayName: 'Relatórios',
-			submenuItens: [{ nome: 'Relatórios Submenu Item 1', onClick: () => console.log('Relatórios Submenu Item 1') }],
+			displayName: 'Relatórios',			
+			disabled: true,
 		},
 		{
 			nome: 'services-menu-item',
 			displayName: 'Serviços',
-			submenuItens: [
-				{ nome: 'Serviços Submenu Item 1', onClick: () => console.log('Serviços Submenu Item 1') },
-				{ nome: 'Serviços Submenu Item 2', onClick: () => console.log('Serviços Submenu Item 2') },
-			],
+			onClick: () => history.push('services'),
+			disabled: false,
 		},
 	];
 
@@ -270,13 +283,13 @@ export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
 		>
 			{subMenuItens.map((smi) => {
 				return (
-					<MenuItem
+					<MenuItem disabled={smi.disabled}
 						key={smi.nome}
 						id={smi.nome}
 						className={classes.dropdownMenuItem}
-						onClick={smi.submenuItens.length > 0 ? handleSubmenuOpen : smi.onClick}
+						onClick={!smi.submenuItens ? smi.onClick : handleSubmenuOpen}
 					>
-						{smi.displayName} {smi.submenuItens.length > 0 ? <ChevronRightIcon /> : ''}
+						{smi.displayName} {smi.submenuItens && <ChevronRightIcon />}
 					</MenuItem>
 				);
 			})}
@@ -296,11 +309,11 @@ export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
 		>
 			{/* Rewrite this */}
 			{subMenuItens.map((sm) => {
-				if (sm.nome === submenuAnchorEl?.id) {
+				if (submenuAnchorEl && sm.nome === submenuAnchorEl.id && sm.submenuItens) {
 					return sm.submenuItens.map((smi) => {
 						return (
-							<MenuItem key={smi.nome} className={classes.dropdownMenuItem} onClick={smi.onClick}>
-								{smi.nome}
+							<MenuItem key={smi.nome} className={classes.dropdownMenuItem} onClick={smi.onClick} disabled={smi.disabled}>
+								{smi.displayName}
 							</MenuItem>
 						);
 					});

@@ -144,8 +144,6 @@ interface PFPageProps {
     setExtraInfoDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
     PFselected: string[],
     setPFselected: React.Dispatch<React.SetStateAction<string[]>>;
-    isPF: boolean;
-    setIsPF: React.Dispatch<React.SetStateAction<boolean>>;
     PFcustomers?: PFfetchCustomersByIdQuery;
     PJcustomers?: PJfetchCustomersQuery;
 };
@@ -155,7 +153,6 @@ export const PFPage: React.FC<PFPageProps> = ({
     removalDialogOpen, setRemovalDialogOpen,
     extraInfoDialogOpen, setExtraInfoDialogOpen,
     PFselected, setPFselected,
-    isPF, setIsPF,
     PFcustomers,
 }) => {
 
@@ -177,7 +174,7 @@ export const PFPage: React.FC<PFPageProps> = ({
                     selected={PFselected} setSelected={setPFselected}
                     extraComponents={[
                         <Button
-                            onClick={() => setIsPF(!isPF)}
+                            onClick={() => history.replace('/customers/PJ')}
                             variant='outlined'
                             color='secondary'>
                             Trocar Tipo Pessoa

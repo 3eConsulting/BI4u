@@ -59,7 +59,7 @@ export const LoginPage = () => {
 		const loggedIn = await authFunctionalities.signIn(username, password);
 
 		if (loggedIn) {
-			history.push('/');
+			history.replace('/');
 		} else {
 			enqueueSnackbar(errorMessage, {
 				variant: 'error',
