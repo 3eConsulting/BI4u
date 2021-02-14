@@ -32,7 +32,7 @@ export class Record extends BaseEntity {
 	textAnswer: string;
 
 	@Column("numeric")
-	numericAnswer: Number;
+	numericAnswer: number;
 
 	@Column("text")
 	evolution: string;

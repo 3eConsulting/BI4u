@@ -19,7 +19,6 @@ import {
 import { IsBoolean, IsDate, validateOrReject, ValidationError } from "class-validator";
 import { isValidCPF } from "../../../validators";
 import logger from "../../../../loaders/logger";
-import { Logger } from "winston";
 import ErrorService from "../../../../services/error";
 import { PFAddressRepository } from "./PFExtraInfo/PFAddress";
 import { PFContactRepository } from "./PFExtraInfo/PFContact";
@@ -146,7 +145,6 @@ export class PFCustomerRepository extends Repository<PFCustomer> {
 	}
 
 	public async fetchCustomers(ids?: string[]) {
-		this.logger.silly(`Fetching PFCustomers ${ids ? `IDS - ${ids}` : ""}`);
 		if (!ids) {
 			return await this.createQueryBuilder("customer")
 				.leftJoinAndSelect("customer.PFextraInfo", "extraInfo")

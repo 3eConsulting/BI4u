@@ -3,20 +3,23 @@ import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 
 import { SpeedDial, Action } from '../../components/SpeedDial';
+import { ExtendedTable } from '../../components/Table';
 
 import { 
 	usePFfetchCustomersByIdLazyQuery,
 	usePJfetchCustomersLazyQuery,
-	usePJfetchCustomersByIdLazyQuery
+	usePJfetchCustomersByIdLazyQuery,
+	usePFfetchCustomersQuery
 } from '../../graphql/generated';
-
-/* import { PFPage } from './PF';
-import { PJPage } from './PJ'; */
 
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import LinkIcon from '@material-ui/icons/Link';
+import Container from '@material-ui/core/Container';
+
+import { useHistory } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) =>
 	createStyles({
@@ -42,7 +45,7 @@ const useStyles = makeStyles((theme) =>
 export const ServicesPage: React.FC = () => {
 	// Hooks
 	const classes = useStyles();
-	
+	const history = useHistory();
 
 	// State
 	const [speedDialOpen, setSpeedDialOpen] = React.useState<boolean>(false);
@@ -51,18 +54,13 @@ export const ServicesPage: React.FC = () => {
 	const [removalDialogOpen, setRemovalDialogOpen] = React.useState<boolean>(false);
 	const [connectionDialogOpen, setConnectionDialogOpen] = React.useState<boolean>(false);
 	const [extraInfoDialogOpen, setExtraInfoDialogOpen] = React.useState<boolean>(false);
-	const [selectedPF, setSelectedPF] = React.useState<string[]>([]);
-	const [selectedPJ, setSelectedPJ] = React.useState<string[]>([]);
+	const [selectedServices, setSelectedServices] = React.useState<string[]>([]);
 
 	// API
 	const [
 		PFfetchCustomers,
 		{data: customersData}
-	] = usePFfetchCustomersByIdLazyQuery({variables: {PFCustomerIDS: selectedPF}});
-
-	const [PJfetchCustomer, {data: PJcustomersData}] = usePJfetchCustomersByIdLazyQuery({variables: {PJCustomerIDS: selectedPJ}})
-
-	const [PJfetchAllcustomers, {data: PJallCustomersData}] = usePJfetchCustomersLazyQuery();
+	] = usePFfetchCustomersByIdLazyQuery({variables: {PFCustomerIDS: selectedServices}});
 
 	// Methods
 	const openAddModal = () => {
@@ -71,16 +69,9 @@ export const ServicesPage: React.FC = () => {
 	}
 	
 	const openRemovalDialog = () => {
-		isPF ? PFfetchCustomers() : PJfetchCustomer();
+		PFfetchCustomers();
 		setSpeedDialOpen(false);
 		setRemovalDialogOpen(true);
-	}
-
-	const openConnectionDialog = () => {
-		PFfetchCustomers();
-		PJfetchAllcustomers();
-		setSpeedDialOpen(false);
-		setConnectionDialogOpen(true);
 	}
 
 	const openExtraInfoDialog = () => {
@@ -89,47 +80,36 @@ export const ServicesPage: React.FC = () => {
 
 	// Utilities
 	const actions: Action[] = [
-		{ 	title: 'Adicionar Cliente',
+		{ 	title: 'Adicionar Serviço',
 			icon: <AddIcon />,
 			handler: openAddModal
 		},
-		{ 	title: 'Deletar Cliente',
+		{ 	title: 'Deletar Serviços',
 			icon: <DeleteForeverIcon />,
 			handler: openRemovalDialog,
-			disabled: (isPF && selectedPF.length === 0) || (!isPF && selectedPJ.length === 0)
+			disabled: (selectedServices.length === 0)
 		},
-		{ 	title: 'Editar Cliente',
+		{ 	title: 'Editar Serviço',
 			icon: <EditIcon />,
 			handler: openExtraInfoDialog,
-			disabled: (isPF && selectedPF.length !== 1) || (!isPF && selectedPJ.length !== 1)
-		},
-		{ 	title: 'Vincular Cliente',
-			icon: <LinkIcon />,
-			handler: openConnectionDialog,
-			disabled: !isPF || selectedPF.length === 0
+			disabled: (selectedServices.length !== 1)
 		},
 	];
 
 	return (
-		<>
-            <h1>Services Page</h1>
-			{/* {isPF ? (
-				<PFPage 
-					isPF={isPF} setIsPF={setIsPF}
-					addModalOpen={addModalOpen} setAddModalOpen={setAddModalOpen}
-					removalDialogOpen={removalDialogOpen} setRemovalDialogOpen={setRemovalDialogOpen}
-					PFselected={selectedPF} setPFselected={setSelectedPF}
-					PFcustomers={customersData} PJcustomers={PJallCustomersData}
-					connectionDialogOpen={connectionDialogOpen} setConnectionDialogOpen={setConnectionDialogOpen}
-					extraInfoDialogOpen={extraInfoDialogOpen} setExtraInfoDialogOpen={setExtraInfoDialogOpen}/>
-			) : (
-				<PJPage 
-					isPF={isPF} setIsPF={setIsPF}
-					addModalOpen={addModalOpen} setAddModalOpen={setAddModalOpen}
-					removalDialogOpen={removalDialogOpen} setRemovalDialogOpen={setRemovalDialogOpen}
-					selected={selectedPJ} setSelected={setSelectedPJ}
-					customers={PJcustomersData}/>
-			)} */}
+		<>			
+			<Container className={classes.container}>
+                <ExtendedTable title="Serviços" columns={[
+                    { name: 'Nome', alignment: 'left', fetchedName: 'firstName', formatDate: false },
+                    { name: 'Sobrenome', alignment: 'center', fetchedName: 'lastName', formatDate: false },
+                    { name: 'CPF', alignment: 'center', fetchedName: 'CPF', formatDate: false },
+                    { name: 'Criado Em', alignment: 'center', fetchedName: 'createdAt', formatDate: true },
+                    { name: 'Atualizado Em', alignment: 'center', fetchedName: 'updatedAt', formatDate: true },
+                ]} query={usePFfetchCustomersQuery} tabledProperty="PFfetchCustomers" rowCallback={(id) => history.push(`/services/${id}`)}
+                    filterBy={['firstName', 'lastName', 'CPF']} rowsPerPage={6}
+                    selected={selectedServices} setSelected={setSelectedServices} />
+            </Container>
+
 
 			<SpeedDial actions={actions} className={classes.speedDial} open={speedDialOpen} setOpen={setSpeedDialOpen}/>
 		</>

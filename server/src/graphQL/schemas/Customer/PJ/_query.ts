@@ -20,7 +20,6 @@ export const queryTypes = () => [Query];
 export const queryResolvers = {
 	Query: {
 		PJfetchCustomers: async (root, args: {}, context: ContextWithAuthentication, info: GraphQLResolveInfo) => {
-			console.log("PJfetchCustomers Query Resolver");
 			return await PJCustomerRep.fetchCustomers();
 		},
 		PJfetchCustomersById: async (

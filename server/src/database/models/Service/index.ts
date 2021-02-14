@@ -4,11 +4,16 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	EntityRepository,
 	ManyToMany,
 	PrimaryGeneratedColumn,
+	Repository,
 	UpdateDateColumn,
 } from "typeorm";
-import { IsCurrency, IsDecimal, IsNumber, IsPositive, Max, Min } from "class-validator";
+import { IsNumber, Max, Min, validateOrReject } from "class-validator";
+import logger from "../../../loaders/logger";
+import ErrorService from "../../../services/error";
+import { NumericTransformer } from "../../utilities/NumericTransformer";
 
 @Entity()
 export class Service extends BaseEntity {
@@ -27,7 +32,7 @@ export class Service extends BaseEntity {
 	@Column("text")
 	description: string;
 
-	@Column("smallint")
+	@Column("smallint", { nullable: true })
 	@IsNumber(
 		{
 			allowInfinity: false,
@@ -38,44 +43,44 @@ export class Service extends BaseEntity {
 			message: "Not a Valid Number",
 		}
 	)
-	deliveryTime: Number;
+	deliveryTime: number;
 
-	@Column("decimal", { precision: 9, scale: 2 })
+	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 2 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "baseSaleValue Must Be at Least 0" })
-	baseSaleValue: Number;
+	baseSaleValue: number;
 
-	@Column("decimal", { precision: 9, scale: 2 })
+	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 2 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "associatedSaleValue Must Be at Least 0" })
-	associatedSaleValue: Number;
+	associatedSaleValue: number;
 
-	@Column("decimal", { precision: 9, scale: 2 })
+	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 2 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "baseCost Must Be at Least 0" })
-	baseCost: Number;
+	baseCost: number;
 
-	@Column("decimal", { precision: 9, scale: 2 })
+	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 2 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "fixedRentability Must Be at Least 0" })
-	fixedRentability: Number;
+	fixedRentability: number;
 
-	@Column("decimal", { precision: 5, scale: 4 })
+	@Column("decimal", { precision: 5, scale: 4, default: 0, transformer: new NumericTransformer() })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 4 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "percentualRentability Must Be at Least 0" })
 	@Max(1, { message: "percentualRentability Must Be at Most 1" })
-	percentualRentability: Number;
+	percentualRentability: number;
 
-	@Column("decimal", { precision: 9, scale: 2 })
+	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 2 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "fixedAssociatedDiscount Must Be at Least 0" })
-	fixedAssociatedDiscount: Number;
+	fixedAssociatedDiscount: number;
 
-	@Column("decimal", { precision: 5, scale: 4 })
+	@Column("decimal", { precision: 5, scale: 4, default: 0, transformer: new NumericTransformer() })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 4 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "percentualRentability Must Be at Least 0" })
 	@Max(1, { message: "percentualRentability Must Be at Most 1" })
-	percentualAssociatedDiscount: Number;
+	percentualAssociatedDiscount: number;
 
 	// -- Relations
 	@ManyToMany((type) => Appointment, (appointment) => appointment.services, { cascade: true })
@@ -87,4 +92,51 @@ export class Service extends BaseEntity {
 
 	@UpdateDateColumn()
 	updatedAt: Date;
+
+	// -- Methods
+	public async validate() {
+		await validateOrReject(this, { validationError: { target: false }, skipMissingProperties: true });
+	}
+}
+
+@EntityRepository(Service)
+export class ServiceRepository extends Repository<Service> {
+	private readonly logger = logger;
+	private readonly errorGenerator = new ErrorService(this.logger);
+
+	public async validateAndCreate(input: Partial<Service>) {
+		let obj = this.create(input);
+
+		try {
+			await obj.validate();
+			await obj.save();
+
+			return obj;
+		} catch (err) {
+			this.errorGenerator.ValidationError(err.message);
+		}
+	}
+
+	public async validateService(service: Partial<Service>) {
+		try {
+			let validationObj = service;
+
+			await validationObj.validate();
+		} catch (err) {
+			this.logger.error(err);
+			this.errorGenerator.ValidationError(err.message);
+		}
+	}
+
+	public async fetchServices(ids?: string[]) {
+		if (!ids) {
+			return await this.createQueryBuilder("service").getMany();
+		} else {
+			return await this.createQueryBuilder("service").where("service.id in (:...ids)", { ids: ids }).getMany();
+		}
+	}
+
+	public async fetchService(id: string) {
+		return await this.createQueryBuilder("service").where("service.id = :id", { id: id }).getOne();
+	}
 }
