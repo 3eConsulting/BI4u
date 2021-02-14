@@ -68,7 +68,6 @@ export class Service extends BaseEntity {
 	@Column("decimal", { precision: 5, scale: 4, default: 0, transformer: new NumericTransformer() })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 4 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "percentualRentability Must Be at Least 0" })
-	@Max(1, { message: "percentualRentability Must Be at Most 1" })
 	percentualRentability: number;
 
 	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })

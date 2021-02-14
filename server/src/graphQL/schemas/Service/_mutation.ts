@@ -61,27 +61,32 @@ export const mutationResolvers = {
 			let service = await ServiceRep.findOne(ServiceID);
 			if (!service) throw new Error("Service Record Not Found");
 
-			console.log(Service.baseCost, service.baseCost, Service.baseCost || service.baseCost);
-
 			// Check for MakeCalculations Flag and BaseCost Fields
 			if (makeCalculations && (Service.baseCost || service.baseCost)) {
+				// Check if Calculation values were provided. If not, assign the existing ones.
+				Service.baseCost = Service.baseCost || service.baseCost;
+				Service.percentualRentability = Service.percentualRentability || service.percentualRentability;
+				Service.fixedRentability = Service.fixedRentability || service.fixedRentability;
+				Service.percentualAssociatedDiscount =
+					Service.percentualAssociatedDiscount || service.percentualAssociatedDiscount;
+				Service.fixedAssociatedDiscount = Service.fixedAssociatedDiscount || service.fixedAssociatedDiscount;
+
 				// Calculate Base Sale Value
 				Service.baseSaleValue =
-					(Service.baseCost || service.baseCost) * (1 + Service.percentualRentability || 1) +
-					(Service.fixedRentability || 0);
+					Service.baseCost * (1 + Service.percentualRentability || 1) + (Service.fixedRentability || 0);
 
 				// Calculate a Theoretical Maximum Limit to the Percentual Discount
 				let maxPercentualDiscount = 1 - (Service.fixedAssociatedDiscount || 0) / Service.baseSaleValue;
 
 				// Use the least between the Theoretical Maximum Limit and the provided Percentual Discount
 				Service.percentualAssociatedDiscount = Math.min(
-					Service.percentualAssociatedDiscount,
+					Service.percentualAssociatedDiscount || 0,
 					maxPercentualDiscount
 				);
 
 				// Calculate the discounted value
 				Service.associatedSaleValue =
-					Service.baseSaleValue * (1 - (Service.percentualAssociatedDiscount || 0)) -
+					Service.baseSaleValue * (1 - Service.percentualAssociatedDiscount) -
 					(Service.fixedAssociatedDiscount || 0);
 
 				// Limit Fixed Decimal Places to 2 and parse back as float
