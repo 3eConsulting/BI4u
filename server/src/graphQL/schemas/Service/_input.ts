@@ -44,6 +44,21 @@ const Input = `
         fixedAssociatedDiscount: Float
         percentualAssociatedDiscount: Float
     }
+
+    # OTHER INPUTS
+    input ServiceRentabilityCalculationInput {
+        baseCost: Float
+        fixedRentability: Float
+        percentualRentability: Float
+    }
+
+    input ServiceDiscountCalculationInput {
+        baseSaleValue: Float
+        fixedAssociatedDiscount: Float
+        percentualAssociatedDiscount: Float
+    }
+
+
 `;
 
 export default () => [Input];

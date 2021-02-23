@@ -27,7 +27,7 @@ export const queryResolvers = {
 			context: ContextWithAuthentication,
 			info: GraphQLResolveInfo
 		) => {
-			await ServiceRep.fetchServices(ServiceIDS);
+			return await ServiceRep.fetchServices(ServiceIDS);
 		},
 		fetchServiceById: async (
 			root,
@@ -35,7 +35,7 @@ export const queryResolvers = {
 			context: ContextWithAuthentication,
 			info: GraphQLResolveInfo
 		) => {
-			await ServiceRep.fetchService(ServiceID);
+			return await ServiceRep.fetchService(ServiceID);
 		},
 	},
 };

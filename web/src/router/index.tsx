@@ -10,6 +10,7 @@ import { authFunctionalities } from '../utilities/authentication';
 
 // Utilities
 import { useSnackbar } from 'notistack';
+import { ServiceDetailPage } from '../pages/Services/details';
 
 interface AuthedRouteProps extends RouteProps {}
 
@@ -77,6 +78,9 @@ export const BaseRouter: React.FC<BaseRouterProps> = () => {
 			</PrivateOnlyRoute>
 			<PrivateOnlyRoute exact path='/Customers/PJ'>
 				<CustomersPage />
+			</PrivateOnlyRoute>
+			<PrivateOnlyRoute exact path='/Services/:serviceID'>
+				<ServiceDetailPage />
 			</PrivateOnlyRoute>
 			<PrivateOnlyRoute exact path='/Services'>
 				<ServicesPage />

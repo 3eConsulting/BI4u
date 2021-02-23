@@ -118,14 +118,17 @@ export const ActivityClassification: React.FC<ActivityClassificationFormProps> =
     }
     const handleAddUpdate = async (data: any) => {
         
-        if(hasCNAE(data.CNAE)) {
-            enqueueSnackbar("CNAE Já Cadastrado Para Este Cliente.", {variant: "info"});
-            return;
-        }
-        
         try {
             setLoading(true)
             if (initialData) {
+                
+                if (initialData.CNAE !== data.CNAE) {
+                    if(hasCNAE(data.CNAE)) {
+                        enqueueSnackbar("CNAE Já Cadastrado Para Este Cliente.", {variant: "info"});
+                        return;
+                    }
+                }
+
                 let updateResponse = await updateActivityClassification({variables: {
                     PJActivityID: initialData.id,
                     ...data
@@ -134,6 +137,10 @@ export const ActivityClassification: React.FC<ActivityClassificationFormProps> =
                 if (updateResponse.data) enqueueSnackbar("Classificação de Atividade Alterada com Sucesso !", {variant: "success"});
 
             } else {
+                if(hasCNAE(data.CNAE)) {
+                    enqueueSnackbar("CNAE Já Cadastrado Para Este Cliente.", {variant: "info"});
+                    return;
+                }
                 let addResponse = await addActivityClassification({variables: {
                     PJCustomerID: PJCustomerID,
                     ...data

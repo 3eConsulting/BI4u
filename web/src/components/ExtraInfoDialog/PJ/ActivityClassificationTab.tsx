@@ -15,6 +15,8 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Badge from '@material-ui/core/Badge';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const useStyles = makeStyles(
@@ -31,12 +33,13 @@ const useStyles = makeStyles(
         },
         accordion: {
             border: `1px solid #efefef`,
-            marginTop: theme.spacing(1)
+            marginTop: theme.spacing(1),
         },
         accordionHeadingText: {
             fontWeight: 'bold',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
+            maxWidth: '500px',
             textOverflow: 'ellipsis'
         },
         accordionSubHeadingText: {
@@ -74,6 +77,33 @@ const ActivityClassificationAccordion:React.FC<ActivityClassificationAccordionPr
         if (!activityClassification && setNewActivityClassificationFormOpen) setTimeout(() => setNewActivityClassificationFormOpen(false), 500);
     }
 
+    const makeShownName = () => {
+        if (activityClassification && activityClassification.description) {
+            if (activityClassification.description.length > 53) {
+                return (
+                    <Tooltip title={activityClassification.description} placement='left' arrow>
+                        <Grid item lg={8} >
+                            <Badge variant="dot" color="primary" invisible={!activityClassification.isMain}>
+                                <Typography className={classes.accordionHeadingText}>{activityClassification.description}</Typography>
+                            </Badge>
+                        </Grid>
+                    </Tooltip>
+                );
+            } else {
+                return (
+                    <Grid item lg={8} >
+                        <Badge variant="dot" color="primary" invisible={!activityClassification.isMain}>
+                            <Typography className={classes.accordionHeadingText}>{activityClassification.description}</Typography>
+                        </Badge>
+                    </Grid>
+                );
+            }
+        } else {
+            return '';
+        }
+    }
+
+
     // CSS
     const classes = useStyles();
     
@@ -85,11 +115,9 @@ const ActivityClassificationAccordion:React.FC<ActivityClassificationAccordionPr
                 onChange={handleChange}
                 elevation={4} 
                 TransitionProps={{ unmountOnExit: true }}>  
-                    <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon/>} >
                         <Grid container direction="row" alignContent="center" alignItems="center" spacing={3}>
-                            <Grid item lg={8}>
-                                <Typography className={classes.accordionHeadingText}>{activityClassification.description}</Typography>
-                            </Grid>
+                            {makeShownName()}
                             <Grid item>
                                 <Grid container alignContent="center" alignItems="center" spacing={3}>
                                     <Grid item className={classes.accordionSubHeadingText}>

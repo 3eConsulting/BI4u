@@ -10,7 +10,7 @@ import {
 	Repository,
 	UpdateDateColumn,
 } from "typeorm";
-import { IsBoolean, IsEmail, IsFQDN, IsPhoneNumber, Length, validateOrReject } from "class-validator";
+import { IsBoolean, IsEmail, IsPhoneNumber, Length, validateOrReject, IsUrl } from "class-validator";
 import logger from "../../../../../loaders/logger";
 import ErrorService from "../../../../../services/error";
 
@@ -39,7 +39,7 @@ export class PJContact extends BaseEntity {
 	mobilePhone: string;
 
 	@Column({ nullable: true })
-	@IsFQDN()
+	@IsUrl()
 	site: string;
 
 	// -- Flags

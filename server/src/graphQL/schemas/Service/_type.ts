@@ -6,6 +6,7 @@ const Customer = `
         code: String
         description: String
         deliveryTime: Int
+        baseCost: Float
         baseSaleValue: Float
         associatedSaleValue: Float
         fixedRentability: Float

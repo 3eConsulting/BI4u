@@ -13,8 +13,9 @@ import Typography from '@material-ui/core/Typography';
 
 import {Add as PFAdd} from './Customer/PF/Add';
 import {Add as PJAdd} from './Customer/PJ/Add';
+import {Add as ServiceAdd} from './Service/Add';
 
-export type FormVariants = 'PFAdd' | 'PJAdd';
+export type FormVariants = 'PFAdd' | 'PJAdd' | 'ServiceAdd';
 
 interface ModalFormProps {
     open: boolean;
@@ -26,11 +27,13 @@ interface ModalFormProps {
 
 const fetchForm = (variant: FormVariants, onClose: () => void) => {
     switch (variant) {
-        case 'PFAdd': 
+        case 'PFAdd':
             return <PFAdd closeModal={onClose}/>;
-        case 'PJAdd': 
-            return <PJAdd closeModal={onClose}/>;    
-        
+        case 'PJAdd':
+            return <PJAdd closeModal={onClose}/>;
+        case 'ServiceAdd':
+            return <ServiceAdd closeModal={onClose}/>;
+
         default:
             return <Typography>Formulário não Encontrado =(</Typography>
     }

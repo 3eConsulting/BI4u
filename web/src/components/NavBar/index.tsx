@@ -159,7 +159,7 @@ export function PrimarySearchAppBar(props: PrimarySearchAppBarProps) {
 		{
 			nome: 'services-menu-item',
 			displayName: 'Serviços',
-			onClick: () => history.push('services'),
+			onClick: () => history.push('/services'),
 			disabled: false,
 		},
 	];

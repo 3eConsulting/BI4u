@@ -6,6 +6,13 @@ export const localeCurrency = (currency: number, locale: string = "pt-BR", curre
 
 export const yupLocale = {
 	required: "Campo obrigatório.",
+	number: {
+		messages: {
+			integer: "Deve ser um número inteiro",
+			max: ({ max }: { max: number }) => `Deve ser menor ou igual à ${max}.`,
+			min: ({ min }: { min: number }) => `Deve ser maior ou igual à ${min}.`,
+		}
+	},
 	string: {
 		messages: {
 			max: ({ max }: { max: number }) => `Deve ter no máximo ${max} caractéres.`,

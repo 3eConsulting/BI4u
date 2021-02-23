@@ -48,7 +48,6 @@ const validationSchema = yup.object().shape({
             .matches(/(\d{2})-(\d{9})/, {message: yupLocale.string.messages.mobilePhone, excludeEmptyString: true})
             .nullable(),
     site: yup.string()
-            .max(40, yupLocale.string.messages.max)
             .url(yupLocale.string.messages.URL)
             .nullable()
 });
@@ -287,6 +286,24 @@ export const ContactForm: React.FC<ContactFormProps> = ({ initialData, defaultNa
                                             numericOnly: true
                                         }
                                     }}
+                                    InputProps={{
+                                        inputComponent: CleaveTextField
+                                    }}
+                                />
+                            )}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Controller
+                            name="site"
+                            control={control}
+                            defaultValue={(initialData && initialData.site) ? initialData.site : null}
+                            render={props => (
+                                <TextField fullWidth variant="outlined"
+                                    {...props}
+                                    label="Site"
+                                    error={!!errors.site}
+                                    helperText={errors.site ? errors.site.message : ""}
                                     InputProps={{
                                         inputComponent: CleaveTextField
                                     }}

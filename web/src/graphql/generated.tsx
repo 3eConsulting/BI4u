@@ -46,6 +46,9 @@ export type Query = {
   PJfetchCustomersById: Array<PjCustomer>;
   PJfetchCustomerById: PjCustomer;
   PJfetchEmployees?: Maybe<Array<PfCustomer>>;
+  fetchServices: Array<Service>;
+  fetchServicesById: Array<Service>;
+  fetchServiceById: Service;
   protectedQuery: Scalars['String'];
 };
 
@@ -72,6 +75,16 @@ export type QueryPJfetchCustomerByIdArgs = {
 
 export type QueryPJfetchEmployeesArgs = {
   PJCustomerID: Scalars['String'];
+};
+
+
+export type QueryFetchServicesByIdArgs = {
+  ServiceIDS: Array<Scalars['ID']>;
+};
+
+
+export type QueryFetchServiceByIdArgs = {
+  ServiceID: Scalars['ID'];
 };
 
 export type Mutation = {
@@ -109,6 +122,9 @@ export type Mutation = {
   PJupdateAddress: PjCustomer;
   PJupdateContact: PjCustomer;
   PJupdateActivityClassification: PjCustomer;
+  addService: Service;
+  removeServices: Scalars['Boolean'];
+  updateService: Service;
   register: User;
 };
 
@@ -289,6 +305,24 @@ export type MutationPJupdateContactArgs = {
 export type MutationPJupdateActivityClassificationArgs = {
   PJActivityID: Scalars['ID'];
   PJActivityClassification: PjActivityClassificationUpdateInput;
+};
+
+
+export type MutationAddServiceArgs = {
+  Service: ServiceInput;
+  makeCalculations?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type MutationRemoveServicesArgs = {
+  ServiceIDS?: Maybe<Array<Scalars['ID']>>;
+};
+
+
+export type MutationUpdateServiceArgs = {
+  ServiceID: Scalars['ID'];
+  Service: ServiceUpdateInput;
+  makeCalculations?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -655,6 +689,52 @@ export type PjActivityClassificationUpdateInput = {
   CNAE?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   isMain?: Maybe<Scalars['Boolean']>;
+};
+
+export type Service = {
+  __typename?: 'Service';
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  code?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  deliveryTime?: Maybe<Scalars['Int']>;
+  baseCost?: Maybe<Scalars['Float']>;
+  baseSaleValue?: Maybe<Scalars['Float']>;
+  associatedSaleValue?: Maybe<Scalars['Float']>;
+  fixedRentability?: Maybe<Scalars['Float']>;
+  percentualRentability?: Maybe<Scalars['Float']>;
+  fixedAssociatedDiscount?: Maybe<Scalars['Float']>;
+  percentualAssociatedDiscount?: Maybe<Scalars['Float']>;
+  createdAt: Scalars['Date'];
+  updatedAt: Scalars['Date'];
+};
+
+export type ServiceInput = {
+  name: Scalars['String'];
+  code: Scalars['String'];
+  description: Scalars['String'];
+  deliveryTime?: Maybe<Scalars['Int']>;
+  baseSaleValue?: Maybe<Scalars['Float']>;
+  associatedSaleValue?: Maybe<Scalars['Float']>;
+  baseCost?: Maybe<Scalars['Float']>;
+  fixedRentability?: Maybe<Scalars['Float']>;
+  percentualRentability?: Maybe<Scalars['Float']>;
+  fixedAssociatedDiscount?: Maybe<Scalars['Float']>;
+  percentualAssociatedDiscount?: Maybe<Scalars['Float']>;
+};
+
+export type ServiceUpdateInput = {
+  name?: Maybe<Scalars['String']>;
+  code?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  deliveryTime?: Maybe<Scalars['Int']>;
+  baseSaleValue?: Maybe<Scalars['Float']>;
+  associatedSaleValue?: Maybe<Scalars['Float']>;
+  baseCost?: Maybe<Scalars['Float']>;
+  fixedRentability?: Maybe<Scalars['Float']>;
+  percentualRentability?: Maybe<Scalars['Float']>;
+  fixedAssociatedDiscount?: Maybe<Scalars['Float']>;
+  percentualAssociatedDiscount?: Maybe<Scalars['Float']>;
 };
 
 export type ExtendedUser = {
@@ -1428,6 +1508,106 @@ export type PJremoveActivityClassificationsMutation = (
   ) }
 );
 
+export type ServiceInfoFragment = (
+  { __typename?: 'Service' }
+  & Pick<Service, 'id' | 'name' | 'code' | 'description' | 'deliveryTime' | 'baseCost' | 'baseSaleValue' | 'associatedSaleValue' | 'fixedRentability' | 'percentualRentability' | 'fixedAssociatedDiscount' | 'percentualAssociatedDiscount' | 'createdAt' | 'updatedAt'>
+);
+
+export type FetchServicesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FetchServicesQuery = (
+  { __typename?: 'Query' }
+  & { fetchServices: Array<(
+    { __typename?: 'Service' }
+    & ServiceInfoFragment
+  )> }
+);
+
+export type FetchServicesByIdQueryVariables = Exact<{
+  ids: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type FetchServicesByIdQuery = (
+  { __typename?: 'Query' }
+  & { fetchServicesById: Array<(
+    { __typename?: 'Service' }
+    & ServiceInfoFragment
+  )> }
+);
+
+export type FetchServiceByIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type FetchServiceByIdQuery = (
+  { __typename?: 'Query' }
+  & { fetchServiceById: (
+    { __typename?: 'Service' }
+    & ServiceInfoFragment
+  ) }
+);
+
+export type AddServiceMutationVariables = Exact<{
+  name: Scalars['String'];
+  code: Scalars['String'];
+  description: Scalars['String'];
+  deliveryTime?: Maybe<Scalars['Int']>;
+  baseSaleValue?: Maybe<Scalars['Float']>;
+  associatedSaleValue?: Maybe<Scalars['Float']>;
+  baseCost?: Maybe<Scalars['Float']>;
+  fixedRentability?: Maybe<Scalars['Float']>;
+  percentualRentability?: Maybe<Scalars['Float']>;
+  fixedAssociatedDiscount?: Maybe<Scalars['Float']>;
+  percentualAssociatedDiscount?: Maybe<Scalars['Float']>;
+}>;
+
+
+export type AddServiceMutation = (
+  { __typename?: 'Mutation' }
+  & { addService: (
+    { __typename?: 'Service' }
+    & ServiceInfoFragment
+  ) }
+);
+
+export type RemoveServicesMutationVariables = Exact<{
+  ServiceIDS: Array<Scalars['ID']> | Scalars['ID'];
+}>;
+
+
+export type RemoveServicesMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'removeServices'>
+);
+
+export type UpdateServicesMutationVariables = Exact<{
+  ServiceID: Scalars['ID'];
+  makeCalculations?: Maybe<Scalars['Boolean']>;
+  name?: Maybe<Scalars['String']>;
+  code?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  deliveryTime?: Maybe<Scalars['Int']>;
+  baseSaleValue?: Maybe<Scalars['Float']>;
+  associatedSaleValue?: Maybe<Scalars['Float']>;
+  baseCost?: Maybe<Scalars['Float']>;
+  fixedRentability?: Maybe<Scalars['Float']>;
+  percentualRentability?: Maybe<Scalars['Float']>;
+  fixedAssociatedDiscount?: Maybe<Scalars['Float']>;
+  percentualAssociatedDiscount?: Maybe<Scalars['Float']>;
+}>;
+
+
+export type UpdateServicesMutation = (
+  { __typename?: 'Mutation' }
+  & { updateService: (
+    { __typename?: 'Service' }
+    & ServiceInfoFragment
+  ) }
+);
+
 export const PfContactInfoFragmentDoc = gql`
     fragment PFContactInfo on PFContact {
   id
@@ -1625,6 +1805,24 @@ export const PfCustomerInfoFragmentDoc = gql`
   }
 }
     ${PfExtraInfoInfoFragmentDoc}`;
+export const ServiceInfoFragmentDoc = gql`
+    fragment ServiceInfo on Service {
+  id
+  name
+  code
+  description
+  deliveryTime
+  baseCost
+  baseSaleValue
+  associatedSaleValue
+  fixedRentability
+  percentualRentability
+  fixedAssociatedDiscount
+  percentualAssociatedDiscount
+  createdAt
+  updatedAt
+}
+    `;
 export const PFfetchCustomersDocument = gql`
     query PFfetchCustomers {
   PFfetchCustomers {
@@ -3060,3 +3258,223 @@ export function usePJremoveActivityClassificationsMutation(baseOptions?: Apollo.
 export type PJremoveActivityClassificationsMutationHookResult = ReturnType<typeof usePJremoveActivityClassificationsMutation>;
 export type PJremoveActivityClassificationsMutationResult = Apollo.MutationResult<PJremoveActivityClassificationsMutation>;
 export type PJremoveActivityClassificationsMutationOptions = Apollo.BaseMutationOptions<PJremoveActivityClassificationsMutation, PJremoveActivityClassificationsMutationVariables>;
+export const FetchServicesDocument = gql`
+    query fetchServices {
+  fetchServices {
+    ...ServiceInfo
+  }
+}
+    ${ServiceInfoFragmentDoc}`;
+
+/**
+ * __useFetchServicesQuery__
+ *
+ * To run a query within a React component, call `useFetchServicesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchServicesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchServicesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFetchServicesQuery(baseOptions?: Apollo.QueryHookOptions<FetchServicesQuery, FetchServicesQueryVariables>) {
+        return Apollo.useQuery<FetchServicesQuery, FetchServicesQueryVariables>(FetchServicesDocument, baseOptions);
+      }
+export function useFetchServicesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchServicesQuery, FetchServicesQueryVariables>) {
+          return Apollo.useLazyQuery<FetchServicesQuery, FetchServicesQueryVariables>(FetchServicesDocument, baseOptions);
+        }
+export type FetchServicesQueryHookResult = ReturnType<typeof useFetchServicesQuery>;
+export type FetchServicesLazyQueryHookResult = ReturnType<typeof useFetchServicesLazyQuery>;
+export type FetchServicesQueryResult = Apollo.QueryResult<FetchServicesQuery, FetchServicesQueryVariables>;
+export const FetchServicesByIdDocument = gql`
+    query fetchServicesByID($ids: [ID!]!) {
+  fetchServicesById(ServiceIDS: $ids) {
+    ...ServiceInfo
+  }
+}
+    ${ServiceInfoFragmentDoc}`;
+
+/**
+ * __useFetchServicesByIdQuery__
+ *
+ * To run a query within a React component, call `useFetchServicesByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchServicesByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchServicesByIdQuery({
+ *   variables: {
+ *      ids: // value for 'ids'
+ *   },
+ * });
+ */
+export function useFetchServicesByIdQuery(baseOptions: Apollo.QueryHookOptions<FetchServicesByIdQuery, FetchServicesByIdQueryVariables>) {
+        return Apollo.useQuery<FetchServicesByIdQuery, FetchServicesByIdQueryVariables>(FetchServicesByIdDocument, baseOptions);
+      }
+export function useFetchServicesByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchServicesByIdQuery, FetchServicesByIdQueryVariables>) {
+          return Apollo.useLazyQuery<FetchServicesByIdQuery, FetchServicesByIdQueryVariables>(FetchServicesByIdDocument, baseOptions);
+        }
+export type FetchServicesByIdQueryHookResult = ReturnType<typeof useFetchServicesByIdQuery>;
+export type FetchServicesByIdLazyQueryHookResult = ReturnType<typeof useFetchServicesByIdLazyQuery>;
+export type FetchServicesByIdQueryResult = Apollo.QueryResult<FetchServicesByIdQuery, FetchServicesByIdQueryVariables>;
+export const FetchServiceByIdDocument = gql`
+    query fetchServiceByID($id: ID!) {
+  fetchServiceById(ServiceID: $id) {
+    ...ServiceInfo
+  }
+}
+    ${ServiceInfoFragmentDoc}`;
+
+/**
+ * __useFetchServiceByIdQuery__
+ *
+ * To run a query within a React component, call `useFetchServiceByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFetchServiceByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFetchServiceByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useFetchServiceByIdQuery(baseOptions: Apollo.QueryHookOptions<FetchServiceByIdQuery, FetchServiceByIdQueryVariables>) {
+        return Apollo.useQuery<FetchServiceByIdQuery, FetchServiceByIdQueryVariables>(FetchServiceByIdDocument, baseOptions);
+      }
+export function useFetchServiceByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FetchServiceByIdQuery, FetchServiceByIdQueryVariables>) {
+          return Apollo.useLazyQuery<FetchServiceByIdQuery, FetchServiceByIdQueryVariables>(FetchServiceByIdDocument, baseOptions);
+        }
+export type FetchServiceByIdQueryHookResult = ReturnType<typeof useFetchServiceByIdQuery>;
+export type FetchServiceByIdLazyQueryHookResult = ReturnType<typeof useFetchServiceByIdLazyQuery>;
+export type FetchServiceByIdQueryResult = Apollo.QueryResult<FetchServiceByIdQuery, FetchServiceByIdQueryVariables>;
+export const AddServiceDocument = gql`
+    mutation addService($name: String!, $code: String!, $description: String!, $deliveryTime: Int, $baseSaleValue: Float, $associatedSaleValue: Float, $baseCost: Float, $fixedRentability: Float, $percentualRentability: Float, $fixedAssociatedDiscount: Float, $percentualAssociatedDiscount: Float) {
+  addService(
+    Service: {name: $name, code: $code, description: $description, deliveryTime: $deliveryTime, baseSaleValue: $baseSaleValue, associatedSaleValue: $associatedSaleValue, baseCost: $baseCost, fixedRentability: $fixedRentability, percentualRentability: $percentualRentability, fixedAssociatedDiscount: $fixedAssociatedDiscount, percentualAssociatedDiscount: $percentualAssociatedDiscount}
+  ) {
+    ...ServiceInfo
+  }
+}
+    ${ServiceInfoFragmentDoc}`;
+export type AddServiceMutationFn = Apollo.MutationFunction<AddServiceMutation, AddServiceMutationVariables>;
+
+/**
+ * __useAddServiceMutation__
+ *
+ * To run a mutation, you first call `useAddServiceMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddServiceMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addServiceMutation, { data, loading, error }] = useAddServiceMutation({
+ *   variables: {
+ *      name: // value for 'name'
+ *      code: // value for 'code'
+ *      description: // value for 'description'
+ *      deliveryTime: // value for 'deliveryTime'
+ *      baseSaleValue: // value for 'baseSaleValue'
+ *      associatedSaleValue: // value for 'associatedSaleValue'
+ *      baseCost: // value for 'baseCost'
+ *      fixedRentability: // value for 'fixedRentability'
+ *      percentualRentability: // value for 'percentualRentability'
+ *      fixedAssociatedDiscount: // value for 'fixedAssociatedDiscount'
+ *      percentualAssociatedDiscount: // value for 'percentualAssociatedDiscount'
+ *   },
+ * });
+ */
+export function useAddServiceMutation(baseOptions?: Apollo.MutationHookOptions<AddServiceMutation, AddServiceMutationVariables>) {
+        return Apollo.useMutation<AddServiceMutation, AddServiceMutationVariables>(AddServiceDocument, baseOptions);
+      }
+export type AddServiceMutationHookResult = ReturnType<typeof useAddServiceMutation>;
+export type AddServiceMutationResult = Apollo.MutationResult<AddServiceMutation>;
+export type AddServiceMutationOptions = Apollo.BaseMutationOptions<AddServiceMutation, AddServiceMutationVariables>;
+export const RemoveServicesDocument = gql`
+    mutation removeServices($ServiceIDS: [ID!]!) {
+  removeServices(ServiceIDS: $ServiceIDS)
+}
+    `;
+export type RemoveServicesMutationFn = Apollo.MutationFunction<RemoveServicesMutation, RemoveServicesMutationVariables>;
+
+/**
+ * __useRemoveServicesMutation__
+ *
+ * To run a mutation, you first call `useRemoveServicesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveServicesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeServicesMutation, { data, loading, error }] = useRemoveServicesMutation({
+ *   variables: {
+ *      ServiceIDS: // value for 'ServiceIDS'
+ *   },
+ * });
+ */
+export function useRemoveServicesMutation(baseOptions?: Apollo.MutationHookOptions<RemoveServicesMutation, RemoveServicesMutationVariables>) {
+        return Apollo.useMutation<RemoveServicesMutation, RemoveServicesMutationVariables>(RemoveServicesDocument, baseOptions);
+      }
+export type RemoveServicesMutationHookResult = ReturnType<typeof useRemoveServicesMutation>;
+export type RemoveServicesMutationResult = Apollo.MutationResult<RemoveServicesMutation>;
+export type RemoveServicesMutationOptions = Apollo.BaseMutationOptions<RemoveServicesMutation, RemoveServicesMutationVariables>;
+export const UpdateServicesDocument = gql`
+    mutation updateServices($ServiceID: ID!, $makeCalculations: Boolean, $name: String, $code: String, $description: String, $deliveryTime: Int, $baseSaleValue: Float, $associatedSaleValue: Float, $baseCost: Float, $fixedRentability: Float, $percentualRentability: Float, $fixedAssociatedDiscount: Float, $percentualAssociatedDiscount: Float) {
+  updateService(
+    ServiceID: $ServiceID
+    makeCalculations: $makeCalculations
+    Service: {name: $name, code: $code, description: $description, deliveryTime: $deliveryTime, baseSaleValue: $baseSaleValue, associatedSaleValue: $associatedSaleValue, baseCost: $baseCost, fixedRentability: $fixedRentability, percentualRentability: $percentualRentability, fixedAssociatedDiscount: $fixedAssociatedDiscount, percentualAssociatedDiscount: $percentualAssociatedDiscount}
+  ) {
+    ...ServiceInfo
+  }
+}
+    ${ServiceInfoFragmentDoc}`;
+export type UpdateServicesMutationFn = Apollo.MutationFunction<UpdateServicesMutation, UpdateServicesMutationVariables>;
+
+/**
+ * __useUpdateServicesMutation__
+ *
+ * To run a mutation, you first call `useUpdateServicesMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateServicesMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateServicesMutation, { data, loading, error }] = useUpdateServicesMutation({
+ *   variables: {
+ *      ServiceID: // value for 'ServiceID'
+ *      makeCalculations: // value for 'makeCalculations'
+ *      name: // value for 'name'
+ *      code: // value for 'code'
+ *      description: // value for 'description'
+ *      deliveryTime: // value for 'deliveryTime'
+ *      baseSaleValue: // value for 'baseSaleValue'
+ *      associatedSaleValue: // value for 'associatedSaleValue'
+ *      baseCost: // value for 'baseCost'
+ *      fixedRentability: // value for 'fixedRentability'
+ *      percentualRentability: // value for 'percentualRentability'
+ *      fixedAssociatedDiscount: // value for 'fixedAssociatedDiscount'
+ *      percentualAssociatedDiscount: // value for 'percentualAssociatedDiscount'
+ *   },
+ * });
+ */
+export function useUpdateServicesMutation(baseOptions?: Apollo.MutationHookOptions<UpdateServicesMutation, UpdateServicesMutationVariables>) {
+        return Apollo.useMutation<UpdateServicesMutation, UpdateServicesMutationVariables>(UpdateServicesDocument, baseOptions);
+      }
+export type UpdateServicesMutationHookResult = ReturnType<typeof useUpdateServicesMutation>;
+export type UpdateServicesMutationResult = Apollo.MutationResult<UpdateServicesMutation>;
+export type UpdateServicesMutationOptions = Apollo.BaseMutationOptions<UpdateServicesMutation, UpdateServicesMutationVariables>;

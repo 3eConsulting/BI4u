@@ -1,0 +1,112 @@
+#### SERVICE OPERATIONS
+
+### FRAGMENTS
+fragment ServiceInfo on Service {
+	id
+	name
+	code
+	description
+	deliveryTime
+	baseCost
+	baseSaleValue
+	associatedSaleValue
+	fixedRentability
+	percentualRentability
+	fixedAssociatedDiscount
+	percentualAssociatedDiscount
+	createdAt
+	updatedAt
+}
+
+### QUERIES
+query fetchServices {
+	fetchServices {
+		...ServiceInfo
+	}
+}
+
+query fetchServicesByID($ids: [ID!]!) {
+	fetchServicesById(ServiceIDS: $ids) {
+		...ServiceInfo
+	}
+}
+
+query fetchServiceByID($id: ID!) {
+	fetchServiceById(ServiceID: $id) {
+		...ServiceInfo
+	}
+}
+
+### MUTATION
+
+mutation addService(
+	$name: String!
+	$code: String!
+	$description: String!
+	$deliveryTime: Int
+	$baseSaleValue: Float
+	$associatedSaleValue: Float
+	$baseCost: Float
+	$fixedRentability: Float
+	$percentualRentability: Float
+	$fixedAssociatedDiscount: Float
+	$percentualAssociatedDiscount: Float
+) {
+	addService(
+		Service: {
+			name: $name
+			code: $code
+			description: $description
+			deliveryTime: $deliveryTime
+			baseSaleValue: $baseSaleValue
+			associatedSaleValue: $associatedSaleValue
+			baseCost: $baseCost
+			fixedRentability: $fixedRentability
+			percentualRentability: $percentualRentability
+			fixedAssociatedDiscount: $fixedAssociatedDiscount
+			percentualAssociatedDiscount: $percentualAssociatedDiscount
+		}
+	) {
+		...ServiceInfo
+	}
+}
+
+mutation removeServices($ServiceIDS: [ID!]!) {
+	removeServices(ServiceIDS: $ServiceIDS)
+}
+
+mutation updateServices(
+	$ServiceID: ID!
+	$makeCalculations: Boolean
+	$name: String
+	$code: String
+	$description: String
+	$deliveryTime: Int
+	$baseSaleValue: Float
+	$associatedSaleValue: Float
+	$baseCost: Float
+	$fixedRentability: Float
+	$percentualRentability: Float
+	$fixedAssociatedDiscount: Float
+	$percentualAssociatedDiscount: Float
+) {
+	updateService(
+		ServiceID: $ServiceID
+		makeCalculations: $makeCalculations
+		Service: {
+			name: $name
+			code: $code
+			description: $description
+			deliveryTime: $deliveryTime
+			baseSaleValue: $baseSaleValue
+			associatedSaleValue: $associatedSaleValue
+			baseCost: $baseCost
+			fixedRentability: $fixedRentability
+			percentualRentability: $percentualRentability
+			fixedAssociatedDiscount: $fixedAssociatedDiscount
+			percentualAssociatedDiscount: $percentualAssociatedDiscount
+		}
+	) {
+		...ServiceInfo
+	}
+}

@@ -26,7 +26,7 @@ export class Service extends BaseEntity {
 	name: string;
 
 	// @TODO ADD VALIDATION TO CODE AFTER AGREEING UPON A FORMAT
-	@Column({ length: 6 })
+	@Column({ length: 6, unique: true })
 	code: string;
 
 	@Column("text")
@@ -45,37 +45,37 @@ export class Service extends BaseEntity {
 	)
 	deliveryTime: number;
 
-	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })
+	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer(), nullable: true })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 2 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "baseSaleValue Must Be at Least 0" })
 	baseSaleValue: number;
 
-	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })
+	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer(), nullable: true })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 2 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "associatedSaleValue Must Be at Least 0" })
 	associatedSaleValue: number;
 
-	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })
+	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer(), nullable: true })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 2 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "baseCost Must Be at Least 0" })
 	baseCost: number;
 
-	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })
+	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer(), nullable: true })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 2 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "fixedRentability Must Be at Least 0" })
 	fixedRentability: number;
 
-	@Column("decimal", { precision: 5, scale: 4, default: 0, transformer: new NumericTransformer() })
+	@Column("decimal", { precision: 5, scale: 4, default: 0, transformer: new NumericTransformer(), nullable: true })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 4 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "percentualRentability Must Be at Least 0" })
 	percentualRentability: number;
 
-	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer() })
+	@Column("decimal", { precision: 9, scale: 2, default: 0, transformer: new NumericTransformer(), nullable: true })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 2 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "fixedAssociatedDiscount Must Be at Least 0" })
 	fixedAssociatedDiscount: number;
 
-	@Column("decimal", { precision: 5, scale: 4, default: 0, transformer: new NumericTransformer() })
+	@Column("decimal", { precision: 5, scale: 4, default: 0, transformer: new NumericTransformer(), nullable: true })
 	@IsNumber({ allowInfinity: false, allowNaN: false, maxDecimalPlaces: 4 }, { message: "Not a Valid Number" })
 	@Min(0, { message: "percentualRentability Must Be at Least 0" })
 	@Max(1, { message: "percentualRentability Must Be at Most 1" })
